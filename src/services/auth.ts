@@ -105,17 +105,31 @@ export class AuthService {
   }
 
   /**
-   * Lấy tài khoản đang đăng nhập hiện tại
+   * Dọn dẹp phiên tự động đăng nhập cũ trước đây (chỉ chạy 1 lần khi cập nhật)
+   */
+  static clearLegacyAutoLogin(): void {
+    if (!this.isClient) return;
+    try {
+      const isCleaned = localStorage.getItem('itftms_autologin_disabled_v2');
+      if (!isCleaned) {
+        localStorage.removeItem(AUTH_STORAGE_KEYS.CURRENT_USER);
+        localStorage.removeItem('itftms_current_role_2026');
+        localStorage.setItem('itftms_autologin_disabled_v2', 'true');
+      }
+    } catch {}
+  }
+
+  /**
+   * Lấy tài khoản đang đăng nhập hiện tại.
+   * KHÔNG tự động đăng nhập - người dùng vào trang với trạng thái chưa đăng nhập.
    */
   static getCurrentUser(): UserAccount | null {
-    if (!this.isClient) return DEFAULT_ACCOUNTS[0]; // Mặc định BTC trên SSR
+    if (!this.isClient) return null;
+    this.clearLegacyAutoLogin();
     try {
       const stored = localStorage.getItem(AUTH_STORAGE_KEYS.CURRENT_USER);
       if (!stored) {
-        // Khởi tạo mặc định tài khoản BTC ban đầu để tiện thử nghiệm
-        const defaultUser = DEFAULT_ACCOUNTS[0];
-        localStorage.setItem(AUTH_STORAGE_KEYS.CURRENT_USER, JSON.stringify(defaultUser));
-        return defaultUser;
+        return null;
       }
       return JSON.parse(stored);
     } catch {

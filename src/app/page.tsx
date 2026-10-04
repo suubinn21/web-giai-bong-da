@@ -80,7 +80,7 @@ export default function Home() {
   const [cloudStatus, setCloudStatus] = useState<'connected' | 'connecting' | 'offline'>('connecting');
 
   // RBAC & Tournament Status
-  const [currentRole, setCurrentRole] = useState<UserRole>('ORGANIZER');
+  const [currentRole, setCurrentRole] = useState<UserRole>('STUDENT');
   const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('GROUP_STAGE');
 
   // Navigation & History Stack (Hỗ trợ lùi 1 trang trên điện thoại & trình duyệt)
@@ -217,7 +217,8 @@ export default function Home() {
     if (user) {
       setCurrentRole(user.role);
     } else {
-      setCurrentRole(StorageService.getCurrentRole());
+      setCurrentRole('STUDENT');
+      StorageService.setCurrentRole('STUDENT');
     }
     setTournamentStatus(StorageService.getTournamentStatus());
     setMounted(true);

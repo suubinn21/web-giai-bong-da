@@ -594,8 +594,8 @@ export class StorageService {
   }
 
   static getCurrentRole(): UserRole {
-    if (!this.isClient) return 'ORGANIZER';
-    return (localStorage.getItem(STORAGE_KEYS.CURRENT_ROLE) as UserRole) || 'ORGANIZER';
+    if (!this.isClient) return 'STUDENT';
+    return (localStorage.getItem(STORAGE_KEYS.CURRENT_ROLE) as UserRole) || 'STUDENT';
   }
 
   static setCurrentRole(role: UserRole): void {
