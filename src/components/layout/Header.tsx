@@ -114,58 +114,55 @@ export const Header: React.FC<HeaderProps> = ({
               <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-300 animate-bounce" />
             </div>
 
-            {/* Back to Portal Hub button */}
+            {/* Back to Portal Hub button (Desktop only, mobile in Menu Hamburger) */}
             {onBackToPortal && (
               <button
                 onClick={onBackToPortal}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all"
                 title="Quay lại cổng danh sách các giải đấu đã tạo"
               >
                 <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="hidden sm:inline">Danh Sách Giải</span>
-                <span className="sm:hidden">Đổi Giải</span>
+                <span>Danh Sách Giải</span>
               </button>
             )}
 
-            <div>
+            <div className="flex-1 min-w-0 pr-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 font-mono">
+                <span className="text-[10px] sm:text-xs font-extrabold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 font-mono">
                   {tournament.shortCode || 'ITFTMS 2026'}
                 </span>
                 <span className="hidden sm:inline-block text-xs text-slate-400">| {tournament.format || 'Bóng Đá 5 Người'}</span>
               </div>
-              <h1 className="text-sm sm:text-base lg:text-lg font-black tracking-tight text-white truncate max-w-[180px] sm:max-w-xs md:max-w-md lg:max-w-lg">
+              <h1 className="text-xs sm:text-base lg:text-lg font-black tracking-tight text-white truncate max-w-[220px] sm:max-w-xs md:max-w-md lg:max-w-lg">
                 {tournament.name || 'GIẢI BÓNG ĐÁ KHOA CNTT 2026'}
               </h1>
             </div>
           </div>
 
-          {/* Right Controls: Create Tournament, Stage Badge, Audio, Role Switcher, Clear/Load Data */}
+          {/* Right Controls: Desktop controls hidden on mobile, mobile has only Hamburger Menu */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             
-            {/* Edit Tournament Config Button */}
+            {/* Edit Tournament Config Button (Desktop only, mobile in Menu Hamburger) */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onEditTournament && (
               <button
                 onClick={onEditTournament}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all"
                 title="Chỉnh sửa cấu hình số bảng đấu, số đội/bảng, lệ phí và thông tin giải đấu"
               >
                 <Edit3 className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden lg:inline">Cấu Hình ({tournament.numberOfGroups || 4} Bảng × {tournament.teamsPerGroup || 4} Đội)</span>
-                <span className="lg:hidden">Cấu Hình Bảng</span>
+                <span>Cấu Hình ({tournament.numberOfGroups || 4} Bảng × {tournament.teamsPerGroup || 4} Đội)</span>
               </button>
             )}
 
-            {/* Create Tournament Button */}
+            {/* Create Tournament Button (Desktop only, mobile in Menu Hamburger) */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onOpenCreateTournament}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30"
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30"
                 title="Khởi tạo mùa giải bóng đá mới"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span className="hidden md:inline">+ Tạo Mới Giải Đấu</span>
-                <span className="md:hidden">+ Tạo Giải</span>
+                <span>+ Tạo Mới Giải Đấu</span>
               </button>
             )}
 
@@ -206,9 +203,9 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
 
-            {/* Cloud Realtime Sync Status Indicator */}
+            {/* Cloud Realtime Sync Status Indicator (Desktop only) */}
             <div
-              className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition-all ${
+              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition-all ${
                 cloudStatus === 'connected'
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                   : cloudStatus === 'connecting'
@@ -238,15 +235,15 @@ export const Header: React.FC<HeaderProps> = ({
                 ></span>
               </span>
               <Cloud className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline font-mono font-bold text-[11px]">
+              <span className="font-mono font-bold text-[11px]">
                 {cloudStatus === 'connected' ? 'Cloud Sync' : cloudStatus === 'connecting' ? 'Kết nối...' : 'Offline'}
               </span>
             </div>
 
-            {/* Sound FX Toggle Button */}
+            {/* Sound FX Toggle Button (Desktop only, mobile in Menu Hamburger) */}
             <button
               onClick={toggleSound}
-              className={`p-2 rounded-lg border transition-all ${
+              className={`hidden md:flex p-2 rounded-lg border transition-all ${
                 soundOn
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400 hover:bg-emerald-900/50'
                   : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
@@ -256,15 +253,14 @@ export const Header: React.FC<HeaderProps> = ({
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
 
-            {/* Role Switcher Dropdown */}
-            <div className="relative">
+            {/* Role Switcher Dropdown (Desktop only, mobile in Menu Hamburger) */}
+            <div className="relative hidden md:block">
               <button
                 onClick={() => setRoleMenuOpen(!roleMenuOpen)}
                 className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border shadow-sm transition-all ${roleLabels[currentRole].color}`}
               >
                 <UserCheck className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{roleLabels[currentRole].label}</span>
-                <span className="sm:hidden">{roleLabels[currentRole].label.slice(0, 6)}..</span>
+                <span>{roleLabels[currentRole].label}</span>
                 <ChevronDown className="w-3 h-3 ml-0.5" />
               </button>
 
@@ -318,15 +314,15 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
 
-            {/* Mobile Menu Hamburger Button */}
+            {/* Mobile Menu Hamburger Button: ONLY button visible on right on mobile phones */}
             {onOpenMobileMenu && (
               <button
                 onClick={onOpenMobileMenu}
-                className="p-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white md:hidden transition-colors shadow-sm"
-                title="Mở menu tính năng giải đấu"
+                className="flex items-center justify-center p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-emerald-400 hover:text-white md:hidden transition-all shadow-md active:scale-95"
+                title="Mở menu chức năng giải đấu"
                 aria-label="Mở menu chức năng"
               >
-                <Menu className="w-5 h-5 text-emerald-400" />
+                <Menu className="w-6 h-6 text-emerald-400" />
               </button>
             )}
 

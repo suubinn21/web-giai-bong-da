@@ -722,6 +722,9 @@ export default function Home() {
         tournament={tournament}
         currentRole={currentRole}
         onRoleChange={handleRoleChange}
+        tournamentStatus={tournamentStatus}
+        onStatusChange={handleStatusChange}
+        onOpenCreateTournament={() => setCreateTournamentOpen(true)}
         liveMatchCount={liveMatches.length}
         activeComplaintsCount={activeComplaints.length}
         suspendedPlayersCount={suspendedPlayers.length}
