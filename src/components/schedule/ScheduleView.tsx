@@ -880,26 +880,32 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                         {/* Mốc Lễ Bế Mạc & Trao Cúp Vô Địch (Sau Ca Chung Kết 16:30) */}
                         {slotTime === '16:30' && (
-                          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/10 to-emerald-500/15 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-emerald-950/20 mt-4">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
-                                <Trophy className="w-5 h-5" />
+                          <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl border border-emerald-500/40 bg-slate-900/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl mt-4">
+                            <div 
+                              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none"
+                              style={{ backgroundImage: `url('/images/trophy-celebration.jpg')` }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/60 pointer-events-none" />
+
+                            <div className="relative z-10 flex items-center gap-3">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden border border-amber-400/60 shadow-md shrink-0">
+                                <img src="/images/trophy-cup.jpg" alt="Cúp Vô Địch" className="w-full h-full object-cover" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs font-black text-emerald-300 uppercase tracking-wider">
+                                  <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
                                     17:15 – 17:45 • LỄ BẾ MẠC &amp; TRAO CÚP VÔ ĐỊCH
                                   </span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-200 border border-emerald-500/30">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
                                     Tổng kết giải
                                   </span>
                                 </div>
-                                <p className="text-xs text-emerald-100/80 mt-0.5">
+                                <p className="text-xs text-slate-200 mt-0.5">
                                   Trao Cúp Vô địch, Huy chương Vàng - Bạc - Đồng, Cầu thủ xuất sắc nhất, Vua phá lưới &amp; Thủ môn xuất sắc nhất.
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-300 bg-black/40 px-3 py-1.5 rounded-xl border border-emerald-500/30 self-start sm:self-center shrink-0">
+                            <div className="relative z-10 flex items-center gap-2 text-xs font-mono font-bold text-emerald-300 bg-black/60 px-3 py-1.5 rounded-xl border border-emerald-500/30 self-start sm:self-center shrink-0">
                               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                               <span>Hoàn thành 32/32 trận trọn gói 1 ngày</span>
                             </div>

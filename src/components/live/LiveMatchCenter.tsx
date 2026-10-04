@@ -495,10 +495,16 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
       </div>
 
       {/* Main Stadium Live Scoreboard Card */}
-      <div className="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-gradient-to-b from-[#0F1E36] via-[#0B132B] to-[#070B14]">
+      <div className="relative rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl bg-slate-900/90 backdrop-blur-md">
+        {/* Stadium Action Photo Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 transform scale-105 pointer-events-none"
+          style={{ backgroundImage: `url('/images/goalkeeper-save.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/85 to-slate-950/70 pointer-events-none" />
         
         {/* Stadium lighting glow top overlay */}
-        <div className="absolute top-0 left-1/4 right-1/4 h-24 bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 left-1/4 right-1/4 h-24 bg-emerald-500/15 blur-3xl pointer-events-none"></div>
 
         {/* Top Info Bar */}
         <div className="px-6 py-3 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400 bg-slate-950/40">

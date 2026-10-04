@@ -76,36 +76,44 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
     <div className="space-y-8">
       
       {/* Top Banner Card */}
-      <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-500/30">
-              VINH DANH & CƠ CẤU GIẢI THƯỞNG
-            </span>
-            <span className="text-xs text-slate-400">Quy định Điều 28</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white">
-            Bảng Vàng Danh Dự ITFTMS 2026
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Trao Cúp, Huy chương Vàng - Bạc - Đồng và các danh hiệu cá nhân xuất sắc nhất giải bóng đá Khoa CNTT.
-          </p>
-        </div>
+      <div className="relative rounded-3xl overflow-hidden border border-amber-500/40 bg-slate-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 transform scale-105 pointer-events-none"
+          style={{ backgroundImage: `url('/images/trophy-celebration.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/60 pointer-events-none" />
 
-        <button
-          onClick={() => {
-            SoundFX.playGoalFanfare();
-            confetti({
-              particleCount: 120,
-              spread: 80,
-              origin: { y: 0.5 },
-            });
-          }}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black text-xs shadow-xl shadow-amber-500/25 transition-all self-start md:self-auto"
-        >
-          <Sparkles className="w-4 h-4" />
-          <span>Bắn Pháo Hoa Ăn Mừng!</span>
-        </button>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                VINH DANH &amp; CƠ CẤU GIẢI THƯỞNG
+              </span>
+              <span className="text-xs text-slate-400">Quy định Điều 28</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-white">
+              Bảng Vàng Danh Dự ITFTMS 2026
+            </h2>
+            <p className="text-xs text-slate-300 mt-1">
+              Trao Cúp, Huy chương Vàng - Bạc - Đồng và các danh hiệu cá nhân xuất sắc nhất giải bóng đá Khoa CNTT.
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              SoundFX.playGoalFanfare();
+              confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.5 },
+              });
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black text-xs shadow-xl shadow-amber-500/25 transition-all self-start md:self-auto"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Bắn Pháo Hoa Ăn Mừng!</span>
+          </button>
+        </div>
       </div>
 
       {/* 3D Olympic-Style Podium Showcase */}
@@ -148,9 +156,17 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
 
           {/* 1st Place (Gold / Champion) */}
           <div className="w-full sm:w-72 flex flex-col items-center order-1 sm:order-2">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-300 to-yellow-600 shadow-2xl shadow-amber-500/40 flex items-center justify-center text-4xl mb-3 border-2 border-amber-200 animate-bounce">
-              🏆
+            {/* Real Champion Cup Trophy Photo */}
+            <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-2xl shadow-amber-500/50 mb-3 relative group">
+              <img 
+                src="/images/trophy-cup.jpg" 
+                alt="Cúp Vô Địch" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <span className="absolute bottom-1 inset-x-0 text-center text-[10px] font-black font-mono text-amber-300 drop-shadow">CÚP VÀNG</span>
             </div>
+
             <span className="text-xs font-black text-amber-300 uppercase tracking-widest bg-amber-950/60 px-3 py-0.5 rounded-full border border-amber-500/40">
               QUÁN QUÂN 2026
             </span>
@@ -213,38 +229,64 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
       <div>
         <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4 flex items-center gap-2">
           <Award className="w-4 h-4 text-emerald-400" />
-          <span>Danh Hiệu Cá Nhân & Phong Cách (Điều 28)</span>
+          <span>Danh Hiệu Cá Nhân &amp; Phong Cách (Điều 28)</span>
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {individualAwards.map((a) => (
-            <div
-              key={a.id}
-              className="bg-[#0B132B]/90 border border-slate-800 rounded-2xl p-5 shadow-xl hover:border-emerald-500/50 transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-2xl">{a.icon}</span>
-                  <span className="font-mono text-xs font-bold text-amber-400">
-                    {a.prizeMoney.toLocaleString()} đ
-                  </span>
-                </div>
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">{a.title}</h4>
-                <div className="text-base font-black text-white mt-1">{a.recipientName}</div>
-                <div className="text-xs text-emerald-400 font-semibold mt-0.5">{a.recipientTeam}</div>
-              </div>
+          {individualAwards.map((a) => {
+            const awardImgMap: Record<string, string> = {
+              TOP_SCORER: '/images/golden-boot.jpg',
+              BEST_GK: '/images/goalkeeper-save.jpg',
+              BEST_PLAYER: '/images/tournament-hero.jpg',
+              FAIR_PLAY: '/images/futsal-action.jpg',
+            };
+            const awardImg = awardImgMap[a.code] || '/images/trophy-cup.jpg';
 
-              {canEdit && (
-                <button
-                  onClick={() => handleOpenEdit(a)}
-                  className="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 hover:text-emerald-400 flex items-center justify-center gap-1 transition-colors"
-                >
-                  <Edit3 className="w-3 h-3" />
-                  <span>Cập Nhật Người Nhận</span>
-                </button>
-              )}
-            </div>
-          ))}
+            return (
+              <div
+                key={a.id}
+                className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all flex flex-col justify-between group"
+              >
+                <div>
+                  {/* Photo Thumbnail Banner */}
+                  <div className="relative h-28 overflow-hidden">
+                    <img 
+                      src={awardImg} 
+                      alt={a.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
+                    <div className="absolute top-2 left-2.5">
+                      <span className="text-lg p-1 bg-black/60 rounded-lg backdrop-blur-sm border border-slate-700/60 inline-block shadow-sm">
+                        {a.icon}
+                      </span>
+                    </div>
+                    <div className="absolute top-2 right-2.5 font-mono text-xs font-bold text-amber-300 bg-black/60 px-2 py-0.5 rounded-lg border border-amber-500/40 backdrop-blur-sm shadow-sm">
+                      {a.prizeMoney.toLocaleString()} đ
+                    </div>
+                  </div>
+
+                  <div className="p-4 space-y-1">
+                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{a.title}</h4>
+                    <div className="text-base font-black text-white mt-1 truncate">{a.recipientName}</div>
+                    <div className="text-xs text-emerald-400 font-semibold mt-0.5 truncate">{a.recipientTeam}</div>
+                  </div>
+                </div>
+
+                {canEdit && (
+                  <div className="p-4 pt-0">
+                    <button
+                      onClick={() => handleOpenEdit(a)}
+                      className="w-full pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 hover:text-emerald-400 flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                      <span>Cập Nhật Người Nhận</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

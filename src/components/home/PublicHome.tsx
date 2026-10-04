@@ -90,14 +90,21 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
     <div className="space-y-8">
       
       {/* Hero Stadium Banner */}
-      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-gradient-to-r from-slate-900/80 via-slate-800/70 to-emerald-950/40 p-6 sm:p-12 shadow-2xl backdrop-blur-md">
+      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-12 shadow-2xl backdrop-blur-md">
+        {/* Action Photo Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
+          style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+
         {/* Animated pitch overlay glow */}
         <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Stadium tactical pitch watermark & turf stripes */}
         <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
-        <div className="absolute -right-10 top-0 bottom-0 w-80 opacity-10 pointer-events-none overflow-hidden">
+        <div className="absolute -right-10 top-0 bottom-0 w-80 opacity-15 pointer-events-none overflow-hidden">
           <svg viewBox="0 0 300 300" className="w-full h-full stroke-emerald-400" fill="none">
             <rect x="20" y="20" width="260" height="260" rx="8" strokeWidth="2" />
             <circle cx="150" cy="150" r="70" strokeWidth="2" />
@@ -337,16 +344,27 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
         </div>
 
         {/* Right Column: Golden Boot Top Scorers (5 Cols) */}
-        <div className="lg:col-span-5 bg-slate-900/75 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-slate-900/75 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 shadow-xl flex flex-col justify-between overflow-hidden">
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-black uppercase tracking-wider text-white">
-                  Đua Vua Phá Lưới (Golden Boot)
-                </h3>
+            {/* Golden Boot Award Banner Photo */}
+            <div className="relative h-28 -mx-5 -mt-5 mb-4 overflow-hidden rounded-t-3xl">
+              <img 
+                src="/images/golden-boot.jpg" 
+                alt="Golden Boot Award" 
+                className="w-full h-full object-cover" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+              <div className="absolute bottom-2.5 left-4 right-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-amber-400 drop-shadow" />
+                  <h3 className="text-sm font-black uppercase tracking-wider text-white drop-shadow">
+                    Đua Vua Phá Lưới (Golden Boot)
+                  </h3>
+                </div>
+                <span className="text-xs font-mono font-bold text-amber-300 bg-black/60 px-2 py-0.5 rounded border border-amber-500/40">
+                  Điều 25
+                </span>
               </div>
-              <span className="text-xs font-mono text-amber-400">Điều 25</span>
             </div>
 
             <div className="space-y-3">

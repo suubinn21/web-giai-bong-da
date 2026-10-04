@@ -276,14 +276,21 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Hero Stadium Billboard */}
-        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-gradient-to-br from-slate-900/80 via-slate-800/70 to-emerald-950/40 p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+          {/* Action Photo Background */}
+          <div 
+            className="absolute inset-0 bg-cover bg-right sm:bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
+            style={{ backgroundImage: `url('/images/tournament-hero.jpg')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+
           {/* Pitch ambient glow */}
-          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
           {/* Stadium tactical pitch watermark & turf stripes */}
           <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 pointer-events-none overflow-hidden">
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-15 pointer-events-none overflow-hidden">
             <svg viewBox="0 0 400 400" className="w-full h-full stroke-emerald-400" fill="none">
               <circle cx="200" cy="200" r="140" strokeWidth="2" />
               <circle cx="200" cy="200" r="6" fill="#10B981" />
@@ -478,52 +485,68 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTournaments.map((tour) => {
+              {filteredTournaments.map((tour, tourIdx) => {
                 const stats = tournamentStatsMap[tour.id] || { teamsCount: 0, matchesCount: 0 };
                 const statusInfo = statusConfigs[tour.status || 'REGISTRATION'] || statusConfigs.REGISTRATION;
                 const teamFillPercent = Math.min(100, Math.round((stats.teamsCount / (tour.maxTeams || 16)) * 100));
+                const tourCovers = ['/images/futsal-action.jpg', '/images/trophy-celebration.jpg', '/images/trophy-cup.jpg', '/images/tournament-hero.jpg'];
+                const coverImg = tourCovers[tourIdx % tourCovers.length];
 
                 return (
                   <div
                     key={tour.id}
-                    className="group relative rounded-3xl bg-[#0B132B] border border-slate-800 hover:border-emerald-500/50 p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-1 overflow-hidden"
+                    className="group relative rounded-3xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 hover:border-emerald-500/60 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/15 hover:-translate-y-1 overflow-hidden"
                   >
                     {/* Top ambient badge line */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-60 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-70 group-hover:opacity-100 transition-opacity z-10"></div>
 
-                    <div className="space-y-4">
-                      {/* Status & Short Code Header */}
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-[11px] font-black tracking-widest text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-lg border border-emerald-800/80">
-                            {tour.shortCode || 'ITFTMS'}
-                          </span>
-                          <span className="text-xs font-bold text-slate-400 bg-slate-900 px-2 py-1 rounded-lg border border-slate-800">
-                            {tour.year || 2026}
-                          </span>
-                        </div>
+                    {/* Tournament Cover Banner Image */}
+                    <div 
+                      onClick={() => onSelectTournament(tour)}
+                      className="relative h-40 overflow-hidden cursor-pointer"
+                    >
+                      <img 
+                        src={coverImg} 
+                        alt={tour.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-black/30" />
 
-                        {/* Status Badge */}
-                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${statusInfo.badgeClass}`}>
+                      {/* Floating Short Code & Year Badges */}
+                      <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 z-10">
+                        <span className="font-mono text-[10px] font-black tracking-widest text-emerald-300 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-emerald-500/40 shadow-sm">
+                          {tour.shortCode || 'ITFTMS'}
+                        </span>
+                        <span className="text-[10px] font-bold text-white bg-black/70 backdrop-blur-md px-2 py-1 rounded-lg border border-slate-700/60 shadow-sm">
+                          {tour.year || 2026}
+                        </span>
+                      </div>
+
+                      {/* Status Badge floating on top right */}
+                      <div className="absolute top-3.5 right-3.5 z-10">
+                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border backdrop-blur-md shadow-sm ${statusInfo.badgeClass}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dotClass}`}></span>
                           <span>{statusInfo.label}</span>
                         </div>
                       </div>
+                    </div>
 
-                      {/* Tournament Name */}
-                      <div>
-                        <h4 
-                          onClick={() => onSelectTournament(tour)}
-                          className="text-lg font-black text-white group-hover:text-emerald-300 transition-colors line-clamp-2 cursor-pointer leading-tight"
-                          title={tour.name}
-                        >
-                          {tour.name}
-                        </h4>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                          <span className="truncate">{tour.organizer || 'Khoa Công Nghệ Thông Tin'}</span>
+                    <div className="p-5 sm:p-6 space-y-4 flex-1 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        {/* Tournament Name */}
+                        <div>
+                          <h4 
+                            onClick={() => onSelectTournament(tour)}
+                            className="text-lg font-black text-white group-hover:text-emerald-300 transition-colors line-clamp-2 cursor-pointer leading-tight"
+                            title={tour.name}
+                          >
+                            {tour.name}
+                          </h4>
+                          <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1.5">
+                            <Building2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                            <span className="truncate">{tour.organizer || 'Khoa Công Nghệ Thông Tin'}</span>
+                          </div>
                         </div>
-                      </div>
 
                       {/* Format & Group Layout Pills */}
                       <div className="flex flex-wrap items-center gap-1.5">
@@ -617,6 +640,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                       )}
                     </div>
                   </div>
+                </div>
                 );
               })}
             </div>

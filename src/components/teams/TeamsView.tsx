@@ -393,9 +393,15 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
           {selectedTeam && (
             <div className="lg:col-span-8 space-y-6">
               
-              {/* Team Hero Header */}
-              <div className="bg-[#0B132B]/90 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              {/* Team Hero Header with athletic match photo */}
+              <div className="relative rounded-3xl overflow-hidden border border-slate-700/60 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-md">
+                <div 
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 transform scale-105 pointer-events-none"
+                  style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   
                   <div className="flex items-center gap-4">
                     {/* Jersey Visualizer Graphic */}

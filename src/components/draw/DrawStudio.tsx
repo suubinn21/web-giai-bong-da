@@ -273,8 +273,14 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
   return (
     <div className="space-y-6">
       
-      {/* Studio Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-950/80 via-[#0B132B] to-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+      {/* Studio Header Banner with Draw Ceremony photo */}
+      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
+          style={{ backgroundImage: `url('/images/draw-ceremony.jpg')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/60 pointer-events-none" />
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           
           <div>
