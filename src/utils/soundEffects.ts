@@ -104,6 +104,13 @@ class SoundSynthesizer {
   }
 
   /**
+   * Goal Cheer alias
+   */
+  public playGoalCheer() {
+    this.playGoalFanfare();
+  }
+
+  /**
    * Card Penalty Alert: Sharp urgent double beep
    */
   public playCardAlert() {

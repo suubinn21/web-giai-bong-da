@@ -2,6 +2,22 @@
 
 export type UserRole = 'SUPER_ADMIN' | 'ORGANIZER' | 'TEAM_MANAGER' | 'REFEREE' | 'STUDENT';
 
+export interface UserAccount {
+  id: string;
+  username: string;
+  password?: string;
+  fullName: string;
+  role: UserRole;
+  email: string;
+  phone?: string;
+  avatarUrl?: string;
+  studentId?: string;
+  class?: string;
+  teamId?: string;
+  teamName?: string;
+  createdAt?: string;
+}
+
 export type TournamentStatus =
   | 'DRAFT'
   | 'REGISTRATION'

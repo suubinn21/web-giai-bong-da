@@ -26,10 +26,14 @@ import {
   ChevronRight,
   Plus,
   Edit3,
-  ChevronDown
+  ChevronDown,
+  LogIn,
+  LogOut,
+  User,
+  KeyRound
 } from 'lucide-react';
 import { TabKey } from './Navigation';
-import { UserRole, Tournament, TournamentStatus } from '@/types';
+import { UserRole, Tournament, TournamentStatus, UserAccount } from '@/types';
 import { SoundFX } from '@/utils/soundEffects';
 
 interface MobileMenuDrawerProps {
@@ -50,6 +54,9 @@ interface MobileMenuDrawerProps {
   onBackToPortal?: () => void;
   onClearData?: () => void;
   onLoadDemo?: () => void;
+  currentUser?: UserAccount | null;
+  onOpenAuthModal?: () => void;
+  onLogout?: () => void;
 }
 
 export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -70,6 +77,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onBackToPortal,
   onClearData,
   onLoadDemo,
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
 }) => {
   const [soundOn, setSoundOn] = React.useState(true);
 
@@ -148,8 +158,82 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         </div>
 
         {/* Drawer Scrollable Content */}
-        <div className="p-4 space-y-5 overflow-y-auto pb-12">
+        <div className="p-4 space-y-4 overflow-y-auto pb-12">
           
+          {/* User Account / Login Card */}
+          <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-md">
+            {currentUser ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
+                    alt={currentUser.fullName}
+                    className="w-11 h-11 rounded-xl object-cover border-2 border-emerald-500/50 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-white truncate">{currentUser.fullName}</span>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">
+                        {currentRole}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-mono truncate">@{currentUser.username} • {currentUser.email}</div>
+                    {currentUser.teamName && (
+                      <div className="text-[10px] text-cyan-400 mt-0.5 font-medium truncate">Đội: {currentUser.teamName}</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                  {onOpenAuthModal && (
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onOpenAuthModal();
+                      }}
+                      className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95"
+                    >
+                      <User className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>Đổi Tài Khoản</span>
+                    </button>
+                  )}
+
+                  {onLogout && (
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onLogout();
+                      }}
+                      className="py-2 px-3 rounded-xl bg-red-950/60 hover:bg-red-900/60 border border-red-500/40 text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-red-400" />
+                      <span>Đăng Xuất</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <div className="text-xs font-bold text-white">Chưa Đăng Nhập Hệ Thống</div>
+                  <div className="text-[10px] text-slate-400">Đăng nhập tài khoản để điều hành &amp; cập nhật giải</div>
+                </div>
+                {onOpenAuthModal && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenAuthModal();
+                    }}
+                    className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-xs shadow-md shadow-emerald-500/20 flex items-center gap-1.5 active:scale-95 shrink-0"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Đăng Nhập</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Tournament Overview Header Card */}
           <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/70 via-slate-900 to-teal-950/70 border border-emerald-500/30 space-y-3 shadow-lg">
             <div className="flex items-start justify-between gap-2">

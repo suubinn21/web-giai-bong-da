@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tournament, TournamentStatus, UserRole } from '@/types';
 import { StorageService } from '@/services/storage';
 import { 
   Trophy, 
@@ -25,8 +24,12 @@ import {
   Activity,
   Layers,
   Edit3,
-  Cloud
+  Cloud,
+  LogIn,
+  LogOut,
+  User
 } from 'lucide-react';
+import { Tournament, TournamentStatus, UserRole, UserAccount } from '@/types';
 
 interface TournamentPortalProps {
   tournaments: Tournament[];
@@ -37,6 +40,9 @@ interface TournamentPortalProps {
   currentRole: UserRole;
   onRoleChange: (role: UserRole) => void;
   cloudStatus?: 'connected' | 'connecting' | 'offline';
+  currentUser?: UserAccount | null;
+  onOpenAuthModal?: () => void;
+  onLogout?: () => void;
 }
 
 export const TournamentPortal: React.FC<TournamentPortalProps> = ({
@@ -48,6 +54,9 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   currentRole,
   onRoleChange,
   cloudStatus = 'connected',
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | TournamentStatus>('ALL');
@@ -220,6 +229,39 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                 ))}
               </select>
             </div>
+
+            {/* User Profile / Login Button */}
+            {currentUser ? (
+              <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-700/80 px-2 sm:px-2.5 py-1 rounded-xl">
+                <img
+                  src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
+                  alt={currentUser.fullName}
+                  className="w-6 h-6 rounded-lg object-cover border border-emerald-500/40"
+                />
+                <span className="text-xs font-bold text-white hidden md:inline max-w-[100px] truncate">
+                  {currentUser.fullName}
+                </span>
+                {onLogout && (
+                  <button
+                    onClick={onLogout}
+                    className="p-1 text-slate-400 hover:text-red-400 rounded transition-colors"
+                    title="Đăng xuất tài khoản"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              onOpenAuthModal && (
+                <button
+                  onClick={onOpenAuthModal}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-emerald-400 text-xs font-bold transition-all shadow-sm active:scale-95"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Đăng Nhập</span>
+                </button>
+              )
+            )}
 
             {/* Create Tournament Button */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (

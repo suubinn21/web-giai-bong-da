@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { UserRole, TournamentStatus, Tournament } from '@/types';
+import { UserRole, TournamentStatus, Tournament, UserAccount } from '@/types';
 import { SoundFX } from '@/utils/soundEffects';
 import { 
   Trophy, 
@@ -11,13 +11,18 @@ import {
   Database,
   UserCheck, 
   Radio, 
-  Sparkles,
-  ChevronDown,
-  Plus,
-  LayoutGrid,
-  Edit3,
-  Cloud,
-  Menu
+  Sparkles, 
+  ChevronDown, 
+  Plus, 
+  LayoutGrid, 
+  Edit3, 
+  Cloud, 
+  Menu,
+  LogIn,
+  LogOut,
+  User,
+  Shield,
+  KeyRound
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -35,6 +40,9 @@ interface HeaderProps {
   onBackToPortal?: () => void;
   cloudStatus?: 'connected' | 'connecting' | 'offline';
   onOpenMobileMenu?: () => void;
+  currentUser?: UserAccount | null;
+  onOpenAuthModal?: () => void;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -52,10 +60,14 @@ export const Header: React.FC<HeaderProps> = ({
   onBackToPortal,
   cloudStatus = 'connected',
   onOpenMobileMenu,
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
 }) => {
   const [soundOn, setSoundOn] = useState(true);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -253,43 +265,115 @@ export const Header: React.FC<HeaderProps> = ({
               {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             </button>
 
-            {/* Role Switcher Dropdown (Desktop only, mobile in Menu Hamburger) */}
-            <div className="relative hidden md:block">
-              <button
-                onClick={() => setRoleMenuOpen(!roleMenuOpen)}
-                className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border shadow-sm transition-all ${roleLabels[currentRole].color}`}
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                <span>{roleLabels[currentRole].label}</span>
-                <ChevronDown className="w-3 h-3 ml-0.5" />
-              </button>
-
-              {roleMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-2 z-50">
-                  <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase border-b border-slate-800">
-                    Chuyển Quyền Trải Nghiệm (RBAC)
+            {/* User Profile / Login System (Desktop only, mobile in Menu Hamburger) */}
+            {currentUser ? (
+              <div className="relative hidden md:block">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all"
+                  title="Thông tin tài khoản & Đổi vai trò"
+                >
+                  <img
+                    src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
+                    alt={currentUser.fullName}
+                    className="w-7 h-7 rounded-lg object-cover border border-emerald-500/40 shrink-0"
+                  />
+                  <div className="flex flex-col text-left">
+                    <span className="text-xs font-bold text-white max-w-[120px] truncate leading-tight">
+                      {currentUser.fullName}
+                    </span>
+                    <span className={`text-[10px] font-semibold text-emerald-400`}>
+                      {roleLabels[currentRole]?.label || currentRole}
+                    </span>
                   </div>
-                  {(Object.keys(roleLabels) as UserRole[]).map((role) => (
-                    <button
-                      key={role}
-                      onClick={() => {
-                        onRoleChange(role);
-                        setRoleMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between transition-colors ${
-                        currentRole === role ? 'bg-slate-800 text-emerald-400 font-bold' : 'text-slate-300'
-                      }`}
-                    >
-                      <div className="flex flex-col">
-                        <span>{roleLabels[role].label}</span>
-                        <span className="text-[10px] text-slate-500">{roleLabels[role].badge}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-3 z-50">
+                    {/* User Info Header */}
+                    <div className="px-4 pb-3 border-b border-slate-800 flex items-center gap-3">
+                      <img
+                        src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
+                        alt={currentUser.fullName}
+                        className="w-10 h-10 rounded-xl object-cover border border-emerald-500/50 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-bold text-white truncate">{currentUser.fullName}</div>
+                        <div className="text-[11px] text-slate-400 font-mono truncate">@{currentUser.username} • {currentUser.email}</div>
+                        <span className={`inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${roleLabels[currentRole]?.color || 'bg-slate-800 text-slate-300'}`}>
+                          {roleLabels[currentRole]?.label}
+                        </span>
                       </div>
-                      {currentRole === role && <span className="text-emerald-400 text-sm">✓</span>}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                    </div>
+
+                    {/* RBAC Quick Role Switcher */}
+                    <div className="px-3 pt-2">
+                      <div className="px-2 py-1 text-[10px] font-black uppercase text-slate-400 tracking-wider">
+                        Chuyển Quyền Nhanh (RBAC)
+                      </div>
+                      <div className="space-y-0.5 mt-1">
+                        {(Object.keys(roleLabels) as UserRole[]).map((role) => (
+                          <button
+                            key={role}
+                            onClick={() => {
+                              onRoleChange(role);
+                              setUserMenuOpen(false);
+                            }}
+                            className={`w-full text-left px-2.5 py-1.5 text-xs rounded-lg flex items-center justify-between transition-colors ${
+                              currentRole === role ? 'bg-emerald-950/60 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-300 hover:bg-slate-800'
+                            }`}
+                          >
+                            <span>{roleLabels[role].label}</span>
+                            {currentRole === role && <span className="text-emerald-400 text-xs">✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-3 pt-2 border-t border-slate-800 px-3 space-y-1">
+                      {onOpenAuthModal && (
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            onOpenAuthModal();
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg flex items-center gap-2 transition-colors"
+                        >
+                          <User className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Đổi Tài Khoản / Đăng Ký Mới</span>
+                        </button>
+                      )}
+
+                      {onLogout && (
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            onLogout();
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg flex items-center gap-2 transition-colors"
+                        >
+                          <LogOut className="w-3.5 h-3.5 text-red-400" />
+                          <span>Đăng Xuất</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* If not logged in */
+              onOpenAuthModal && (
+                <button
+                  onClick={onOpenAuthModal}
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 active:scale-95"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Đăng Nhập</span>
+                </button>
+              )
+            )}
 
             {/* Action Buttons: Clear Mock Data & Load Demo Data */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (

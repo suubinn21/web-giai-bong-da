@@ -13,8 +13,11 @@ import {
   UserRole,
   TournamentStatus,
   Tournament,
+  UserAccount,
 } from '@/types';
 import { StorageService, defaultCleanAwards } from '@/services/storage';
+import { AuthService } from '@/services/auth';
+import { AuthModal } from '@/components/auth/AuthModal';
 import {
   subscribeTournamentCloud,
   pushTournamentCloud,
@@ -44,6 +47,11 @@ import { MobileMenuDrawer } from '@/components/layout/MobileMenuDrawer';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+
+  // User Authentication state
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authNotice, setAuthNotice] = useState<string | undefined>(undefined);
 
   // Portal vs Single Tournament view mode
   const [viewMode, setViewMode] = useState<'portal' | 'tournament'>('portal');
@@ -91,7 +99,13 @@ export default function Home() {
     setFinances(StorageService.getFinances());
     setAwards(StorageService.getAwards());
     setAuditLogs(StorageService.getAuditLogs());
-    setCurrentRole(StorageService.getCurrentRole());
+    const user = AuthService.getCurrentUser();
+    setCurrentUser(user);
+    if (user) {
+      setCurrentRole(user.role);
+    } else {
+      setCurrentRole(StorageService.getCurrentRole());
+    }
     setTournamentStatus(StorageService.getTournamentStatus());
     setMounted(true);
 
@@ -443,6 +457,26 @@ export default function Home() {
     setActiveTab('live');
   };
 
+  // User Authentication handlers
+  const handleLoginSuccess = (user: UserAccount) => {
+    setCurrentUser(user);
+    setCurrentRole(user.role);
+    StorageService.setCurrentRole(user.role);
+    setAuthModalOpen(false);
+  };
+
+  const handleLogout = () => {
+    AuthService.logout();
+    setCurrentUser(null);
+    setCurrentRole('STUDENT');
+    StorageService.setCurrentRole('STUDENT');
+  };
+
+  const handleOpenAuthModal = (notice?: string) => {
+    setAuthNotice(notice);
+    setAuthModalOpen(true);
+  };
+
   if (!mounted) {
     return (
       <div className="min-h-screen bg-[#070B14] flex flex-col items-center justify-center text-white">
@@ -465,6 +499,9 @@ export default function Home() {
           currentRole={currentRole}
           onRoleChange={handleRoleChange}
           cloudStatus={cloudStatus}
+          currentUser={currentUser}
+          onOpenAuthModal={() => handleOpenAuthModal()}
+          onLogout={handleLogout}
         />
         <CreateTournamentModal
           isOpen={createTournamentOpen}
@@ -482,6 +519,12 @@ export default function Home() {
           onSubmit={handleSaveEditedTournament}
           currentTournament={editingTournament || tournament}
           mode="edit"
+        />
+        <AuthModal
+          isOpen={authModalOpen}
+          onClose={() => setAuthModalOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+          messageNotice={authNotice}
         />
       </div>
     );
@@ -510,6 +553,9 @@ export default function Home() {
         onBackToPortal={() => setViewMode('portal')}
         cloudStatus={cloudStatus}
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        currentUser={currentUser}
+        onOpenAuthModal={() => handleOpenAuthModal()}
+        onLogout={handleLogout}
       />
 
       {/* Navigation Tabs Bar */}
@@ -732,6 +778,17 @@ export default function Home() {
         onBackToPortal={() => setViewMode('portal')}
         onClearData={handleClearData}
         onLoadDemo={handleLoadDemo}
+        currentUser={currentUser}
+        onOpenAuthModal={() => handleOpenAuthModal()}
+        onLogout={handleLogout}
+      />
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        messageNotice={authNotice}
       />
 
     </div>
