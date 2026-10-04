@@ -57,9 +57,9 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
     return (
       <div
         onClick={() => onSelectMatch(match.id)}
-        className={`w-64 sm:w-72 rounded-2xl border transition-all cursor-pointer shadow-xl ${
+        className={`w-full sm:w-64 md:w-72 rounded-2xl border transition-all cursor-pointer shadow-xl ${
           isFinal
-            ? 'bg-gradient-to-b from-amber-950/60 to-slate-900 border-amber-500/60 hover:border-amber-400 glow-amber scale-105'
+            ? 'bg-gradient-to-b from-amber-950/60 to-slate-900 border-amber-500/60 hover:border-amber-400 glow-amber sm:scale-105'
             : 'bg-[#0B132B]/90 border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80'
         }`}
       >
@@ -151,6 +151,8 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
     );
   };
 
+  const [mobileStage, setMobileStage] = React.useState<'ALL' | 'QF' | 'SF' | 'FINAL'>('ALL');
+
   return (
     <div className="space-y-6">
       
@@ -171,7 +173,7 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs text-slate-400">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
             <span>Đội Thắng Đi Tiếp</span>
@@ -183,8 +185,90 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         </div>
       </div>
 
-      {/* Bracket Tree Flow Chart Visualizer */}
-      <div className="overflow-x-auto pb-6 pt-2">
+      {/* Mobile Stage Selector Tabs (only visible on mobile phones) */}
+      <div className="flex sm:hidden items-center justify-between gap-1 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto text-xs">
+        <button
+          onClick={() => setMobileStage('ALL')}
+          className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
+            mobileStage === 'ALL' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          Sơ Đồ Ngang
+        </button>
+        <button
+          onClick={() => setMobileStage('QF')}
+          className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
+            mobileStage === 'QF' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          Tứ Kết
+        </button>
+        <button
+          onClick={() => setMobileStage('SF')}
+          className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
+            mobileStage === 'SF' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          Bán Kết
+        </button>
+        <button
+          onClick={() => setMobileStage('FINAL')}
+          className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
+            mobileStage === 'FINAL' ? 'bg-amber-500 text-slate-950 font-black shadow' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          Chung Kết 🏆
+        </button>
+      </div>
+
+      {/* Mobile Selected Round Cards Stack (clean vertical view on phones) */}
+      {mobileStage !== 'ALL' && (
+        <div className="sm:hidden space-y-4 pt-2">
+          {mobileStage === 'QF' && (
+            <div className="space-y-3">
+              <div className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center justify-between">
+                <span>4 TRẬN VÒNG TỨ KẾT</span>
+                <span className="text-[10px] text-slate-400 font-normal">Chạm trận để vào Live Center</span>
+              </div>
+              <div className="flex flex-col gap-3">
+                {renderBracketMatch(tk1, 'TỨ KẾT 1', 'Nhất bảng A', 'Nhì bảng B')}
+                {renderBracketMatch(tk3, 'TỨ KẾT 3', 'Nhất bảng C', 'Nhì bảng D')}
+                {renderBracketMatch(tk2, 'TỨ KẾT 2', 'Nhất bảng B', 'Nhì bảng A')}
+                {renderBracketMatch(tk4, 'TỨ KẾT 4', 'Nhất bảng D', 'Nhì bảng C')}
+              </div>
+            </div>
+          )}
+
+          {mobileStage === 'SF' && (
+            <div className="space-y-3">
+              <div className="text-xs font-black text-cyan-400 uppercase tracking-widest flex items-center justify-between">
+                <span>2 TRẬN VÒNG BÁN KẾT</span>
+                <span className="text-[10px] text-slate-400 font-normal">Chạm trận để vào Live Center</span>
+              </div>
+              <div className="flex flex-col gap-3">
+                {renderBracketMatch(bk1, 'BÁN KẾT 1', 'Thắng Tứ kết 1', 'Thắng Tứ kết 3')}
+                {renderBracketMatch(bk2, 'BÁN KẾT 2', 'Thắng Tứ kết 2', 'Thắng Tứ kết 4')}
+              </div>
+            </div>
+          )}
+
+          {mobileStage === 'FINAL' && (
+            <div className="space-y-4">
+              <div className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-amber-400" />
+                <span>TRẬN CHUNG KẾT &amp; TRANH HẠNG BA</span>
+              </div>
+              <div className="flex flex-col gap-4">
+                {renderBracketMatch(grandFinal, '🏆 CHUNG KẾT (FINAL)', 'Thắng Bán kết 1', 'Thắng Bán kết 2', true)}
+                {renderBracketMatch(thirdPlace, '🥉 TRANH HẠNG 3', 'Thua Bán kết 1', 'Thua Bán kết 2')}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bracket Tree Flow Chart Visualizer (hidden on mobile if user chose a specific stage tab) */}
+      <div className={`overflow-x-auto pb-6 pt-2 ${mobileStage !== 'ALL' ? 'hidden sm:block' : 'block'}`}>
         <div className="min-w-[900px] flex items-center justify-between gap-8 py-4 px-2">
           
           {/* Column 1: Quarter Finals (Tứ kết) */}

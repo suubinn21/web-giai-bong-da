@@ -39,6 +39,8 @@ import { AwardsView } from '@/components/awards/AwardsView';
 import { AuditLogsView } from '@/components/audit/AuditLogsView';
 import { CreateTournamentModal } from '@/components/tournament/CreateTournamentModal';
 import { TournamentPortal } from '@/components/portal/TournamentPortal';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
+import { MobileMenuDrawer } from '@/components/layout/MobileMenuDrawer';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -46,6 +48,9 @@ export default function Home() {
   // Portal vs Single Tournament view mode
   const [viewMode, setViewMode] = useState<'portal' | 'tournament'>('portal');
   const [allTournaments, setAllTournaments] = useState<Tournament[]>([]);
+
+  // Mobile navigation drawer
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Core application states
   const [tournament, setTournament] = useState<Tournament>(StorageService.getTournament());
@@ -504,6 +509,7 @@ export default function Home() {
         onEditTournament={() => handleOpenEditTournament(tournament)}
         onBackToPortal={() => setViewMode('portal')}
         cloudStatus={cloudStatus}
+        onOpenMobileMenu={() => setMobileMenuOpen(true)}
       />
 
       {/* Navigation Tabs Bar */}
@@ -520,7 +526,7 @@ export default function Home() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 md:py-8">
         
         {activeTab === 'home' && (
           <PublicHome
@@ -689,6 +695,40 @@ export default function Home() {
         onSubmit={handleSaveEditedTournament}
         currentTournament={editingTournament || tournament}
         mode="edit"
+      />
+
+      {/* Mobile Smartphone Floating Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          setAuditLogs(StorageService.getAuditLogs());
+        }}
+        liveMatchCount={liveMatches.length}
+        activeComplaintsCount={activeComplaints.length}
+        suspendedPlayersCount={suspendedPlayers.length}
+        onOpenMobileMenu={() => setMobileMenuOpen(true)}
+      />
+
+      {/* Mobile Full Screen Menu Drawer */}
+      <MobileMenuDrawer
+        isOpen={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        activeTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          setAuditLogs(StorageService.getAuditLogs());
+        }}
+        tournament={tournament}
+        currentRole={currentRole}
+        onRoleChange={handleRoleChange}
+        liveMatchCount={liveMatches.length}
+        activeComplaintsCount={activeComplaints.length}
+        suspendedPlayersCount={suspendedPlayers.length}
+        onOpenEditTournament={() => handleOpenEditTournament(tournament)}
+        onBackToPortal={() => setViewMode('portal')}
+        onClearData={handleClearData}
+        onLoadDemo={handleLoadDemo}
       />
 
     </div>

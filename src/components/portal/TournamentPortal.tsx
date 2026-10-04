@@ -153,29 +153,30 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Logo & Platform Name */}
-          <div className="flex items-center gap-3.5">
-            <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-xl shadow-emerald-500/20 border border-emerald-400/30">
-              <Trophy className="w-6 h-6 text-white" />
-              <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-300 animate-bounce" />
+          <div className="flex items-center gap-2.5 sm:gap-3.5">
+            <div className="relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-xl shadow-emerald-500/20 border border-emerald-400/30 shrink-0">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 animate-bounce" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-black tracking-widest text-emerald-400 uppercase bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80 font-mono">
-                  IT FOOTBALL HUB
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-black tracking-widest text-emerald-400 uppercase bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-800/80 font-mono">
+                  IT FOOTBALL
                 </span>
-                <span className="text-xs text-slate-400 hidden sm:inline">• Khoa Công Nghệ Thông Tin</span>
+                <span className="text-[11px] text-slate-400 hidden sm:inline">• Khoa CNTT</span>
               </div>
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-white">
-                CỔNG THÔNG TIN CÁC GIẢI ĐẤU BÓNG ĐÁ
+              <h1 className="text-xs sm:text-base md:text-lg font-black tracking-tight text-white line-clamp-1">
+                <span className="hidden sm:inline">CỔNG THÔNG TIN CÁC GIẢI ĐẤU BÓNG ĐÁ</span>
+                <span className="sm:hidden">CỔNG CÁC GIẢI ĐẤU</span>
               </h1>
             </div>
           </div>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Cloud Realtime Sync Status Indicator */}
             <div
-              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition-all ${
+              className={`flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-xl border text-[11px] sm:text-xs font-semibold shadow-sm transition-all ${
                 cloudStatus === 'connected'
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                   : cloudStatus === 'connecting'
@@ -204,17 +205,17 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               </span>
             </div>
 
-            {/* RBAC Role Selector */}
-            <div className="hidden md:flex items-center gap-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-xl text-xs">
-              <span className="text-slate-400">Góc nhìn:</span>
+            {/* RBAC Role Selector (visible on mobile and desktop) */}
+            <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-700/80 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs">
+              <span className="text-slate-400 hidden lg:inline">Góc nhìn:</span>
               <select
                 value={currentRole}
                 onChange={(e) => onRoleChange(e.target.value as UserRole)}
-                className="bg-transparent text-emerald-400 font-bold focus:outline-none cursor-pointer"
+                className="bg-transparent text-emerald-400 font-bold focus:outline-none cursor-pointer max-w-[85px] sm:max-w-none text-[11px] sm:text-xs"
               >
                 {Object.entries(roleLabels).map(([role, item]) => (
                   <option key={role} value={role} className="bg-slate-900 text-white">
-                    {item.label} ({item.badge})
+                    {item.label}
                   </option>
                 ))}
               </select>
@@ -224,10 +225,11 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onCreateTournament}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40"
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40 shrink-0"
               >
-                <Plus className="w-4 h-4" />
-                <span>+ Tạo Mới Giải Đấu</span>
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">+ Tạo Mới Giải Đấu</span>
+                <span className="sm:hidden">+ Tạo Giải</span>
               </button>
             )}
           </div>

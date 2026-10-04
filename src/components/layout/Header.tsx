@@ -16,7 +16,8 @@ import {
   Plus,
   LayoutGrid,
   Edit3,
-  Cloud
+  Cloud,
+  Menu
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -33,6 +34,7 @@ interface HeaderProps {
   onEditTournament?: () => void;
   onBackToPortal?: () => void;
   cloudStatus?: 'connected' | 'connecting' | 'offline';
+  onOpenMobileMenu?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -49,6 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
   onEditTournament,
   onBackToPortal,
   cloudStatus = 'connected',
+  onOpenMobileMenu,
 }) => {
   const [soundOn, setSoundOn] = useState(true);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
@@ -313,6 +316,18 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>Demo</span>
                 </button>
               </div>
+            )}
+
+            {/* Mobile Menu Hamburger Button */}
+            {onOpenMobileMenu && (
+              <button
+                onClick={onOpenMobileMenu}
+                className="p-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white md:hidden transition-colors shadow-sm"
+                title="Mở menu tính năng giải đấu"
+                aria-label="Mở menu chức năng"
+              >
+                <Menu className="w-5 h-5 text-emerald-400" />
+              </button>
             )}
 
           </div>

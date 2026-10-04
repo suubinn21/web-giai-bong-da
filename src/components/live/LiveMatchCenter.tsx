@@ -532,22 +532,22 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
         </div>
 
         {/* Score & Teams Display */}
-        <div className="p-6 sm:p-10">
-          <div className="grid grid-cols-1 md:grid-cols-7 items-center gap-6">
+        <div className="p-4 sm:p-10">
+          <div className="grid grid-cols-12 items-center gap-1 sm:gap-6">
             
             {/* Home Team */}
-            <div className="md:col-span-3 flex flex-col items-center md:items-end text-center md:text-right">
+            <div className="col-span-4 md:col-span-3 flex flex-col items-center md:items-end text-center md:text-right">
               <div 
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold shadow-xl border-2 mb-3"
+                className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-extrabold shadow-xl border-2 mb-2 sm:mb-3"
                 style={{ backgroundColor: homeTeam?.primaryColor || '#1e3a8a', borderColor: homeTeam?.secondaryColor || '#ffffff' }}
               >
                 ⚽
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide">
+              <h2 className="text-xs sm:text-2xl font-black text-white tracking-wide line-clamp-2 md:line-clamp-none">
                 {homeTeam?.name || 'Đội Nhà'}
               </h2>
-              <p className="text-xs text-slate-400 mt-1">Lớp {homeTeam?.class} • {homeTeam?.department}</p>
-              <div className="flex items-center gap-2 mt-2">
+              <p className="hidden sm:block text-xs text-slate-400 mt-1">Lớp {homeTeam?.class} • {homeTeam?.department}</p>
+              <div className="hidden sm:flex items-center gap-2 mt-2">
                 <span className="text-[11px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">
                   Đội trưởng: #{homeTeam?.captainName}
                 </span>
@@ -555,43 +555,43 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
             </div>
 
             {/* Score & Live Clock Center */}
-            <div className="md:col-span-1 flex flex-col items-center justify-center my-2 md:my-0">
-              <div className="bg-slate-950/80 px-4 py-1.5 rounded-full border border-slate-800 text-emerald-400 font-mono text-base font-extrabold tracking-widest mb-3 shadow-inner">
+            <div className="col-span-4 md:col-span-1 flex flex-col items-center justify-center my-0">
+              <div className="bg-slate-950/80 px-2.5 sm:px-4 py-1 rounded-full border border-slate-800 text-emerald-400 font-mono text-xs sm:text-base font-extrabold tracking-widest mb-1.5 sm:mb-3 shadow-inner">
                 {formatMinSec(seconds)}
               </div>
 
-              <div className="flex items-center gap-3">
-                <span className="text-4xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-md">
+              <div className="flex items-center gap-1.5 sm:gap-3">
+                <span className="text-3xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-md">
                   {activeMatch.homeScore}
                 </span>
-                <span className="text-2xl sm:text-3xl font-bold text-slate-500">-</span>
-                <span className="text-4xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-md">
+                <span className="text-xl sm:text-3xl font-bold text-slate-500">-</span>
+                <span className="text-3xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-md">
                   {activeMatch.awayScore}
                 </span>
               </div>
 
               {/* Penalty shootout badge if exists (Rule #8) */}
               {activeMatch.penaltyShootout && (
-                <div className="mt-3 bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5">
-                  <Award className="w-3.5 h-3.5" />
-                  <span>Penalty 6m: {activeMatch.penaltyShootout.homeScore} - {activeMatch.penaltyShootout.awayScore}</span>
+                <div className="mt-2 bg-amber-500/20 border border-amber-500/40 text-amber-300 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 text-center">
+                  <Award className="w-3 h-3 hidden sm:inline" />
+                  <span>Pen: {activeMatch.penaltyShootout.homeScore}-{activeMatch.penaltyShootout.awayScore}</span>
                 </div>
               )}
             </div>
 
             {/* Away Team */}
-            <div className="md:col-span-3 flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="col-span-4 md:col-span-3 flex flex-col items-center md:items-start text-center md:text-left">
               <div 
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-3xl font-extrabold shadow-xl border-2 mb-3"
+                className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-extrabold shadow-xl border-2 mb-2 sm:mb-3"
                 style={{ backgroundColor: awayTeam?.primaryColor || '#059669', borderColor: awayTeam?.secondaryColor || '#ffffff' }}
               >
                 ⚽
               </div>
-              <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide">
+              <h2 className="text-xs sm:text-2xl font-black text-white tracking-wide line-clamp-2 md:line-clamp-none">
                 {awayTeam?.name || 'Đội Khách'}
               </h2>
-              <p className="text-xs text-slate-400 mt-1">Lớp {awayTeam?.class} • {awayTeam?.department}</p>
-              <div className="flex items-center gap-2 mt-2">
+              <p className="hidden sm:block text-xs text-slate-400 mt-1">Lớp {awayTeam?.class} • {awayTeam?.department}</p>
+              <div className="hidden sm:flex items-center gap-2 mt-2">
                 <span className="text-[11px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono">
                   Đội trưởng: #{awayTeam?.captainName}
                 </span>
