@@ -21,6 +21,7 @@ import {
   subscribeTournamentsListCloud,
   pushTournamentsListCloud,
   ensureTournamentInitializedInCloud,
+  deleteTournamentCloud,
 } from '@/services/dbSync';
 import { Header } from '@/components/layout/Header';
 import { Navigation, TabKey } from '@/components/layout/Navigation';
@@ -226,11 +227,12 @@ export default function Home() {
 
   const handleDeleteTournament = (tourId: string) => {
     StorageService.deleteTournament(tourId);
-    const updatedList = StorageService.getAllTournaments();
+    const updatedList = StorageService.getAllTournaments().filter((t) => t.id !== tourId);
     setAllTournaments(updatedList);
     if (tournament.id === tourId && updatedList.length > 0) {
       setTournament(updatedList[0]);
     }
+    deleteTournamentCloud(tourId);
     pushTournamentsListCloud(updatedList);
   };
 
@@ -457,6 +459,7 @@ export default function Home() {
           onDeleteTournament={handleDeleteTournament}
           currentRole={currentRole}
           onRoleChange={handleRoleChange}
+          cloudStatus={cloudStatus}
         />
         <CreateTournamentModal
           isOpen={createTournamentOpen}

@@ -1,5 +1,12 @@
 import { db, isFirebaseConfigured } from './firebase';
-import { doc, onSnapshot, setDoc, getDoc } from 'firebase/firestore';
+import {
+  doc,
+  collection,
+  onSnapshot,
+  setDoc,
+  getDoc,
+  deleteDoc,
+} from 'firebase/firestore';
 import {
   Tournament,
   Team,
@@ -12,6 +19,7 @@ import {
   AuditLog,
   TournamentStatus,
 } from '@/types';
+import { StorageService } from './storage';
 
 export interface TournamentCloudData {
   tournament: Tournament;
@@ -33,6 +41,54 @@ function cleanForFirestore<T>(data: T): T {
     return JSON.parse(JSON.stringify(data));
   } catch {
     return data;
+  }
+}
+
+/**
+ * Lắng nghe danh sách tất cả các giải đấu trên Cloud (Realtime)
+ * Lấy trực tiếp từ collection 'tournament_data' để đảm bảo mọi thiết bị
+ * luôn nhìn thấy đúng 100% tất cả các giải đấu vừa được tạo.
+ */
+export function subscribeTournamentsListCloud(
+  onList: (list: Tournament[], activeId?: string) => void
+): () => void {
+  if (!db || !isFirebaseConfigured()) return () => {};
+
+  try {
+    const colRef = collection(db, 'tournament_data');
+    const unsubscribe = onSnapshot(
+      colRef,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const cloudTournaments: Tournament[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data.tournament && data.tournament.id) {
+              cloudTournaments.push(data.tournament);
+              // Lưu trước cache số đội và số trận đấu vào StorageService để hiển thị trên Portal
+              if (Array.isArray(data.teams) || Array.isArray(data.matches)) {
+                StorageService.saveTournamentStatsCache(
+                  data.tournament.id,
+                  data.teams || [],
+                  data.matches || []
+                );
+              }
+            }
+          });
+
+          if (cloudTournaments.length > 0) {
+            onList(cloudTournaments);
+          }
+        }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi đồng bộ danh sách giải đấu:', err);
+      }
+    );
+    return unsubscribe;
+  } catch (error) {
+    console.warn('[Firestore] Lỗi kết nối danh sách giải đấu:', error);
+    return () => {};
   }
 }
 
@@ -59,7 +115,7 @@ export function subscribeTournamentCloud(
         }
       },
       (err) => {
-        console.warn('[Firestore] Lỗi đồng bộ thời gian thực:', err);
+        console.warn('[Firestore] Lỗi đồng bộ thời gian thực giải đấu:', err);
         if (onError) onError(err);
       }
     );
@@ -92,38 +148,21 @@ export async function pushTournamentCloud(
 }
 
 /**
- * Lắng nghe danh sách tất cả các giải đấu trên Cloud
+ * Xóa một giải đấu khỏi Cloud
  */
-export function subscribeTournamentsListCloud(
-  onList: (list: Tournament[], activeId?: string) => void
-): () => void {
-  if (!db || !isFirebaseConfigured()) return () => {};
+export async function deleteTournamentCloud(tournamentId: string): Promise<void> {
+  if (!db || !isFirebaseConfigured() || !tournamentId) return;
 
   try {
-    const metaRef = doc(db, 'meta', 'all_tournaments');
-    const unsubscribe = onSnapshot(
-      metaRef,
-      (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-          if (Array.isArray(data?.list)) {
-            onList(data.list, data.activeId);
-          }
-        }
-      },
-      (err) => {
-        console.warn('[Firestore] Lỗi lắng nghe danh sách giải đấu:', err);
-      }
-    );
-    return unsubscribe;
-  } catch (error) {
-    console.warn('[Firestore] Lỗi danh sách giải đấu:', error);
-    return () => {};
+    const docRef = doc(db, 'tournament_data', tournamentId);
+    await deleteDoc(docRef);
+  } catch (err) {
+    console.error('[Firestore] Lỗi xóa giải đấu khỏi đám mây:', err);
   }
 }
 
 /**
- * Đẩy danh sách tất cả các giải đấu lên Cloud
+ * Đẩy danh sách tất cả các giải đấu lên Cloud meta
  */
 export async function pushTournamentsListCloud(
   list: Tournament[],

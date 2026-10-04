@@ -24,7 +24,8 @@ import {
   Medal,
   Activity,
   Layers,
-  Edit3
+  Edit3,
+  Cloud
 } from 'lucide-react';
 
 interface TournamentPortalProps {
@@ -35,6 +36,7 @@ interface TournamentPortalProps {
   onDeleteTournament: (tournamentId: string) => void;
   currentRole: UserRole;
   onRoleChange: (role: UserRole) => void;
+  cloudStatus?: 'connected' | 'connecting' | 'offline';
 }
 
 export const TournamentPortal: React.FC<TournamentPortalProps> = ({
@@ -45,6 +47,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   onDeleteTournament,
   currentRole,
   onRoleChange,
+  cloudStatus = 'connected',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | TournamentStatus>('ALL');
@@ -170,6 +173,37 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
           {/* Right Action Bar */}
           <div className="flex items-center gap-3">
+            {/* Cloud Realtime Sync Status Indicator */}
+            <div
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition-all ${
+                cloudStatus === 'connected'
+                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
+                  : cloudStatus === 'connecting'
+                  ? 'bg-amber-950/40 border-amber-500/40 text-amber-400'
+                  : 'bg-slate-900 border-slate-700 text-slate-400'
+              }`}
+              title={
+                cloudStatus === 'connected'
+                  ? '🟢 Firebase Firestore Realtime: Dữ liệu đám mây đang kết nối đồng bộ trực tiếp'
+                  : 'Đang kết nối...'
+              }
+            >
+              <span className="relative flex h-2 w-2">
+                {cloudStatus === 'connected' && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    cloudStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
+                  }`}
+                ></span>
+              </span>
+              <Cloud className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline font-mono font-bold text-[11px]">
+                {cloudStatus === 'connected' ? 'Cloud Sync' : 'Đang kết nối...'}
+              </span>
+            </div>
+
             {/* RBAC Role Selector */}
             <div className="hidden md:flex items-center gap-2 bg-slate-900/90 border border-slate-700/80 px-3 py-1.5 rounded-xl text-xs">
               <span className="text-slate-400">Góc nhìn:</span>

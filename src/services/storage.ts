@@ -644,6 +644,14 @@ export class StorageService {
     }
   }
 
+  static saveTournamentStatsCache(tournamentId: string, teams: Team[], matches: Match[]): void {
+    if (!this.isClient) return;
+    const teamKey = tournamentId === defaultTournament.id ? STORAGE_KEYS.TEAMS : `${STORAGE_KEYS.TEAMS}_${tournamentId}`;
+    const matchKey = tournamentId === defaultTournament.id ? STORAGE_KEYS.MATCHES : `${STORAGE_KEYS.MATCHES}_${tournamentId}`;
+    localStorage.setItem(teamKey, JSON.stringify(teams));
+    localStorage.setItem(matchKey, JSON.stringify(matches));
+  }
+
   static createNewTournament(tournament: Tournament, preloadDemoTeams: boolean = false): void {
     if (!this.isClient) return;
     
