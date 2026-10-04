@@ -21,7 +21,7 @@ import {
   KeyRound
 } from 'lucide-react';
 import { UserAccount, UserRole } from '@/types';
-import { AuthService, DEFAULT_ACCOUNTS } from '@/services/auth';
+import { AuthService } from '@/services/auth';
 import { SoundFX } from '@/utils/soundEffects';
 
 interface AuthModalProps {
@@ -241,14 +241,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-xs font-bold text-slate-300">
-                      Mật khẩu
-                    </label>
-                    <span className="text-[11px] text-slate-400">
-                      Demo mật khẩu: <code className="text-emerald-400 bg-slate-800 px-1 rounded">123</code>
-                    </span>
-                  </div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Mật khẩu
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
                     <input
@@ -284,47 +279,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
-
-              {/* Demo Accounts Quick-Fill for Permission Testing */}
-              <div className="mt-5 pt-4 border-t border-slate-800">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center justify-between">
-                  <span>Tài Khoản Mẫu Để Kiểm Thử (Pass: 123)</span>
-                  <span className="text-[10px] text-emerald-400 font-normal">Bấm để tự điền</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {DEFAULT_ACCOUNTS.map((acc) => (
-                    <button
-                      key={acc.id}
-                      type="button"
-                      onClick={() => {
-                        setLoginIdentifier(acc.username);
-                        setLoginPassword('123');
-                        setErrorMsg(null);
-                      }}
-                      className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all ${
-                        loginIdentifier === acc.username
-                          ? 'bg-emerald-950/70 border-emerald-500/80 text-white'
-                          : 'bg-slate-950/40 border-slate-800 hover:border-slate-700 text-slate-300'
-                      }`}
-                    >
-                      <img
-                        src={acc.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
-                        alt={acc.fullName}
-                        className="w-7 h-7 rounded-lg object-cover border border-slate-700 shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="font-bold text-white text-[11px] truncate">@{acc.username}</span>
-                          <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-slate-800 text-emerald-400 border border-slate-700 shrink-0">
-                            {acc.role}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 truncate">{acc.fullName}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           ) : (
             /* Register Form */
