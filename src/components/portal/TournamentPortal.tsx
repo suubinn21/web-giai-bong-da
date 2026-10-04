@@ -12,14 +12,12 @@ import {
   Plus, 
   Trash2, 
   ExternalLink, 
-  ShieldCheck, 
   Clock, 
   Coins, 
   Flame, 
   ArrowRight, 
   Building2, 
   Filter,
-  CheckCircle2,
   Medal,
   Activity,
   Layers,
@@ -647,55 +645,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
           )}
         </div>
 
-        {/* Feature Banner: 39-Point Specification Quality Guarantee */}
-        <div className="bg-gradient-to-r from-slate-950 via-[#0B132B] to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4" />
-            <span>ĐẶC TẢ CHUẨN HÓA ITFTMS 2026 THEO QUY CHUẨN KHOA CNTT</span>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-            <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl space-y-1">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                16 Đội & 4 Bảng Đấu
-              </div>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
-                Mỗi bảng 4 đội đá vòng tròn 1 lượt, 2 đội đứng đầu vào Tứ Kết, Bán Kết, Tranh hạng 3 và Chung Kết (32 trận).
-              </p>
-            </div>
-
-            <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl space-y-1">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                Luật Tích Lũy 2 Thẻ Vàng
-              </div>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
-                Cầu thủ tích lũy đủ 2 thẻ vàng bị tự động treo giò 1 trận tiếp theo (Điều 11), cảnh báo ngay trên danh sách ra sân.
-              </p>
-            </div>
-
-            <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl space-y-1">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                Luân Lưu 6m & Khóa Khiếu Nại
-              </div>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
-                Hòa vòng Knockout sút penalty 6m (Điều 8). Cổng khiếu nại trọng tài tự động khóa sau 15 phút kết thúc trận (Điều 17).
-              </p>
-            </div>
-
-            <div className="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl space-y-1">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                Tài Chính & Ký Quỹ Độc Lập
-              </div>
-              <p className="text-slate-400 text-[11px] leading-relaxed">
-                Tách bạch sổ quỹ Lệ phí đăng ký (500.000 VNĐ) và Tiền ký quỹ thẻ (50.000 VNĐ) theo dõi hoàn trả / tịch thu chuẩn xác.
-              </p>
-            </div>
-          </div>
-        </div>
 
       </main>
 
