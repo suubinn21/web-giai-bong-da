@@ -98,19 +98,63 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     if (next) SoundFX.playWhistle();
   };
 
-  const statusLabels: Record<TournamentStatus, string> = {
-    DRAFT: 'Bản Nháp (Draft)',
-    REGISTRATION: 'Đang Mở Đăng Ký',
-    REGISTRATION_CLOSED: 'Đã Chốt Danh Sách',
-    DRAWING: 'Đang Bốc Thăm',
-    GROUP_STAGE: 'Vòng Bảng (24 Trận)',
-    QUARTER_FINAL: 'Vòng Tứ Kết',
-    SEMI_FINAL: 'Vòng Bán Kết',
-    THIRD_PLACE: 'Tranh Hạng 3',
-    FINAL: 'Chung Kết',
-    COMPLETED: 'Đã Bế Mạc',
+  const statusConfigs: Record<
+    TournamentStatus,
+    { label: string; bgClass: string; dotClass: string }
+  > = {
+    DRAFT: {
+      label: 'Bản Nháp (Draft)',
+      bgClass: 'bg-slate-900 border-slate-700 text-slate-300',
+      dotClass: 'bg-slate-500',
+    },
+    REGISTRATION: {
+      label: 'Đang Mở Đăng Ký',
+      bgClass: 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300',
+      dotClass: 'bg-emerald-400 animate-ping',
+    },
+    REGISTRATION_CLOSED: {
+      label: 'Đã Chốt Danh Sách',
+      bgClass: 'bg-blue-950/80 border-blue-500/50 text-blue-300',
+      dotClass: 'bg-blue-400',
+    },
+    DRAWING: {
+      label: 'Đang Bốc Thăm',
+      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
+      dotClass: 'bg-amber-400 animate-bounce',
+    },
+    GROUP_STAGE: {
+      label: 'Vòng Bảng (24 Trận)',
+      bgClass: 'bg-teal-950/80 border-teal-500/50 text-teal-300',
+      dotClass: 'bg-teal-400 animate-pulse',
+    },
+    QUARTER_FINAL: {
+      label: 'Vòng Tứ Kết',
+      bgClass: 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300',
+      dotClass: 'bg-indigo-400 animate-pulse',
+    },
+    SEMI_FINAL: {
+      label: 'Vòng Bán Kết',
+      bgClass: 'bg-purple-950/80 border-purple-500/50 text-purple-300',
+      dotClass: 'bg-purple-400 animate-pulse',
+    },
+    THIRD_PLACE: {
+      label: 'Tranh Hạng 3',
+      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
+      dotClass: 'bg-amber-400',
+    },
+    FINAL: {
+      label: 'Chung Kết & Trao Cúp',
+      bgClass: 'bg-rose-950/90 border-rose-500/60 text-rose-300',
+      dotClass: 'bg-rose-400 animate-pulse',
+    },
+    COMPLETED: {
+      label: 'Đã Bế Mạc',
+      bgClass: 'bg-slate-900 border-slate-700/80 text-slate-400',
+      dotClass: 'bg-slate-500',
+    },
   };
 
+  const currentStage = statusConfigs[tournamentStatus] || statusConfigs.GROUP_STAGE;
   const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
 
   return (
@@ -247,8 +291,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               </div>
 
               {/* Tournament Stage Badge */}
-              <div className="text-[10px] font-bold text-emerald-400 bg-emerald-950/90 border border-emerald-500/40 px-2 py-1 rounded-lg shrink-0">
-                {statusLabels[tournamentStatus] || 'Vòng Bảng'}
+              <div className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border shrink-0 flex items-center gap-1.5 shadow-sm ${currentStage.bgClass}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${currentStage.dotClass} shrink-0`}></span>
+                <span className="whitespace-nowrap">{currentStage.label}</span>
               </div>
             </div>
 
@@ -290,11 +335,11 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <select
                   value={tournamentStatus}
                   onChange={(e) => onStatusChange(e.target.value as TournamentStatus)}
-                  className="bg-slate-900 border border-slate-700 text-emerald-400 font-bold px-2 py-1 rounded-lg text-xs focus:outline-none"
+                  className={`border font-bold px-2.5 py-1.5 rounded-xl text-xs focus:outline-none transition-all ${currentStage.bgClass}`}
                 >
-                  {Object.entries(statusLabels).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
+                  {(Object.entries(statusConfigs) as [TournamentStatus, typeof currentStage][]).map(([key, config]) => (
+                    <option key={key} value={key} className="bg-slate-900 text-white">
+                      {config.label}
                     </option>
                   ))}
                 </select>

@@ -86,18 +86,65 @@ export const Header: React.FC<HeaderProps> = ({
     STUDENT: { label: 'Sinh Viên / Cổ Động Viên', badge: 'Công khai', color: 'bg-purple-500/20 text-purple-400 border-purple-500/40' },
   };
 
-  const statusLabels: Record<TournamentStatus, string> = {
-    DRAFT: 'Bản Nháp (Draft)',
-    REGISTRATION: 'Đang Mở Đăng Ký',
-    REGISTRATION_CLOSED: 'Đã Chốt Danh Sách',
-    DRAWING: 'Đang Bốc Thăm',
-    GROUP_STAGE: 'Vòng Bảng (24 Trận)',
-    QUARTER_FINAL: 'Vòng Tứ Kết',
-    SEMI_FINAL: 'Vòng Bán Kết',
-    THIRD_PLACE: 'Tranh Hạng 3',
-    FINAL: 'Chung Kết',
-    COMPLETED: 'Đã Bế Mạc',
+  const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+
+  const statusConfigs: Record<
+    TournamentStatus,
+    { label: string; bgClass: string; dotClass: string }
+  > = {
+    DRAFT: {
+      label: 'Bản Nháp (Draft)',
+      bgClass: 'bg-slate-900 border-slate-700 text-slate-300',
+      dotClass: 'bg-slate-500',
+    },
+    REGISTRATION: {
+      label: 'Đang Mở Đăng Ký',
+      bgClass: 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300',
+      dotClass: 'bg-emerald-400 animate-ping',
+    },
+    REGISTRATION_CLOSED: {
+      label: 'Đã Chốt Danh Sách',
+      bgClass: 'bg-blue-950/80 border-blue-500/50 text-blue-300',
+      dotClass: 'bg-blue-400',
+    },
+    DRAWING: {
+      label: 'Đang Bốc Thăm',
+      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
+      dotClass: 'bg-amber-400 animate-bounce',
+    },
+    GROUP_STAGE: {
+      label: 'Vòng Bảng (24 Trận)',
+      bgClass: 'bg-teal-950/80 border-teal-500/50 text-teal-300',
+      dotClass: 'bg-teal-400 animate-pulse',
+    },
+    QUARTER_FINAL: {
+      label: 'Vòng Tứ Kết',
+      bgClass: 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300',
+      dotClass: 'bg-indigo-400 animate-pulse',
+    },
+    SEMI_FINAL: {
+      label: 'Vòng Bán Kết',
+      bgClass: 'bg-purple-950/80 border-purple-500/50 text-purple-300',
+      dotClass: 'bg-purple-400 animate-pulse',
+    },
+    THIRD_PLACE: {
+      label: 'Tranh Hạng 3',
+      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
+      dotClass: 'bg-amber-400',
+    },
+    FINAL: {
+      label: 'Chung Kết & Trao Cúp',
+      bgClass: 'bg-rose-950/90 border-rose-500/60 text-rose-300',
+      dotClass: 'bg-rose-400 animate-pulse',
+    },
+    COMPLETED: {
+      label: 'Đã Bế Mạc',
+      bgClass: 'bg-slate-900 border-slate-700/80 text-slate-400',
+      dotClass: 'bg-slate-500',
+    },
   };
+
+  const currentStage = statusConfigs[tournamentStatus] || statusConfigs.GROUP_STAGE;
 
   return (
     <header className="sticky top-0 z-50 bg-[#0B132B]/95 backdrop-blur-md border-b border-slate-800 text-white shadow-xl">
@@ -179,38 +226,50 @@ export const Header: React.FC<HeaderProps> = ({
             )}
 
             {/* Tournament Stage Indicator */}
-            <div className="relative hidden xl:block shrink-0">
+            <div className="relative hidden lg:block shrink-0">
               <button
-                onClick={() => setStatusMenuOpen(!statusMenuOpen)}
-                className="flex items-center gap-2 text-xs font-medium bg-slate-900/80 hover:bg-slate-800 h-9 px-3 rounded-xl border border-slate-700 transition-colors shrink-0 whitespace-nowrap"
-                title="Thay đổi giai đoạn giải đấu"
+                onClick={() => canManage && setStatusMenuOpen(!statusMenuOpen)}
+                className={`flex items-center gap-2 text-xs font-bold h-9 px-3 rounded-xl border shadow-sm transition-all shrink-0 whitespace-nowrap ${currentStage.bgClass} ${
+                  canManage ? 'cursor-pointer hover:brightness-110 active:scale-95' : 'cursor-default'
+                }`}
+                title={canManage ? 'Bấm để thay đổi giai đoạn giải đấu' : 'Giai đoạn hiện tại của giải đấu'}
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-                <span className="text-slate-400 whitespace-nowrap">Giai đoạn:</span>
-                <span className="text-emerald-300 font-bold whitespace-nowrap">{statusLabels[tournamentStatus]}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className={`w-2 h-2 rounded-full ${currentStage.dotClass} shrink-0`}></span>
+                </span>
+                <span className="text-slate-400 font-medium whitespace-nowrap">Giai đoạn:</span>
+                <span className="font-extrabold whitespace-nowrap">{currentStage.label}</span>
+                {canManage && <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />}
               </button>
 
-              {statusMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-2 z-50">
-                  <div className="px-3 py-1 text-[11px] font-semibold text-slate-400 uppercase border-b border-slate-800">
-                    Chuyển Giai Đoạn Giải
+              {canManage && statusMenuOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3 py-1.5 text-[11px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-800 flex items-center justify-between">
+                    <span>Chuyển Giai Đoạn Giải</span>
+                    <span className="text-[10px] text-emerald-400 font-normal">BTC / Admin</span>
                   </div>
-                  {Object.entries(statusLabels).map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => {
-                        onStatusChange(key as TournamentStatus);
-                        setStatusMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs hover:bg-slate-800 flex items-center justify-between ${
-                        tournamentStatus === key ? 'text-emerald-400 font-bold bg-emerald-950/40' : 'text-slate-300'
-                      }`}
-                    >
-                      <span>{label}</span>
-                      {tournamentStatus === key && <span className="text-xs">✓</span>}
-                    </button>
-                  ))}
+                  <div className="max-h-80 overflow-y-auto py-1">
+                    {(Object.entries(statusConfigs) as [TournamentStatus, typeof currentStage][]).map(([key, config]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          onStatusChange(key);
+                          setStatusMenuOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between transition-colors ${
+                          tournamentStatus === key
+                            ? `${config.bgClass} font-black border-y border-transparent`
+                            : 'text-slate-300 hover:bg-slate-800'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2 h-2 rounded-full ${config.dotClass} shrink-0`}></span>
+                          <span>{config.label}</span>
+                        </div>
+                        {tournamentStatus === key && <span className="text-xs font-bold">✓</span>}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
