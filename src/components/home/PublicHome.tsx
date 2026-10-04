@@ -17,7 +17,8 @@ import {
   TrendingUp,
   Shirt,
   Play,
-  MapPin
+  MapPin,
+  CheckCircle2
 } from 'lucide-react';
 
 interface PublicHomeProps {
@@ -44,6 +45,16 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
   const liveMatches = matches.filter((m) => m.status === 'LIVE');
   const finishedMatches = matches.filter((m) => m.status === 'FINISHED');
   const scheduledMatches = matches.filter((m) => m.status === 'SCHEDULED');
+
+  // Trận Cầu Nổi Bật & Đang Diễn Ra: Ưu tiên trận LIVE và trận sắp đá (SCHEDULED), ẩn hoàn toàn các trận đã đá xong (FINISHED)
+  const featuredMatches = [
+    ...liveMatches,
+    ...scheduledMatches.sort((a, b) => {
+      const dateComp = (a.date || '').localeCompare(b.date || '');
+      if (dateComp !== 0) return dateComp;
+      return (a.time || '').localeCompare(b.time || '');
+    }),
+  ];
 
   const totalGoals = matches.reduce(
     (sum, m) => sum + (m.status === 'FINISHED' || m.status === 'LIVE' ? m.homeScore + m.awayScore : 0),
@@ -207,78 +218,100 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
           </div>
 
           <div className="space-y-3">
-            {matches.slice(0, 3).map((m) => {
-              const home = getTeam(m.homeTeamId);
-              const away = getTeam(m.awayTeamId);
-
-              return (
-                <div
-                  key={m.id}
-                  onClick={() => {
-                    onSelectMatch(m.id);
-                    onNavigate('live');
-                  }}
-                  className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60"
-                >
-                  <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400 gap-1.5 flex-wrap">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-mono font-bold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
-                        #{m.matchNumber || m.id}
-                      </span>
-                      <span className="font-bold text-emerald-400">{m.roundLabel}</span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black bg-cyan-950/90 text-cyan-300 border border-cyan-500/40">
-                        <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
-                        <span>{(m.venueName ? m.venueName.match(/Sân\s*\d+/i)?.[0] || m.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
-                      </span>
-                    </div>
-
-                    {m.status === 'LIVE' ? (
-                      <span className="bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 animate-pulse text-[10px]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                        LIVE {m.currentMinute}&apos;
-                      </span>
-                    ) : m.status === 'FINISHED' ? (
-                      <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">KẾT THÚC (FT)</span>
-                    ) : (
-                      <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">{m.time} • {m.date}</span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-7 items-center py-2">
-                    <div className="col-span-3 text-right">
-                      <span className="text-xs sm:text-sm font-bold text-white block truncate">
-                        {home?.name || 'TBD'}
-                      </span>
-                      <span className="text-[10px] text-slate-400">Lớp {home?.class}</span>
-                    </div>
-
-                    <div className="col-span-1 text-center font-mono font-black text-lg sm:text-xl text-emerald-400">
-                      {m.status === 'FINISHED' || m.status === 'LIVE'
-                        ? `${m.homeScore} - ${m.awayScore}`
-                        : 'VS'}
-                    </div>
-
-                    <div className="col-span-3 text-left">
-                      <span className="text-xs sm:text-sm font-bold text-white block truncate">
-                        {away?.name || 'TBD'}
-                      </span>
-                      <span className="text-[10px] text-slate-400">Lớp {away?.class}</span>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                    <span className="flex items-center gap-1 font-semibold text-cyan-300 truncate max-w-[200px]" title={m.venueName || 'Sân 1'}>
-                      <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                      <span className="truncate">{m.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}</span>
-                    </span>
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1 text-[11px] shrink-0">
-                      <span>Bấm xem Live</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </span>
-                  </div>
+            {featuredMatches.length === 0 ? (
+              <div className="bg-[#0B132B]/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
+                  <CheckCircle2 className="w-6 h-6" />
                 </div>
-              );
-            })}
+                <div>
+                  <h4 className="text-sm font-bold text-white">Toàn bộ các trận đấu đã hoàn tất</h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Không có trận đấu nào đang đá hoặc sắp diễn ra. Tất cả {finishedMatches.length} trận đấu đã kết thúc và có tỉ số chính thức.
+                  </p>
+                </div>
+                <button
+                  onClick={() => onNavigate('schedule')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold transition-all shadow-sm active:scale-95"
+                >
+                  <span>Xem Toàn Bộ Kết Quả &amp; BXH</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              featuredMatches.slice(0, 4).map((m) => {
+                const home = getTeam(m.homeTeamId);
+                const away = getTeam(m.awayTeamId);
+
+                return (
+                  <div
+                    key={m.id}
+                    onClick={() => {
+                      onSelectMatch(m.id);
+                      onNavigate('live');
+                    }}
+                    className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60"
+                  >
+                    <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400 gap-1.5 flex-wrap">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono font-bold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+                          #{m.matchNumber || m.id}
+                        </span>
+                        <span className="font-bold text-emerald-400">{m.roundLabel}</span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black bg-cyan-950/90 text-cyan-300 border border-cyan-500/40">
+                          <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+                          <span>{(m.venueName ? m.venueName.match(/Sân\s*\d+/i)?.[0] || m.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
+                        </span>
+                      </div>
+
+                      {m.status === 'LIVE' ? (
+                        <span className="bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 animate-pulse text-[10px]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                          LIVE {m.currentMinute}&apos;
+                        </span>
+                      ) : (
+                        <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700 flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-emerald-400" />
+                          <span>{m.time} • {m.date}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-7 items-center py-2">
+                      <div className="col-span-3 text-right">
+                        <span className="text-xs sm:text-sm font-bold text-white block truncate">
+                          {home?.name || 'TBD'}
+                        </span>
+                        <span className="text-[10px] text-slate-400">Lớp {home?.class}</span>
+                      </div>
+
+                      <div className="col-span-1 text-center font-mono font-black text-lg sm:text-xl text-emerald-400">
+                        {m.status === 'LIVE'
+                          ? `${m.homeScore} - ${m.awayScore}`
+                          : 'VS'}
+                      </div>
+
+                      <div className="col-span-3 text-left">
+                        <span className="text-xs sm:text-sm font-bold text-white block truncate">
+                          {away?.name || 'TBD'}
+                        </span>
+                        <span className="text-[10px] text-slate-400">Lớp {away?.class}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                      <span className="flex items-center gap-1 font-semibold text-cyan-300 truncate max-w-[200px]" title={m.venueName || 'Sân 1'}>
+                        <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                        <span className="truncate">{m.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}</span>
+                      </span>
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1 text-[11px] shrink-0">
+                        <span>{m.status === 'LIVE' ? 'Xem Trực Tiếp (Live)' : 'Chi Tiết Trận Đấu'}</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
