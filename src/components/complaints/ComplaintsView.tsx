@@ -54,6 +54,7 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
   const [reviewResponse, setReviewResponse] = useState('');
 
   const canReview = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+  const canSubmit = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER' || currentRole === 'TEAM_MANAGER';
 
   // Live 15-minute countdown calculation
   useEffect(() => {
@@ -207,6 +208,10 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             {/* Submit button */}
             <button
               onClick={() => {
+                if (!canSubmit) {
+                  alert('Chỉ Đội Trưởng / Trưởng Đoàn hoặc Ban Tổ Chức mới có thẩm quyền gửi khiếu nại trận đấu theo Điều lệ!');
+                  return;
+                }
                 if (isWindowExpired) {
                   alert('Cửa sổ khiếu nại 15 phút đã khép lại!');
                   return;
@@ -214,7 +219,8 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                 setFormTeamId(selectedMatchForComplaint?.homeTeamId || '');
                 setModalOpen(true);
               }}
-              disabled={isWindowExpired}
+              disabled={isWindowExpired || !canSubmit}
+              title={!canSubmit ? 'Chỉ dành cho Trưởng đoàn/Đội trưởng hoặc BTC' : undefined}
               className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-slate-950 font-bold text-xs shadow-lg transition-all"
             >
               + Gửi Khiếu Nại
