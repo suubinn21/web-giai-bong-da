@@ -307,32 +307,8 @@ export const Header: React.FC<HeaderProps> = ({
                       </div>
                     </div>
 
-                    {/* RBAC Quick Role Switcher */}
-                    <div className="px-3 pt-2">
-                      <div className="px-2 py-1 text-[10px] font-black uppercase text-slate-400 tracking-wider">
-                        Chuyển Quyền Nhanh (RBAC)
-                      </div>
-                      <div className="space-y-0.5 mt-1">
-                        {(Object.keys(roleLabels) as UserRole[]).map((role) => (
-                          <button
-                            key={role}
-                            onClick={() => {
-                              onRoleChange(role);
-                              setUserMenuOpen(false);
-                            }}
-                            className={`w-full text-left px-2.5 py-1.5 text-xs rounded-lg flex items-center justify-between transition-colors ${
-                              currentRole === role ? 'bg-emerald-950/60 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-300 hover:bg-slate-800'
-                            }`}
-                          >
-                            <span>{roleLabels[role].label}</span>
-                            {currentRole === role && <span className="text-emerald-400 text-xs">✓</span>}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
                     {/* Actions */}
-                    <div className="mt-3 pt-2 border-t border-slate-800 px-3 space-y-1">
+                    <div className="pt-2 border-t border-slate-800 px-3 space-y-1">
                       {onOpenAuthModal && (
                         <button
                           onClick={() => {

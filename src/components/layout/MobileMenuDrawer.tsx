@@ -98,14 +98,6 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     if (next) SoundFX.playWhistle();
   };
 
-  const rolesList: { role: UserRole; label: string; badge: string; color: string }[] = [
-    { role: 'STUDENT', label: 'Sinh Viên', badge: 'Xem thông tin & bảng xếp hạng', color: 'border-slate-700 bg-slate-800 text-slate-300' },
-    { role: 'ORGANIZER', label: 'Ban Tổ Chức', badge: 'Toàn quyền điều hành giải', color: 'border-emerald-500 bg-emerald-950/60 text-emerald-400' },
-    { role: 'REFEREE', label: 'Trọng Tài', badge: 'Nhập tỷ số & sự kiện trận', color: 'border-amber-500 bg-amber-950/60 text-amber-400' },
-    { role: 'TEAM_MANAGER', label: 'Đội Bóng', badge: 'Quản lý cầu thủ & áo đấu', color: 'border-blue-500 bg-blue-950/60 text-blue-400' },
-    { role: 'SUPER_ADMIN', label: 'Super Admin', badge: 'Quản trị hệ thống tối cao', color: 'border-purple-500 bg-purple-950/60 text-purple-300' },
-  ];
-
   const statusLabels: Record<TournamentStatus, string> = {
     DRAFT: 'Bản Nháp (Draft)',
     REGISTRATION: 'Đang Mở Đăng Ký',
@@ -310,40 +302,6 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             )}
           </div>
 
-          {/* RBAC Role Selector (Moved from mobile header into Menu) */}
-          <div className="space-y-2">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-              <span>Góc nhìn vai trò người dùng (RBAC)</span>
-              <span className="text-[10px] text-emerald-400 font-mono font-bold">
-                {currentRole}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              {rolesList.map((r) => {
-                const isCurrent = currentRole === r.role;
-                return (
-                  <button
-                    key={r.role}
-                    onClick={() => {
-                      SoundFX.playClick();
-                      onRoleChange(r.role);
-                    }}
-                    className={`p-2.5 rounded-xl text-left border transition-all flex items-center justify-between ${
-                      isCurrent
-                        ? 'border-emerald-500 bg-emerald-950/80 text-white font-bold shadow-md shadow-emerald-500/20'
-                        : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <div>
-                      <div className="text-xs">{r.label}</div>
-                      <div className="text-[9px] text-slate-500 line-clamp-1">{r.badge}</div>
-                    </div>
-                    {isCurrent && <span className="text-emerald-400 text-xs font-black">✓</span>}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
 
           {/* Primary Operations Grid (12 Feature Tabs) */}
           <div className="space-y-2">
