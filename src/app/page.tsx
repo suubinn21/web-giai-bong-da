@@ -16,6 +16,7 @@ import {
   UserAccount,
 } from '@/types';
 import { StorageService, defaultCleanAwards } from '@/services/storage';
+import { ScheduleEngine } from '@/services/scheduleEngine';
 import { AuthService } from '@/services/auth';
 import { AuthModal } from '@/components/auth/AuthModal';
 import {
@@ -376,8 +377,19 @@ export default function Home() {
       setTournament(updatedTour);
     }
     const cleaned = StorageService.cleanExcessGroupsData(updatedTour);
+    let currentMatches = cleaned.matches;
+    if (updatedTour.startDate && updatedTour.startDate !== tournament.startDate) {
+      currentMatches = ScheduleEngine.synchronizeMatchTimes(
+        currentMatches,
+        cleaned.teams,
+        venues,
+        referees,
+        updatedTour.startDate
+      );
+      StorageService.saveMatches(currentMatches);
+    }
     setTeams(cleaned.teams);
-    setMatches(cleaned.matches);
+    setMatches(currentMatches);
     const updatedList = StorageService.getAllTournaments();
     setAllTournaments(updatedList);
     const updatedLogs = StorageService.getAuditLogs();
@@ -612,6 +624,7 @@ export default function Home() {
             onMatchesUpdate={handleMatchesUpdate}
             onSelectMatch={handleSelectMatchAndNavigateLive}
             currentRole={currentRole}
+            tournament={tournament}
           />
         )}
 

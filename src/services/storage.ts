@@ -13,6 +13,7 @@ import {
   Tournament,
   getGroupLetters,
 } from '@/types';
+import { ScheduleEngine } from './scheduleEngine';
 
 const STORAGE_KEYS = {
   ALL_TOURNAMENTS: 'itftms_all_tournaments_list',
@@ -172,128 +173,57 @@ export const generateDemoTeams = (): Team[] => {
   });
 };
 
-export const generateDemoMatches = (teams: Team[]): Match[] => {
-  const matches: Match[] = [];
-  const groups: Array<'A' | 'B' | 'C' | 'D'> = ['A', 'B', 'C', 'D'];
-  let matchNum = 1;
+export const generateDemoMatches = (
+  teams: Team[],
+  startDate: string = defaultTournament.startDate || '2026-10-15'
+): Match[] => {
+  const matches = ScheduleEngine.generateFullTournamentSchedule(
+    teams,
+    defaultVenues,
+    defaultReferees,
+    startDate
+  );
 
-  const pairings = [
-    [0, 1], [2, 3],
-    [0, 2], [1, 3],
-    [0, 3], [1, 2],
-  ];
+  // Set match 1 finished and match 2 live for realistic demo data:
+  const m1 = matches.find((m) => m.id === 'M01');
+  if (m1) {
+    const homeTeam = teams.find((t) => t.id === m1.homeTeamId);
+    const awayTeam = teams.find((t) => t.id === m1.awayTeamId);
+    if (homeTeam && awayTeam) {
+      m1.status = 'FINISHED';
+      m1.homeScore = 3;
+      m1.awayScore = 1;
+      m1.currentMinute = 40;
+      m1.half = 2;
+      m1.completedAt = new Date(Date.now() - 8 * 60 * 1000).toISOString();
+      m1.events = [
+        { id: 'E1', matchId: 'M01', type: 'GOAL', minute: 8, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '07:38' },
+        { id: 'E2', matchId: 'M01', type: 'CARD', minute: 15, teamId: awayTeam.id, playerId: awayTeam.players[3]?.id || 'P2', playerName: awayTeam.players[3]?.name || 'Hậu vệ', cardType: 'YELLOW', reason: 'Kéo người thô bạo', timestamp: '07:45' },
+        { id: 'E3', matchId: 'M01', type: 'GOAL', minute: 23, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P3', playerName: awayTeam.players[6]?.name || 'Tiền đạo', timestamp: '07:53' },
+        { id: 'E4', matchId: 'M01', type: 'GOAL', minute: 35, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P4', playerName: homeTeam.players[1]?.name || 'Tiền vệ', timestamp: '08:05' },
+        { id: 'E5', matchId: 'M01', type: 'GOAL', minute: 39, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '08:09' }
+      ];
+    }
+  }
 
-  groups.forEach((g) => {
-    const groupTeams = teams.filter((t) => t.group === g);
-    pairings.forEach((pair, pIdx) => {
-      const homeTeam = groupTeams[pair[0]];
-      const awayTeam = groupTeams[pair[1]];
-      const venueId = pIdx % 3 === 0 ? 'V01' : pIdx % 3 === 1 ? 'V02' : 'V03';
-      const venueName = defaultVenues.find((v) => v.id === venueId)?.name;
-      const ref = defaultReferees[pIdx % defaultReferees.length];
-
-      let status: Match['status'] = 'SCHEDULED';
-      let homeScore = 0;
-      let awayScore = 0;
-      let currentMinute = 0;
-      let half: 1 | 2 = 1;
-      let completedAt: string | undefined = undefined;
-      const events: Match['events'] = [];
-
-      if (matchNum === 1 && homeTeam && awayTeam) {
-        status = 'FINISHED';
-        homeScore = 3;
-        awayScore = 1;
-        currentMinute = 40;
-        half = 2;
-        completedAt = new Date(Date.now() - 8 * 60 * 1000).toISOString();
-        events.push(
-          { id: 'E1', matchId: 'M01', type: 'GOAL', minute: 8, teamId: homeTeam.id, playerId: homeTeam.players[6].id, playerName: homeTeam.players[6].name, timestamp: '14:08' },
-          { id: 'E2', matchId: 'M01', type: 'CARD', minute: 15, teamId: awayTeam.id, playerId: awayTeam.players[3].id, playerName: awayTeam.players[3].name, cardType: 'YELLOW', reason: 'Kéo người thô bạo', timestamp: '14:15' },
-          { id: 'E3', matchId: 'M01', type: 'SUBSTITUTION', minute: 18, teamId: homeTeam.id, playerOutId: homeTeam.players[4].id, playerOutName: homeTeam.players[4].name, playerInId: homeTeam.players[8].id, playerInName: homeTeam.players[8].name, timestamp: '14:18' },
-          { id: 'E4', matchId: 'M01', type: 'GOAL', minute: 23, teamId: awayTeam.id, playerId: awayTeam.players[6].id, playerName: awayTeam.players[6].name, timestamp: '14:28' },
-          { id: 'E5', matchId: 'M01', type: 'CARD', minute: 31, teamId: homeTeam.id, playerId: homeTeam.players[6].id, playerName: homeTeam.players[6].name, cardType: 'YELLOW', reason: 'Phản ứng trọng tài', timestamp: '14:36' },
-          { id: 'E6', matchId: 'M01', type: 'GOAL', minute: 35, teamId: homeTeam.id, playerId: homeTeam.players[1].id, playerName: homeTeam.players[1].name, timestamp: '14:40' },
-          { id: 'E7', matchId: 'M01', type: 'GOAL', minute: 39, teamId: homeTeam.id, playerId: homeTeam.players[6].id, playerName: homeTeam.players[6].name, timestamp: '14:44' }
-        );
-      } else if (matchNum === 2 && homeTeam && awayTeam) {
-        status = 'LIVE';
-        homeScore = 2;
-        awayScore = 1;
-        currentMinute = 28;
-        half = 2;
-        events.push(
-          { id: 'E21', matchId: 'M02', type: 'GOAL', minute: 12, teamId: homeTeam.id, playerId: homeTeam.players[6].id, playerName: homeTeam.players[6].name, timestamp: '15:12' },
-          { id: 'E22', matchId: 'M02', type: 'CARD', minute: 19, teamId: homeTeam.id, playerId: homeTeam.players[2].id, playerName: homeTeam.players[2].name, cardType: 'YELLOW', reason: 'Vào bóng chậm', timestamp: '15:19' },
-          { id: 'E23', matchId: 'M02', type: 'GOAL', minute: 22, teamId: awayTeam.id, playerId: awayTeam.players[6].id, playerName: awayTeam.players[6].name, timestamp: '15:24' },
-          { id: 'E24', matchId: 'M02', type: 'GOAL', minute: 26, teamId: homeTeam.id, playerId: homeTeam.players[1].id, playerName: homeTeam.players[1].name, timestamp: '15:28' }
-        );
-      }
-
-      const matchId = `M${String(matchNum).padStart(2, '0')}`;
-      const hour = 7 + (matchNum % 8) * 1;
-      const timeStr = `${String(hour).padStart(2, '0')}:30`;
-
-      matches.push({
-        id: matchId,
-        matchNumber: matchNum,
-        round: 'GROUP',
-        group: g,
-        roundLabel: `Bảng ${g} - Lượt ${Math.floor(pIdx / 2) + 1}`,
-        venueId,
-        venueName,
-        date: '2026-10-15',
-        time: timeStr,
-        homeTeamId: homeTeam?.id || '',
-        awayTeamId: awayTeam?.id || '',
-        refereeId: ref.id,
-        refereeName: ref.name,
-        homeScore,
-        awayScore,
-        status,
-        currentMinute,
-        half,
-        events,
-        completedAt,
-      });
-
-      matchNum++;
-    });
-  });
-
-  const knockoutTemplates: { id: string; label: string; round: Match['round'] }[] = [
-    { id: 'M25', label: 'Tứ kết 1 (Nhất A vs Nhì B)', round: 'QUARTER_FINAL' },
-    { id: 'M26', label: 'Tứ kết 2 (Nhất B vs Nhì A)', round: 'QUARTER_FINAL' },
-    { id: 'M27', label: 'Tứ kết 3 (Nhất C vs Nhì D)', round: 'QUARTER_FINAL' },
-    { id: 'M28', label: 'Tứ kết 4 (Nhất D vs Nhì C)', round: 'QUARTER_FINAL' },
-    { id: 'M29', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', round: 'SEMI_FINAL' },
-    { id: 'M30', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', round: 'SEMI_FINAL' },
-    { id: 'M31', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', round: 'THIRD_PLACE' },
-    { id: 'M32', label: 'CHUNG KẾT (Thắng BK1 vs Thắng BK2)', round: 'FINAL' },
-  ];
-
-  knockoutTemplates.forEach((k, idx) => {
-    matches.push({
-      id: k.id,
-      matchNumber: 25 + idx,
-      round: k.round,
-      roundLabel: k.label,
-      venueId: 'V01',
-      venueName: 'Sân 1 - Cỏ Nhân Tạo Ký Túc Xá',
-      date: '2026-10-18',
-      time: `${14 + idx}:00`,
-      homeTeamId: '',
-      awayTeamId: '',
-      refereeId: 'REF01',
-      refereeName: 'Trần Văn Hùng',
-      homeScore: 0,
-      awayScore: 0,
-      status: 'SCHEDULED',
-      currentMinute: 0,
-      half: 1,
-      events: [],
-    });
-  });
+  const m2 = matches.find((m) => m.id === 'M02');
+  if (m2) {
+    const homeTeam = teams.find((t) => t.id === m2.homeTeamId);
+    const awayTeam = teams.find((t) => t.id === m2.awayTeamId);
+    if (homeTeam && awayTeam) {
+      m2.status = 'LIVE';
+      m2.homeScore = 2;
+      m2.awayScore = 1;
+      m2.currentMinute = 28;
+      m2.half = 2;
+      m2.events = [
+        { id: 'E21', matchId: 'M02', type: 'GOAL', minute: 12, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P5', playerName: homeTeam.players[6]?.name || 'Cầu thủ', timestamp: '07:42' },
+        { id: 'E22', matchId: 'M02', type: 'CARD', minute: 19, teamId: homeTeam.id, playerId: homeTeam.players[2]?.id || 'P6', playerName: homeTeam.players[2]?.name || 'Cầu thủ', cardType: 'YELLOW', reason: 'Vào bóng chậm', timestamp: '07:49' },
+        { id: 'E23', matchId: 'M02', type: 'GOAL', minute: 22, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P7', playerName: awayTeam.players[6]?.name || 'Cầu thủ', timestamp: '07:52' },
+        { id: 'E24', matchId: 'M02', type: 'GOAL', minute: 26, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P8', playerName: homeTeam.players[1]?.name || 'Cầu thủ', timestamp: '07:56' }
+      ];
+    }
+  }
 
   return matches;
 };
@@ -727,8 +657,9 @@ export class StorageService {
    * Loads realistic 16-team demo data for testing and demonstration purposes.
    */
   static loadDemoData(): { teams: Team[]; matches: Match[]; finances: FinancialTransaction[]; complaints: Complaint[] } {
+    const currentTour = this.getTournament();
     const demoTeams = generateDemoTeams();
-    const demoMatches = generateDemoMatches(demoTeams);
+    const demoMatches = generateDemoMatches(demoTeams, currentTour?.startDate || '2026-10-15');
     const demoFinances: FinancialTransaction[] = [
       { id: 'FIN-01', type: 'INCOME', category: 'REGISTRATION_FEE', categoryName: 'Lệ phí đăng ký (16 đội × 500k)', amount: 8000000, date: '2026-10-01', description: 'Thu lệ phí đăng ký giải 16 đội bóng khoa CNTT', recipientOrPayer: 'Đại diện 16 Đội bóng' },
       { id: 'FIN-02', type: 'INCOME', category: 'DEPOSIT', categoryName: 'Tiền ký quỹ (16 đội × 50k)', amount: 800000, date: '2026-10-01', description: 'Thu tiền ký quỹ chấp hành điều lệ giải', recipientOrPayer: 'Đại diện 16 Đội bóng' },

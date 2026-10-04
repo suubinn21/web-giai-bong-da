@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Match, Team, Venue, Referee, UserRole } from '@/types';
+import { Match, Team, Venue, Referee, UserRole, Tournament, MatchStatus } from '@/types';
 import { ScheduleEngine } from '@/services/scheduleEngine';
 import { StorageService } from '@/services/storage';
 import { 
@@ -13,7 +13,12 @@ import {
   Radio, 
   AlertCircle,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Edit3,
+  Zap,
+  X,
+  Check,
+  AlertTriangle
 } from 'lucide-react';
 
 interface ScheduleViewProps {
@@ -24,6 +29,7 @@ interface ScheduleViewProps {
   onMatchesUpdate: (matches: Match[]) => void;
   onSelectMatch: (matchId: string) => void;
   currentRole: UserRole;
+  tournament?: Tournament;
 }
 
 export const ScheduleView: React.FC<ScheduleViewProps> = ({
@@ -34,10 +40,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   onMatchesUpdate,
   onSelectMatch,
   currentRole,
+  tournament,
 }) => {
   const [filterVenue, setFilterVenue] = useState<string>('ALL');
   const [filterRound, setFilterRound] = useState<string>('ALL');
   const [filterDate, setFilterDate] = useState<string>('ALL');
+
+  // Edit Single Match Modal State
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const [editDate, setEditDate] = useState('');
+  const [editTime, setEditTime] = useState('');
+  const [editVenueId, setEditVenueId] = useState('');
+  const [editRefereeId, setEditRefereeId] = useState('');
+  const [editStatus, setEditStatus] = useState<MatchStatus>('SCHEDULED');
 
   const canGenerate = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
 
@@ -50,10 +65,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   const handleAutoGenerate = () => {
     if (!canGenerate) return;
     try {
-      const generated = ScheduleEngine.generateGroupSchedule(teams, venues, referees);
-      // Combine with existing knockout slots
-      const knockoutMatches = matches.filter((m) => m.round !== 'GROUP');
-      const allUpdated = [...generated, ...knockoutMatches];
+      const startDate = tournament?.startDate || '2026-10-15';
+      const generated = ScheduleEngine.generateGroupSchedule(teams, venues, referees, startDate);
+      const knockouts = ScheduleEngine.generateKnockoutSchedule(venues, referees, startDate);
+      const allUpdated = [...generated, ...knockouts];
 
       onMatchesUpdate(allUpdated);
       StorageService.saveMatches(allUpdated);
@@ -62,16 +77,100 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         currentRole,
         currentRole,
         'TỰ ĐỘNG LẬP LỊCH THI ĐẤU (SCHEDULE ENGINE)',
-        '24 Trận Vòng Bảng',
-        'Tự động phân bổ 24 trận đấu vào 3 cụm sân từ 06:30 - 17:00, không trùng sân, không trùng giờ và không trùng đội.'
+        '32 Trận Đấu (Vòng Bảng & Knockout)',
+        `Tự động phân bổ 32 trận đấu theo ngày khai mạc ${startDate}, ca sáng 07:30, 09:00 và ca chiều 15:00 không trùng sân bãi.`
       );
 
-      alert('Đã tạo thành công lịch thi đấu 24 trận vòng bảng chuẩn xác, không có xung đột sân bãi!');
+      alert(`Đã tạo thành công lịch thi đấu 32 trận chuẩn xác theo ngày khởi tranh ${startDate}! 0 xung đột sân bãi.`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Có lỗi khi tạo lịch thi đấu.';
       alert(`Lỗi: ${msg}`);
     }
   };
+
+  // Trigger Synchronization of all 32 matches to tournament start date
+  const handleSyncAllSchedule = () => {
+    if (!canGenerate) return;
+    const startDate = tournament?.startDate || '2026-10-15';
+    const confirmed = window.confirm(
+      `Đồng bộ toàn bộ thời gian 32 trận đấu theo ngày khai mạc giải (${startDate})?\n\n• Vòng bảng: 3 ngày thi đấu (3 ca/ngày: 07:30, 09:00, 15:00)\n• Vòng Tứ kết: Ngày thứ 5 (08:00 & 09:30)\n• Vòng Bán kết: Ngày thứ 7 (15:00)\n• Tranh Hạng 3 & Chung Kết: Ngày thứ 9 (14:30 & 16:00)\n• Tỉ số và sự kiện đã diễn ra được bảo toàn nguyên vẹn.`
+    );
+    if (!confirmed) return;
+
+    const syncedMatches = ScheduleEngine.synchronizeMatchTimes(
+      matches,
+      teams,
+      venues,
+      referees,
+      startDate
+    );
+    onMatchesUpdate(syncedMatches);
+    StorageService.saveMatches(syncedMatches);
+    StorageService.logAction(
+      currentRole,
+      currentRole,
+      'ĐỒNG BỘ THỜI GIAN LỊCH THI ĐẤU TOÀN GIẢI',
+      '32 Trận Đấu',
+      `Tự động phân bổ lịch đấu đồng bộ từ ngày khai mạc ${startDate}, chia đều 3 ca/ngày không trùng sân và không trùng đội.`
+    );
+    alert(`Đã đồng bộ lịch thi đấu thành công theo ngày khai mạc ${startDate}! Tuyệt đối 0 xung đột sân bãi.`);
+  };
+
+  // Open Edit Modal for a specific match
+  const handleOpenEditMatch = (e: React.MouseEvent, m: Match) => {
+    e.stopPropagation();
+    setEditingMatch(m);
+    setEditDate(m.date);
+    setEditTime(m.time);
+    setEditVenueId(m.venueId);
+    setEditRefereeId(m.refereeId);
+    setEditStatus(m.status);
+  };
+
+  // Save changes from Edit Modal
+  const handleSaveMatchSchedule = () => {
+    if (!editingMatch) return;
+    const selectedVenue = venues.find((v) => v.id === editVenueId);
+    const selectedRef = referees.find((r) => r.id === editRefereeId);
+
+    const updated = matches.map((m) => {
+      if (m.id === editingMatch.id) {
+        return {
+          ...m,
+          date: editDate,
+          time: editTime,
+          venueId: editVenueId,
+          venueName: selectedVenue?.name || m.venueName,
+          refereeId: editRefereeId,
+          refereeName: selectedRef?.name || m.refereeName,
+          status: editStatus,
+        };
+      }
+      return m;
+    });
+
+    onMatchesUpdate(updated);
+    StorageService.saveMatches(updated);
+    StorageService.logAction(
+      currentRole,
+      currentRole,
+      'CẬP NHẬT LỊCH THI ĐẤU',
+      `Trận #${editingMatch.matchNumber} (${editingMatch.roundLabel})`,
+      `Đổi lịch sang ngày ${editDate}, giờ ${editTime}, sân ${selectedVenue?.name || editVenueId}`
+    );
+    setEditingMatch(null);
+  };
+
+  // Detect conflicts in real-time during manual match edit
+  const conflictMatch = editingMatch
+    ? matches.find(
+        (m) =>
+          m.id !== editingMatch.id &&
+          m.date === editDate &&
+          m.time === editTime &&
+          m.venueId === editVenueId
+      )
+    : null;
 
   const getVenueDetails = (venueId?: string, venueNameFallback?: string) => {
     const v = venues.find((item) => item.id === venueId);
@@ -123,13 +222,24 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
           )}
 
           {canGenerate && (
-            <button
-              onClick={handleAutoGenerate}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Tự Động Tạo Lịch 24 Trận</span>
-            </button>
+            <>
+              <button
+                onClick={handleSyncAllSchedule}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-bold text-xs shadow-sm transition-all active:scale-95"
+                title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo ngày khai mạc giải"
+              >
+                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Đồng Bộ Giờ Toàn Giải</span>
+              </button>
+
+              <button
+                onClick={handleAutoGenerate}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Tự Động Tạo Lịch 32 Trận</span>
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -288,16 +398,31 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 </div>
               )}
 
-              {/* Card Footer: Detailed Pitch / Venue & Date */}
-              <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px]">
-                <div className="flex items-center gap-1.5 truncate max-w-[210px]" title={fullName}>
+              {/* Card Footer: Detailed Pitch / Venue & Synchronized Date/Time */}
+              <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 truncate max-w-[190px]" title={fullName}>
                   <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                   <span className="truncate font-semibold text-cyan-300">{fullName}</span>
                 </div>
-                <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-400 shrink-0">
-                  <Calendar className="w-3 h-3 text-slate-500" />
-                  <span>{m.date}</span>
-                  {m.time && <span>• {m.time}</span>}
+
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700/80">
+                    <Calendar className="w-3 h-3 text-slate-400" />
+                    <span>{m.date}</span>
+                    <Clock className="w-3 h-3 text-emerald-400 ml-1" />
+                    <span className="font-bold text-emerald-400">{m.time}</span>
+                  </div>
+
+                  {canGenerate && (
+                    <button
+                      onClick={(e) => handleOpenEditMatch(e, m)}
+                      className="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95"
+                      title="Chỉnh sửa ngày, giờ & sân thi đấu của trận này"
+                    >
+                      <Edit3 className="w-3 h-3 text-cyan-400" />
+                      <span>Sửa Lịch</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -305,6 +430,181 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         })}
       </div>
 
+      {/* Edit Match Schedule Modal */}
+      {editingMatch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-white">
+                    Điều Chỉnh Giờ &amp; Sân Thi Đấu
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Trận #{editingMatch.matchNumber} • {editingMatch.roundLabel}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingMatch(null)}
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Match Teams Info */}
+            <div className="p-3.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 flex items-center justify-between text-xs font-bold text-white">
+              <div className="flex items-center gap-2 truncate">
+                <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span>{getTeam(editingMatch.homeTeamId)?.name || 'Đội 1 (Chờ xác định)'}</span>
+              </div>
+              <span className="text-emerald-400 font-mono font-black px-2">VS</span>
+              <div className="flex items-center gap-2 truncate text-right">
+                <span>{getTeam(editingMatch.awayTeamId)?.name || 'Đội 2 (Chờ xác định)'}</span>
+                <span className="w-3 h-3 rounded-full bg-cyan-500"></span>
+              </div>
+            </div>
+
+            {/* Form Fields */}
+            <div className="space-y-3 text-xs">
+              {/* Date Input */}
+              <div>
+                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Ngày Thi Đấu</span>
+                </label>
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Time Input & Quick Slots */}
+              <div>
+                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Giờ Thi Đấu</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {['07:30', '09:00', '10:30', '14:00', '15:00', '16:30'].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setEditTime(preset)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
+                        editTime === preset
+                          ? 'bg-emerald-500 text-white shadow-sm'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="time"
+                  value={editTime}
+                  onChange={(e) => setEditTime(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Venue Selection */}
+              <div>
+                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Sân Thi Đấu</span>
+                </label>
+                <select
+                  value={editVenueId}
+                  onChange={(e) => setEditVenueId(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-cyan-500 focus:outline-none"
+                >
+                  {venues.map((v) => (
+                    <option key={v.id} value={v.id}>
+                      {v.name} ({v.location})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Referee Selection */}
+              <div>
+                <label className="font-bold text-slate-300 block mb-1.5">
+                  Trọng Tài Phụ Trách
+                </label>
+                <select
+                  value={editRefereeId}
+                  onChange={(e) => setEditRefereeId(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-cyan-500 focus:outline-none"
+                >
+                  {referees.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name} ({r.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Match Status */}
+              <div>
+                <label className="font-bold text-slate-300 block mb-1.5">
+                  Trạng Thái Trận
+                </label>
+                <select
+                  value={editStatus}
+                  onChange={(e) => setEditStatus(e.target.value as MatchStatus)}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-emerald-500 focus:outline-none"
+                >
+                  <option value="SCHEDULED">Chưa Bắt Đầu (SCHEDULED)</option>
+                  <option value="LIVE">Đang Diễn Ra (LIVE)</option>
+                  <option value="FINISHED">Đã Kết Thúc (FINISHED)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Conflict Warning Alert */}
+            {conflictMatch && (
+              <div className="p-3 rounded-2xl bg-amber-950/60 border border-amber-500/50 text-amber-300 text-xs flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <div className="font-bold">Cảnh báo trùng sân &amp; giờ:</div>
+                  <div className="text-[11px] text-amber-200/90">
+                    Sân này lúc <strong>{editTime}</strong> ngày <strong>{editDate}</strong> đã được xếp cho <strong>Trận #{conflictMatch.matchNumber} ({conflictMatch.roundLabel})</strong>!
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setEditingMatch(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveMatchSchedule}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition-all active:scale-95"
+              >
+                Lưu Thay Đổi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
+
