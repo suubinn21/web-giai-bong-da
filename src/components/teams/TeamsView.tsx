@@ -56,7 +56,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   const [newPlayerName, setNewPlayerName] = useState('');
   const [newPlayerStudentId, setNewPlayerStudentId] = useState('');
   const [newPlayerClass, setNewPlayerClass] = useState('');
-  const [newPlayerCohort, setNewPlayerCohort] = useState('K22');
+  const [newPlayerCohort, setNewPlayerCohort] = useState('K23');
   const [newPlayerDob, setNewPlayerDob] = useState('2004-05-15');
   const [newPlayerJersey, setNewPlayerJersey] = useState<number>(10);
   const [newPlayerPos, setNewPlayerPos] = useState<PlayerPosition>('FW');
@@ -766,7 +766,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   type="text"
                   value={newPlayerStudentId}
                   onChange={(e) => setNewPlayerStudentId(e.target.value)}
-                  placeholder="VD: 22520099"
+                  placeholder="VD: 23520099"
                   className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
                 />
               </div>
@@ -778,10 +778,10 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   onChange={(e) => setNewPlayerCohort(e.target.value)}
                   className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
                 >
-                  <option value="K21">Khóa K21 (2021)</option>
-                  <option value="K22">Khóa K22 (2022)</option>
                   <option value="K23">Khóa K23 (2023)</option>
                   <option value="K24">Khóa K24 (2024)</option>
+                  <option value="K25">Khóa K25 (2025)</option>
+                  <option value="K26">Khóa K26 (2026)</option>
                 </select>
               </div>
             </div>
