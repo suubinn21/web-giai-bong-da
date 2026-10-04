@@ -23,8 +23,11 @@ import {
   User,
   Shield,
   KeyRound,
-  ArrowLeft
+  ArrowLeft,
+  Sun,
+  Moon
 } from 'lucide-react';
+import { useTheme } from '@/utils/useTheme';
 
 interface HeaderProps {
   currentRole: UserRole;
@@ -75,6 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { isLight, toggleTheme } = useTheme();
 
   const toggleSound = () => {
     const next = !soundOn;
@@ -344,6 +348,29 @@ export const Header: React.FC<HeaderProps> = ({
               title={soundOn ? 'Âm thanh còi & ăn mừng: BẬT' : 'Âm thanh: TẮT'}
             >
               {soundOn ? <Volume2 className="w-4 h-4 shrink-0" /> : <VolumeX className="w-4 h-4 shrink-0" />}
+            </button>
+
+            {/* Theme Mode Toggle Button (Sáng / Tối) */}
+            <button
+              onClick={toggleTheme}
+              className={`hidden md:flex items-center gap-1.5 h-9 px-2.5 rounded-xl border transition-all shrink-0 font-bold text-xs ${
+                isLight
+                  ? 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 shadow-sm'
+                  : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-white hover:border-slate-600'
+              }`}
+              title={isLight ? 'Chuyển sang Giao diện Nền Tối' : 'Chuyển sang Giao diện Nền Trắng'}
+            >
+              {isLight ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span className="hidden xl:inline">Nền Trắng</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <span className="hidden xl:inline">Nền Tối</span>
+                </>
+              )}
             </button>
 
             {/* User Profile / Login System (Desktop only, mobile in Menu Hamburger) */}

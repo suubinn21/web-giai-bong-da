@@ -96,7 +96,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
           style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+        <div className="hero-billboard-overlay absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
 
         {/* Animated pitch overlay glow */}
         <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>

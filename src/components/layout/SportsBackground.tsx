@@ -4,11 +4,12 @@ import React from 'react';
  * SportsBackground: Renders a professional, athletic football stadium atmosphere
  * featuring dynamic floodlights, tactical pitch blueprint, hexagonal football mesh,
  * and high-energy sports geometry.
+ * Adapts seamlessly between Light (Daylight White Arena) and Dark (Night Stadium) themes.
  */
 export const SportsBackground: React.FC = () => {
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none transition-colors duration-500"
       aria-hidden="true"
     >
       {/* 1. Realistic Football Stadium High-Definition Background Photo */}
@@ -19,24 +20,24 @@ export const SportsBackground: React.FC = () => {
         }}
       />
 
-      {/* 2. Luminous Stadium Atmosphere Layer (Brighter, vibrant athletic tint) */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#081326]/60 via-[#0a1830]/45 to-[#061020]/70" />
+      {/* 2. Luminous Stadium Atmosphere Layer (Daylight White overlay in Light mode, Night tint in Dark mode) */}
+      <div className="sports-stadium-overlay absolute inset-0 bg-gradient-to-b from-[#081326]/60 via-[#0a1830]/45 to-[#061020]/70 transition-all duration-500" />
 
       {/* 3. Lush Green Pitch Lighting Boost (Làm sáng màu cỏ và ánh đèn sân) */}
-      <div className="absolute inset-0 bg-radial-gradient from-emerald-500/15 via-transparent to-transparent opacity-80" />
+      <div className="sports-pitch-boost absolute inset-0 bg-radial-gradient from-emerald-500/15 via-transparent to-transparent opacity-80" />
 
       {/* 4. Realistic Stadium Turf Stripes (Vệt sọc cỏ sân vận động xen kẽ) */}
-      <div className="absolute inset-0 sports-turf-stripes opacity-40" />
+      <div className="sports-turf-stripes absolute inset-0 opacity-40 transition-opacity" />
 
       {/* 5. Hexagonal Football Net & Carbon Texture (Lưới bóng đá lục giác & sợi thể thao) */}
-      <div className="absolute inset-0 sports-hex-pattern opacity-30" />
+      <div className="sports-hex-pattern absolute inset-0 opacity-30 transition-opacity" />
 
       {/* 6. Stadium Floodlights (Đèn pha sân vận động góc trái, phải và trung tâm) */}
       {/* Top-Left Stadium Floodlight Tower */}
-      <div className="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-emerald-400/30 via-teal-400/20 to-transparent blur-[100px] animate-stadium-pulse" />
+      <div className="stadium-floodlight-left absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-emerald-400/30 via-teal-400/20 to-transparent blur-[100px] animate-stadium-pulse" />
       
       {/* Top-Right Stadium Floodlight Tower */}
-      <div className="absolute -top-32 -right-32 w-[700px] h-[700px] rounded-full bg-gradient-to-bl from-cyan-400/30 via-blue-500/20 to-transparent blur-[100px] animate-stadium-pulse" />
+      <div className="stadium-floodlight-right absolute -top-32 -right-32 w-[700px] h-[700px] rounded-full bg-gradient-to-bl from-cyan-400/30 via-blue-500/20 to-transparent blur-[100px] animate-stadium-pulse" />
 
       {/* Pitch Center Overhead Aura */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[600px] rounded-full bg-gradient-to-b from-emerald-300/20 via-cyan-400/15 to-transparent blur-[120px]" />
@@ -47,7 +48,7 @@ export const SportsBackground: React.FC = () => {
 
       {/* 5. Giant Tactical Football Pitch Blueprint (Vector sa bàn & đường kẻ sân bóng đá thể thao) */}
       <svg
-        className="absolute top-8 left-1/2 -translate-x-1/2 w-[1250px] max-w-[150vw] h-[860px] opacity-[0.065] stroke-emerald-400 pointer-events-none transition-opacity"
+        className="pitch-blueprint-svg absolute top-8 left-1/2 -translate-x-1/2 w-[1250px] max-w-[150vw] h-[860px] opacity-[0.065] stroke-emerald-400 pointer-events-none transition-all"
         viewBox="0 0 1000 700"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +119,7 @@ export const SportsBackground: React.FC = () => {
       <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[1100px] h-[350px] rounded-full bg-gradient-to-t from-emerald-500/20 via-teal-500/10 to-transparent blur-3xl pointer-events-none" />
 
       {/* 8. Vignette Falloff (Độ sâu nhẹ nhàng, giữ ảnh nền sân bóng sáng rõ và chuyên nghiệp) */}
-      <div className="absolute inset-0 bg-radial-vignette opacity-40 pointer-events-none" />
+      <div className="stadium-vignette absolute inset-0 bg-radial-vignette opacity-40 pointer-events-none transition-opacity" />
     </div>
   );
 };

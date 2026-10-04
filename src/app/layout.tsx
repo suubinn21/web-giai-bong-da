@@ -13,8 +13,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className="dark">
-      <body className="bg-[#050811] text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white relative">
+    <html lang="vi" className="light" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('itftms_theme');
+                  if (saved === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white relative transition-colors duration-300">
         <SportsBackground />
         <div className="relative z-10 min-h-screen flex flex-col">
           {children}

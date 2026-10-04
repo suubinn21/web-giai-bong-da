@@ -26,9 +26,12 @@ import {
   LogIn,
   LogOut,
   User,
-  ArrowLeft
+  ArrowLeft,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { Tournament, TournamentStatus, UserRole, UserAccount } from '@/types';
+import { useTheme } from '@/utils/useTheme';
 
 interface TournamentPortalProps {
   tournaments: Tournament[];
@@ -64,6 +67,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | TournamentStatus>('ALL');
   const [yearFilter, setYearFilter] = useState<string>('ALL');
+  const { isLight, toggleTheme } = useTheme();
 
   // Stats across tournaments
   const totalTournaments = tournaments.length;
@@ -255,6 +259,25 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               )
             )}
 
+            {/* Theme Mode Toggle (Sáng / Tối) */}
+            <button
+              onClick={toggleTheme}
+              title={isLight ? "Chuyển sang Giao diện Nền Tối" : "Chuyển sang Giao diện Nền Trắng"}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-xs font-bold transition-all shadow-sm active:scale-95 text-slate-700 dark:text-slate-300 hover:border-emerald-500 shrink-0"
+            >
+              {isLight ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="hidden sm:inline">Nền Trắng</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="hidden sm:inline">Nền Tối</span>
+                </>
+              )}
+            </button>
+
             {/* Create Tournament Button */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
@@ -280,7 +303,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             className="absolute inset-0 bg-cover bg-right sm:bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
             style={{ backgroundImage: `url('/images/tournament-hero.jpg')` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+          <div className="hero-billboard-overlay absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
 
           {/* Pitch ambient glow */}
           <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
