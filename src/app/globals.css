@@ -8,8 +8,8 @@
 }
 
 body {
-  color: #f1f5f9;
-  background-color: #050811;
+  color: #f8fafc;
+  background-color: #081120;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   overflow-x: hidden;
 }
@@ -18,8 +18,8 @@ body {
 .sports-turf-stripes {
   background-image: repeating-linear-gradient(
     0deg,
-    rgba(16, 185, 129, 0.02) 0px,
-    rgba(16, 185, 129, 0.02) 70px,
+    rgba(16, 185, 129, 0.04) 0px,
+    rgba(16, 185, 129, 0.04) 70px,
     transparent 70px,
     transparent 140px
   );
@@ -28,14 +28,14 @@ body {
 /* Sports Hex Pattern (Lưới khung thành & kết cấu bóng đá lục giác công nghệ cao) */
 .sports-hex-pattern {
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 1.2px, transparent 1.2px),
-    radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.1) 1.2px, transparent 1.2px);
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 1.2px, transparent 1.2px),
+    radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.14) 1.2px, transparent 1.2px);
   background-size: 28px 28px;
 }
 
-/* Stadium Radial Vignette (Độ sâu góc sân ban đêm) */
+/* Stadium Radial Vignette (Độ sâu góc sân ban đêm - Tinh chỉnh sáng và nét hơn) */
 .bg-radial-vignette {
-  background: radial-gradient(ellipse at center, transparent 35%, rgba(4, 7, 15, 0.88) 100%);
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(4, 10, 22, 0.55) 100%);
 }
 
 /* Stadium Floodlight Breathing Animation */

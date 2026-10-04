@@ -156,7 +156,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   return (
     <div className="min-h-screen bg-transparent text-slate-100 flex flex-col">
       {/* Top Header of the Portal */}
-      <header className="sticky top-0 z-50 bg-[#0B132B]/90 backdrop-blur-md border-b border-slate-800">
+      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Logo & Platform Name */}
@@ -276,7 +276,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Hero Stadium Billboard */}
-        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-br from-[#060B19]/90 via-[#0B1530]/90 to-[#12224A]/90 p-6 sm:p-10 shadow-2xl backdrop-blur-sm">
+        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-gradient-to-br from-slate-900/80 via-slate-800/70 to-emerald-950/40 p-6 sm:p-10 shadow-2xl backdrop-blur-md">
           {/* Pitch ambient glow */}
           <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
           <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>

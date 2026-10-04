@@ -154,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
   const currentStage = statusConfigs[tournamentStatus] || statusConfigs.GROUP_STAGE;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B132B]/95 backdrop-blur-md border-b border-slate-800 text-white shadow-xl">
+    <header className="sticky top-0 z-50 bg-slate-900/85 backdrop-blur-md border-b border-slate-700/60 text-white shadow-xl">
       {/* Top Banner Alert for Live Matches */}
       {liveMatchCount > 0 && (
         <div 

@@ -90,10 +90,10 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
     <div className="space-y-8">
       
       {/* Hero Stadium Banner */}
-      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-r from-[#060B19]/90 via-[#0B1530]/90 to-[#12224A]/90 p-6 sm:p-12 shadow-2xl backdrop-blur-sm">
+      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-gradient-to-r from-slate-900/80 via-slate-800/70 to-emerald-950/40 p-6 sm:p-12 shadow-2xl backdrop-blur-md">
         {/* Animated pitch overlay glow */}
-        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Stadium tactical pitch watermark & turf stripes */}
         <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
@@ -163,31 +163,31 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
             <span className="text-[10px] uppercase font-bold text-slate-400">Số Đội Bóng</span>
             <span className="text-2xl font-black font-mono text-white mt-1">16 ĐỘI</span>
             <span className="text-[10px] text-emerald-400">4 Bảng A-B-C-D</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
             <span className="text-[10px] uppercase font-bold text-slate-400">Tổng Cầu Thủ</span>
             <span className="text-2xl font-black font-mono text-cyan-400 mt-1">192</span>
             <span className="text-[10px] text-slate-400">16 đội × 12 max</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
             <span className="text-[10px] uppercase font-bold text-slate-400">Tổng Số Trận</span>
             <span className="text-2xl font-black font-mono text-amber-400 mt-1">32 TRẬN</span>
             <span className="text-[10px] text-slate-400">24 Vòng bảng + 8 KO</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
             <span className="text-[10px] uppercase font-bold text-slate-400">Bàn Thắng</span>
             <span className="text-2xl font-black font-mono text-emerald-400 mt-1">{totalGoals} ⚽</span>
             <span className="text-[10px] text-slate-400">{finishedMatches.length} trận hoàn tất</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
             <span className="text-[10px] uppercase font-bold text-slate-400">Thẻ Phạt</span>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-lg font-black font-mono text-amber-400">{totalYellowCards}🟨</span>
@@ -197,7 +197,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
           </div>
 
           {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
-            <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
               <span className="text-[10px] uppercase font-bold text-slate-400">Tài Chính Quỹ (BTC)</span>
               <span className="text-base font-black font-mono text-emerald-400 mt-1">
                 {(totalIncome - totalExpense).toLocaleString()} đ
@@ -205,7 +205,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
               <span className="text-[10px] text-slate-400">Thu {(totalIncome/1000000).toFixed(1)}M / Chi {(totalExpense/1000000).toFixed(1)}M</span>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+            <div className="p-4 rounded-2xl bg-slate-900/75 backdrop-blur-md border border-slate-700/60 flex flex-col justify-between shadow-lg">
               <span className="text-[10px] uppercase font-bold text-slate-400">Hiệu Suất Ghi Bàn</span>
               <span className="text-xl font-black font-mono text-emerald-400 mt-1">
                 {finishedMatches.length > 0 ? (totalGoals / finishedMatches.length).toFixed(1) : '0.0'} ⚽/trận
@@ -270,7 +270,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
                       onSelectMatch(m.id);
                       onNavigate('live');
                     }}
-                    className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60"
+                    className="bg-slate-900/75 backdrop-blur-md border border-slate-700/60 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60"
                   >
                     <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400 gap-1.5 flex-wrap">
                       <div className="flex items-center gap-1.5">
@@ -337,7 +337,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
         </div>
 
         {/* Right Column: Golden Boot Top Scorers (5 Cols) */}
-        <div className="lg:col-span-5 bg-[#0B132B]/90 border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-slate-900/75 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 shadow-xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">

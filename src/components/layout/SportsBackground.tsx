@@ -11,28 +11,39 @@ export const SportsBackground: React.FC = () => {
       className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
       aria-hidden="true"
     >
-      {/* 1. Deep Midnight Stadium Base */}
-      <div className="absolute inset-0 bg-[#050811]" />
+      {/* 1. Realistic Football Stadium High-Definition Background Photo */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 scale-[1.02]"
+        style={{
+          backgroundImage: `url('/images/stadium-bg.jpg')`,
+        }}
+      />
 
-      {/* 2. Realistic Stadium Turf Stripes (Vệt sọc cỏ sân vận động xen kẽ) */}
-      <div className="absolute inset-0 sports-turf-stripes opacity-60" />
+      {/* 2. Luminous Stadium Atmosphere Layer (Brighter, vibrant athletic tint) */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#081326]/60 via-[#0a1830]/45 to-[#061020]/70" />
 
-      {/* 3. Hexagonal Football Net & Carbon Texture (Lưới bóng đá lục giác & sợi thể thao) */}
-      <div className="absolute inset-0 sports-hex-pattern opacity-40" />
+      {/* 3. Lush Green Pitch Lighting Boost (Làm sáng màu cỏ và ánh đèn sân) */}
+      <div className="absolute inset-0 bg-radial-gradient from-emerald-500/15 via-transparent to-transparent opacity-80" />
 
-      {/* 4. Stadium Floodlights (Đèn pha sân vận động góc trái, phải và trung tâm) */}
+      {/* 4. Realistic Stadium Turf Stripes (Vệt sọc cỏ sân vận động xen kẽ) */}
+      <div className="absolute inset-0 sports-turf-stripes opacity-40" />
+
+      {/* 5. Hexagonal Football Net & Carbon Texture (Lưới bóng đá lục giác & sợi thể thao) */}
+      <div className="absolute inset-0 sports-hex-pattern opacity-30" />
+
+      {/* 6. Stadium Floodlights (Đèn pha sân vận động góc trái, phải và trung tâm) */}
       {/* Top-Left Stadium Floodlight Tower */}
-      <div className="absolute -top-32 -left-32 w-[650px] h-[650px] rounded-full bg-gradient-to-br from-emerald-500/20 via-teal-500/10 to-transparent blur-[110px] animate-stadium-pulse" />
+      <div className="absolute -top-32 -left-32 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-emerald-400/30 via-teal-400/20 to-transparent blur-[100px] animate-stadium-pulse" />
       
       {/* Top-Right Stadium Floodlight Tower */}
-      <div className="absolute -top-32 -right-32 w-[650px] h-[650px] rounded-full bg-gradient-to-bl from-cyan-500/20 via-blue-600/10 to-transparent blur-[110px] animate-stadium-pulse" />
+      <div className="absolute -top-32 -right-32 w-[700px] h-[700px] rounded-full bg-gradient-to-bl from-cyan-400/30 via-blue-500/20 to-transparent blur-[100px] animate-stadium-pulse" />
 
       {/* Pitch Center Overhead Aura */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] rounded-full bg-gradient-to-b from-emerald-400/10 via-cyan-400/5 to-transparent blur-[140px]" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[600px] rounded-full bg-gradient-to-b from-emerald-300/20 via-cyan-400/15 to-transparent blur-[120px]" />
 
       {/* Stadium Light Cones / Angular Beams */}
-      <div className="absolute top-0 left-[15%] w-96 h-[600px] bg-gradient-to-b from-emerald-400/10 via-emerald-500/0 to-transparent transform -rotate-12 blur-2xl opacity-60" />
-      <div className="absolute top-0 right-[15%] w-96 h-[600px] bg-gradient-to-b from-cyan-400/10 via-cyan-500/0 to-transparent transform rotate-12 blur-2xl opacity-60" />
+      <div className="absolute top-0 left-[12%] w-96 h-[650px] bg-gradient-to-b from-emerald-300/20 via-emerald-400/5 to-transparent transform -rotate-12 blur-2xl opacity-80" />
+      <div className="absolute top-0 right-[12%] w-96 h-[650px] bg-gradient-to-b from-cyan-300/20 via-cyan-400/5 to-transparent transform rotate-12 blur-2xl opacity-80" />
 
       {/* 5. Giant Tactical Football Pitch Blueprint (Vector sa bàn & đường kẻ sân bóng đá thể thao) */}
       <svg
@@ -104,10 +115,10 @@ export const SportsBackground: React.FC = () => {
       </div>
 
       {/* 7. Bottom Stadium Glow (Ánh sáng hắt từ mặt sân lên) */}
-      <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[1100px] h-[350px] rounded-full bg-gradient-to-t from-emerald-500/10 via-teal-500/5 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[1100px] h-[350px] rounded-full bg-gradient-to-t from-emerald-500/20 via-teal-500/10 to-transparent blur-3xl pointer-events-none" />
 
-      {/* 8. Vignette Falloff (Tối góc sân để làm nổi bật nội dung bảng điều khiển) */}
-      <div className="absolute inset-0 bg-radial-vignette opacity-70 pointer-events-none" />
+      {/* 8. Vignette Falloff (Độ sâu nhẹ nhàng, giữ ảnh nền sân bóng sáng rõ và chuyên nghiệp) */}
+      <div className="absolute inset-0 bg-radial-vignette opacity-40 pointer-events-none" />
     </div>
   );
 };

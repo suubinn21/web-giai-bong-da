@@ -92,7 +92,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   ];
 
   return (
-    <nav className="hidden md:block bg-[#0B132B]/80 border-b border-slate-800 sticky top-16 sm:top-20 z-40 backdrop-blur-md">
+    <nav className="hidden md:block bg-slate-900/75 border-b border-slate-700/60 sticky top-16 sm:top-20 z-40 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center space-x-1 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
           {onBackToPortal && (
