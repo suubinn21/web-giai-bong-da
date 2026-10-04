@@ -91,8 +91,9 @@ export default function Home() {
     setAllTournaments(all);
     const curr = StorageService.getTournament();
     setTournament(curr);
-    setTeams(StorageService.getTeams());
-    setMatches(StorageService.getMatches());
+    const cleaned = StorageService.cleanExcessGroupsData(curr);
+    setTeams(cleaned.teams);
+    setMatches(cleaned.matches);
     setVenues(StorageService.getVenues());
     setReferees(StorageService.getReferees());
     setComplaints(StorageService.getComplaints());
@@ -374,6 +375,9 @@ export default function Home() {
     if (tournament.id === updatedTour.id) {
       setTournament(updatedTour);
     }
+    const cleaned = StorageService.cleanExcessGroupsData(updatedTour);
+    setTeams(cleaned.teams);
+    setMatches(cleaned.matches);
     const updatedList = StorageService.getAllTournaments();
     setAllTournaments(updatedList);
     const updatedLogs = StorageService.getAuditLogs();
@@ -383,6 +387,8 @@ export default function Home() {
     pushTournamentsListCloud(updatedList);
     pushTournamentCloud(updatedTour.id, {
       tournament: updatedTour,
+      teams: cleaned.teams,
+      matches: cleaned.matches,
       auditLogs: updatedLogs,
     });
     alert(`Đã cập nhật cấu hình giải đấu "${updatedTour.name}" thành công!`);

@@ -358,6 +358,36 @@ export const Header: React.FC<HeaderProps> = ({
                           <span>Đăng Xuất</span>
                         </button>
                       )}
+
+                      {/* Database Utilities inside User Menu for Admin/BTC */}
+                      {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
+                        <div className="pt-2 border-t border-slate-800 space-y-1">
+                          {onClearData && (
+                            <button
+                              onClick={() => {
+                                setUserMenuOpen(false);
+                                onClearData();
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-lg flex items-center gap-2 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                              <span>Xóa Sạch Dữ Liệu Mẫu</span>
+                            </button>
+                          )}
+                          {onLoadDemo && (
+                            <button
+                              onClick={() => {
+                                setUserMenuOpen(false);
+                                onLoadDemo();
+                              }}
+                              className="w-full text-left px-2.5 py-1.5 text-xs text-amber-300 hover:text-amber-200 hover:bg-amber-950/40 rounded-lg flex items-center gap-2 transition-colors"
+                            >
+                              <Database className="w-3.5 h-3.5 text-amber-400" />
+                              <span>Nạp Dữ Liệu Mẫu (Demo)</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -373,29 +403,6 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>Đăng Nhập</span>
                 </button>
               )
-            )}
-
-            {/* Action Buttons: Clear Mock Data & Load Demo Data */}
-            {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
-              <div className="hidden xl:flex items-center gap-1.5 shrink-0">
-                <button
-                  onClick={onClearData}
-                  className="flex items-center gap-1.5 h-9 text-xs text-red-300 hover:text-white bg-red-950/60 hover:bg-red-900 px-3 rounded-xl border border-red-500/40 transition-colors shrink-0 whitespace-nowrap"
-                  title="Xóa trắng toàn bộ dữ liệu để bắt đầu giải đấu"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                  <span>Xóa Dữ Liệu</span>
-                </button>
-
-                <button
-                  onClick={onLoadDemo}
-                  className="flex items-center gap-1.5 h-9 text-xs text-amber-300 hover:text-white bg-slate-900 hover:bg-slate-800 px-3 rounded-xl border border-amber-500/30 transition-colors shrink-0 whitespace-nowrap"
-                  title="Nạp lại 16 đội và lịch thi đấu mẫu để thử nghiệm"
-                >
-                  <Database className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>Demo</span>
-                </button>
-              </div>
             )}
 
             {/* Mobile Menu Hamburger Button: ONLY button visible on right on mobile phones */}

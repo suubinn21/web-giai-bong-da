@@ -11,6 +11,7 @@ import {
   TournamentStatus,
   UserRole,
   Tournament,
+  getGroupLetters,
 } from '@/types';
 
 const STORAGE_KEYS = {
@@ -53,46 +54,6 @@ export const defaultTournament: Tournament = {
 
 export const initialTournamentsList: Tournament[] = [
   defaultTournament,
-  {
-    id: 'TOUR-2026-SPRING',
-    name: 'Giải Futsal Mùa Xuân Đoàn Khoa CNTT 2026',
-    shortCode: 'SPRING-2026',
-    year: 2026,
-    organizer: 'CLB Thể Thao IT & Đoàn Khoa',
-    format: 'Bóng đá 5 người (Futsal)',
-    maxTeams: 16,
-    numberOfGroups: 4,
-    teamsPerGroup: 4,
-    maxPlayersPerTeam: 12,
-    matchDurationMinutes: 40,
-    breakDurationMinutes: 5,
-    registrationFee: 500000,
-    depositFee: 50000,
-    startDate: '2026-11-05',
-    endDate: '2026-11-15',
-    status: 'REGISTRATION',
-    description: 'Giải đấu futsal truyền thống đầu năm dành cho các chi đoàn khoa CNTT tranh tài.',
-  },
-  {
-    id: 'TOUR-2025-AUTUMN',
-    name: 'Giải Bóng Đá IT Mở Rộng 2025 (Mùa Trước)',
-    shortCode: 'IT-CUP-2025',
-    year: 2025,
-    organizer: 'Ban Chấp Hành Đoàn Khoa CNTT',
-    format: 'Bóng đá 5 người (Futsal)',
-    maxTeams: 16,
-    numberOfGroups: 4,
-    teamsPerGroup: 4,
-    maxPlayersPerTeam: 12,
-    matchDurationMinutes: 40,
-    breakDurationMinutes: 5,
-    registrationFee: 500000,
-    depositFee: 50000,
-    startDate: '2025-10-10',
-    endDate: '2025-10-20',
-    status: 'COMPLETED',
-    description: 'Mùa giải bóng đá sinh viên 2025 thành công rực rỡ với ngôi vương thuộc về CNTT K21.',
-  },
 ];
 
 // 3 Pitches per Specification Section 18 & 23
@@ -710,6 +671,30 @@ export class StorageService {
   static setCurrentRole(role: UserRole): void {
     if (!this.isClient) return;
     localStorage.setItem(STORAGE_KEYS.CURRENT_ROLE, role);
+  }
+
+  /**
+   * Cleans up teams and matches belonging to excess groups beyond the tournament's numberOfGroups
+   */
+  static cleanExcessGroupsData(tournament: Tournament): { teams: Team[]; matches: Match[] } {
+    if (!this.isClient) return { teams: [], matches: [] };
+    const validGroups = getGroupLetters(tournament.numberOfGroups || 4);
+    const teams = this.getTeams();
+    const cleanedTeams = teams.filter((t) => !t.group || validGroups.includes(t.group));
+    const validTeamIds = new Set(cleanedTeams.map((t) => t.id));
+
+    const matches = this.getMatches();
+    const cleanedMatches = matches.filter(
+      (m) =>
+        (!m.group || validGroups.includes(m.group)) &&
+        validTeamIds.has(m.homeTeamId) &&
+        validTeamIds.has(m.awayTeamId)
+    );
+
+    this.saveTeams(cleanedTeams);
+    this.saveMatches(cleanedMatches);
+
+    return { teams: cleanedTeams, matches: cleanedMatches };
   }
 
   /**
