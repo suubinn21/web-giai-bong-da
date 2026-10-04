@@ -156,7 +156,7 @@ export class AuthService {
     const found = users.find(
       (u) =>
         (u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId) &&
-        (u.password === cleanPass || cleanPass === '123' || cleanPass === 'admin2026') // Hỗ trợ mật khẩu chính hoặc demo
+        u.password === cleanPass
     );
 
     if (!found) {
