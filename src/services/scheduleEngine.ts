@@ -27,13 +27,16 @@ export class ScheduleEngine {
    * Generates a collision-free 24-match group stage schedule.
    * Distributes 8 matches per matchday across 3 pitches (07:30, 09:00, 15:00).
    */
+  /**
+   * Generates collision-free 24-match group stage schedule for 16 teams / 4 groups / 3 pitches in 1 single day.
+   * Specification timetable: 06:30 - 13:10 across 8 synchronized time slots.
+   */
   static generateGroupSchedule(
     teams: Team[],
     venues: Venue[],
     referees: Referee[],
     startDate: string = '2026-10-15'
   ): Match[] {
-    const groups: Array<'A' | 'B' | 'C' | 'D'> = ['A', 'B', 'C', 'D'];
     const activeVenues = venues.filter((v) => v.status !== 'MAINTENANCE');
     const availableReferees = referees.filter((r) => r.status !== 'INACTIVE');
 
@@ -41,82 +44,115 @@ export class ScheduleEngine {
       throw new Error('Không có sân bóng khả dụng để lập lịch thi đấu.');
     }
 
-    // 4 teams per group -> 3 rounds of 2 matches = 6 matches per group
-    // Team indices: 0, 1, 2, 3
-    // Round 1 (Lượt 1): 0 vs 1, 2 vs 3
-    // Round 2 (Lượt 2): 0 vs 2, 1 vs 3
-    // Round 3 (Lượt 3): 0 vs 3, 1 vs 2
-    const roundPairings = [
-      { roundIdx: 1, pairs: [[0, 1], [2, 3]] },
-      { roundIdx: 2, pairs: [[0, 2], [1, 3]] },
-      { roundIdx: 3, pairs: [[0, 3], [1, 2]] },
-    ];
+    // Standard 3 pitches
+    const v1 = activeVenues[0] || venues[0];
+    const v2 = activeVenues[1] || activeVenues[0] || venues[1];
+    const v3 = activeVenues[2] || activeVenues[0] || venues[2];
+    const pitchVenues = [v1, v2, v3];
 
-    // Standard synchronized time slots for 5-a-side matches (40 min + 5 min break + buffer):
-    // Ca 1: 07:30 (Sân 1, Sân 2, Sân 3) -> 3 trận
-    // Ca 2: 09:00 (Sân 1, Sân 2, Sân 3) -> 3 trận
-    // Ca 3: 15:00 (Sân 1, Sân 2)        -> 2 trận
-    // Tổng = 8 trận/ngày, tương ứng đúng 8 trận của mỗi lượt đấu vòng bảng!
-    const dailyScheduleSlots = [
-      { time: '07:30', venueIndex: 0 },
-      { time: '07:30', venueIndex: 1 },
-      { time: '07:30', venueIndex: 2 },
-      { time: '09:00', venueIndex: 0 },
-      { time: '09:00', venueIndex: 1 },
-      { time: '09:00', venueIndex: 2 },
-      { time: '15:00', venueIndex: 0 },
-      { time: '15:00', venueIndex: 1 },
+    const groupTeamsA = teams.filter((t) => t.group === 'A');
+    const groupTeamsB = teams.filter((t) => t.group === 'B');
+    const groupTeamsC = teams.filter((t) => t.group === 'C');
+    const groupTeamsD = teams.filter((t) => t.group === 'D');
+
+    const getGroupTeam = (group: 'A' | 'B' | 'C' | 'D', idx: number): Team | undefined => {
+      if (group === 'A') return groupTeamsA[idx];
+      if (group === 'B') return groupTeamsB[idx];
+      if (group === 'C') return groupTeamsC[idx];
+      return groupTeamsD[idx];
+    };
+
+    // Quy ước theo yêu cầu BTC:
+    // Slot 1 (06:30): Sân 1 (A1-A4), Sân 2 (A2-A3), Sân 3 (B1-B4)
+    // Slot 2 (07:20): Sân 1 (B2-B3), Sân 2 (C1-C4), Sân 3 (C2-C3)
+    // Slot 3 (08:10): Sân 1 (D1-D4), Sân 2 (D2-D3), Sân 3 (A1-A3)
+    // Slot 4 (09:00): Sân 1 (A4-A2), Sân 2 (B1-B3), Sân 3 (B4-B2)
+    // Slot 5 (09:50): Sân 1 (C1-C3), Sân 2 (C4-C2), Sân 3 (D1-D3)
+    // Slot 6 (10:40): Sân 1 (D4-D2), Sân 2 (A1-A2), Sân 3 (A3-A4)
+    // Slot 7 (11:30): Sân 1 (B1-B2), Sân 2 (B3-B4), Sân 3 (C1-C2)
+    // Slot 8 (12:20): Sân 1 (C3-C4), Sân 2 (D1-D2), Sân 3 (D3-D4)
+    const scheduleSlots: {
+      time: string;
+      venueIdx: number;
+      group: 'A' | 'B' | 'C' | 'D';
+      homeIdx: number;
+      awayIdx: number;
+      label: string;
+    }[] = [
+      // 06:30 – 07:20 (Ca 1)
+      { time: '06:30', venueIdx: 0, group: 'A', homeIdx: 0, awayIdx: 3, label: 'Bảng A - Lượt 1 (A1 - A4)' },
+      { time: '06:30', venueIdx: 1, group: 'A', homeIdx: 1, awayIdx: 2, label: 'Bảng A - Lượt 1 (A2 - A3)' },
+      { time: '06:30', venueIdx: 2, group: 'B', homeIdx: 0, awayIdx: 3, label: 'Bảng B - Lượt 1 (B1 - B4)' },
+
+      // 07:20 – 08:10 (Ca 2)
+      { time: '07:20', venueIdx: 0, group: 'B', homeIdx: 1, awayIdx: 2, label: 'Bảng B - Lượt 1 (B2 - B3)' },
+      { time: '07:20', venueIdx: 1, group: 'C', homeIdx: 0, awayIdx: 3, label: 'Bảng C - Lượt 1 (C1 - C4)' },
+      { time: '07:20', venueIdx: 2, group: 'C', homeIdx: 1, awayIdx: 2, label: 'Bảng C - Lượt 1 (C2 - C3)' },
+
+      // 08:10 – 09:00 (Ca 3)
+      { time: '08:10', venueIdx: 0, group: 'D', homeIdx: 0, awayIdx: 3, label: 'Bảng D - Lượt 1 (D1 - D4)' },
+      { time: '08:10', venueIdx: 1, group: 'D', homeIdx: 1, awayIdx: 2, label: 'Bảng D - Lượt 1 (D2 - D3)' },
+      { time: '08:10', venueIdx: 2, group: 'A', homeIdx: 0, awayIdx: 2, label: 'Bảng A - Lượt 2 (A1 - A3)' },
+
+      // 09:00 – 09:50 (Ca 4)
+      { time: '09:00', venueIdx: 0, group: 'A', homeIdx: 3, awayIdx: 1, label: 'Bảng A - Lượt 2 (A4 - A2)' },
+      { time: '09:00', venueIdx: 1, group: 'B', homeIdx: 0, awayIdx: 2, label: 'Bảng B - Lượt 2 (B1 - B3)' },
+      { time: '09:00', venueIdx: 2, group: 'B', homeIdx: 3, awayIdx: 1, label: 'Bảng B - Lượt 2 (B4 - B2)' },
+
+      // 09:50 – 10:40 (Ca 5)
+      { time: '09:50', venueIdx: 0, group: 'C', homeIdx: 0, awayIdx: 2, label: 'Bảng C - Lượt 2 (C1 - C3)' },
+      { time: '09:50', venueIdx: 1, group: 'C', homeIdx: 3, awayIdx: 1, label: 'Bảng C - Lượt 2 (C4 - C2)' },
+      { time: '09:50', venueIdx: 2, group: 'D', homeIdx: 0, awayIdx: 2, label: 'Bảng D - Lượt 2 (D1 - D3)' },
+
+      // 10:40 – 11:30 (Ca 6)
+      { time: '10:40', venueIdx: 0, group: 'D', homeIdx: 3, awayIdx: 1, label: 'Bảng D - Lượt 2 (D4 - D2)' },
+      { time: '10:40', venueIdx: 1, group: 'A', homeIdx: 0, awayIdx: 1, label: 'Bảng A - Lượt 3 (A1 - A2)' },
+      { time: '10:40', venueIdx: 2, group: 'A', homeIdx: 2, awayIdx: 3, label: 'Bảng A - Lượt 3 (A3 - A4)' },
+
+      // 11:30 – 12:20 (Ca 7)
+      { time: '11:30', venueIdx: 0, group: 'B', homeIdx: 0, awayIdx: 1, label: 'Bảng B - Lượt 3 (B1 - B2)' },
+      { time: '11:30', venueIdx: 1, group: 'B', homeIdx: 2, awayIdx: 3, label: 'Bảng B - Lượt 3 (B3 - B4)' },
+      { time: '11:30', venueIdx: 2, group: 'C', homeIdx: 0, awayIdx: 1, label: 'Bảng C - Lượt 3 (C1 - C2)' },
+
+      // 12:20 – 13:10 (Ca 8)
+      { time: '12:20', venueIdx: 0, group: 'C', homeIdx: 2, awayIdx: 3, label: 'Bảng C - Lượt 3 (C3 - C4)' },
+      { time: '12:20', venueIdx: 1, group: 'D', homeIdx: 0, awayIdx: 1, label: 'Bảng D - Lượt 3 (D1 - D2)' },
+      { time: '12:20', venueIdx: 2, group: 'D', homeIdx: 2, awayIdx: 3, label: 'Bảng D - Lượt 3 (D3 - D4)' },
     ];
 
     const generatedMatches: Match[] = [];
-    let matchCounter = 1;
 
-    // Distribute rounds across 3 matchdays (Day 0, Day 1, Day 2)
-    roundPairings.forEach((r, dayOffset) => {
-      const dateStr = addDaysToDate(startDate, dayOffset);
-      let slotIdx = 0;
+    scheduleSlots.forEach((slot, index) => {
+      const matchNumber = index + 1;
+      const home = getGroupTeam(slot.group, slot.homeIdx);
+      const away = getGroupTeam(slot.group, slot.awayIdx);
+      const venue = pitchVenues[slot.venueIdx % pitchVenues.length];
+      const referee = availableReferees.length > 0
+        ? availableReferees[slot.venueIdx % availableReferees.length]
+        : { id: 'REF01', name: 'Trọng tài BTC' };
 
-      // Group order for this round
-      groups.forEach((g) => {
-        const groupTeams = teams.filter((t) => t.group === g);
-        if (groupTeams.length < 4) return;
+      const matchId = `M${String(matchNumber).padStart(2, '0')}`;
 
-        r.pairs.forEach((pair) => {
-          const home = groupTeams[pair[0]];
-          const away = groupTeams[pair[1]];
-
-          const slotConfig = dailyScheduleSlots[slotIdx % dailyScheduleSlots.length];
-          const venue = activeVenues[slotConfig.venueIndex % activeVenues.length];
-          const time = slotConfig.time;
-          const referee = availableReferees[(matchCounter - 1) % availableReferees.length];
-
-          const matchId = `M${String(matchCounter).padStart(2, '0')}`;
-
-          generatedMatches.push({
-            id: matchId,
-            matchNumber: matchCounter,
-            round: 'GROUP',
-            group: g,
-            roundLabel: `Bảng ${g} - Lượt ${r.roundIdx}`,
-            venueId: venue.id,
-            venueName: venue.name,
-            date: dateStr,
-            time,
-            homeTeamId: home?.id || '',
-            awayTeamId: away?.id || '',
-            refereeId: referee?.id || 'REF01',
-            refereeName: referee?.name || 'Trọng tài BTC',
-            homeScore: 0,
-            awayScore: 0,
-            status: 'SCHEDULED',
-            currentMinute: 0,
-            half: 1,
-            events: [],
-          });
-
-          matchCounter++;
-          slotIdx++;
-        });
+      generatedMatches.push({
+        id: matchId,
+        matchNumber,
+        round: 'GROUP',
+        group: slot.group,
+        roundLabel: slot.label,
+        venueId: venue.id,
+        venueName: venue.name,
+        date: startDate,
+        time: slot.time,
+        homeTeamId: home?.id || '',
+        awayTeamId: away?.id || '',
+        refereeId: referee.id,
+        refereeName: referee.name,
+        homeScore: 0,
+        awayScore: 0,
+        status: 'SCHEDULED',
+        currentMinute: 0,
+        half: 1,
+        events: [],
       });
     });
 
@@ -124,7 +160,13 @@ export class ScheduleEngine {
   }
 
   /**
-   * Generates synchronized knockout stage schedule (Quarterfinals, Semifinals, 3rd Place, Final).
+   * Generates synchronized single-day knockout stage schedule:
+   * - 13:10 - 13:50: Nghỉ trưa & tổng hợp kết quả (BXH 4 bảng, chỉ số phụ)
+   * - 13:50 - 14:35: Tứ kết 1 & Tứ kết 2 (Nhánh A-B, nghỉ từ 11:30)
+   * - 14:40 - 15:25: Tứ kết 3 & Tứ kết 4 (Nhánh C-D, nghỉ từ 13:10)
+   * - 15:35 - 16:20: Bán kết 1 & Bán kết 2 song song (Sân 1, Sân 2)
+   * - 16:30 - 17:15: Tranh Hạng 3 (Sân 2) & CHUNG KẾT VÔ ĐỊCH (Sân 1)
+   * - 17:15 - 17:45: Lễ Trao Giải & Bế Mạc
    */
   static generateKnockoutSchedule(
     venues: Venue[],
@@ -133,51 +175,50 @@ export class ScheduleEngine {
   ): Match[] {
     const v1 = venues[0] || { id: 'V01', name: 'Sân 1 - Cỏ Nhân Tạo Ký Túc Xá' };
     const v2 = venues[1] || v1;
-    const ref = referees[0] || { id: 'REF01', name: 'Trần Văn Hùng' };
-
-    // Tứ kết: Day 4 (cách 1 ngày nghỉ hồi phục sau vòng bảng)
-    const qfDate = addDaysToDate(startDate, 4);
-    // Bán kết: Day 6 (cách 1 ngày nghỉ sau tứ kết)
-    const sfDate = addDaysToDate(startDate, 6);
-    // Chung kết & Tranh hạng 3: Day 8 (bế mạc giải)
-    const finalDate = addDaysToDate(startDate, 8);
+    const availableReferees = referees.filter((r) => r.status !== 'INACTIVE');
+    const ref1 = availableReferees[0] || { id: 'REF01', name: 'Trần Văn Hùng' };
+    const ref2 = availableReferees[1] || ref1;
 
     const knockoutSlots: {
       id: string;
       matchNumber: number;
       round: MatchRound;
       label: string;
-      date: string;
       time: string;
       venueId: string;
       venueName: string;
+      referee: { id: string; name: string };
     }[] = [
-      // 4 Quarterfinals (2 ca sáng)
-      { id: 'M25', matchNumber: 25, round: 'QUARTER_FINAL', label: 'Tứ kết 1 (Nhất A vs Nhì B)', date: qfDate, time: '08:00', venueId: v1.id, venueName: v1.name },
-      { id: 'M26', matchNumber: 26, round: 'QUARTER_FINAL', label: 'Tứ kết 2 (Nhất B vs Nhì A)', date: qfDate, time: '08:00', venueId: v2.id, venueName: v2.name },
-      { id: 'M27', matchNumber: 27, round: 'QUARTER_FINAL', label: 'Tứ kết 3 (Nhất C vs Nhì D)', date: qfDate, time: '09:30', venueId: v1.id, venueName: v1.name },
-      { id: 'M28', matchNumber: 28, round: 'QUARTER_FINAL', label: 'Tứ kết 4 (Nhất D vs Nhì C)', date: qfDate, time: '09:30', venueId: v2.id, venueName: v2.name },
-      // 2 Semifinals (1 ca chiều)
-      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', date: sfDate, time: '15:00', venueId: v1.id, venueName: v1.name },
-      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', date: sfDate, time: '15:00', venueId: v2.id, venueName: v2.name },
-      // Tranh Hạng 3 & Chung Kết (Sân chính V01)
-      { id: 'M31', matchNumber: 31, round: 'THIRD_PLACE', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', date: finalDate, time: '14:30', venueId: v1.id, venueName: v1.name },
-      { id: 'M32', matchNumber: 32, round: 'FINAL', label: 'CHUNG KẾT VÔ ĐỊCH (Thắng BK1 vs Thắng BK2)', date: finalDate, time: '16:00', venueId: v1.id, venueName: v1.name },
+      // 13:50 – 14:35: 2 Tứ kết nhánh A-B (đã nghỉ từ 11:30 sáng)
+      { id: 'M25', matchNumber: 25, round: 'QUARTER_FINAL', label: 'Tứ kết 1 (Nhất A vs Nhì B)', time: '13:50', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M26', matchNumber: 26, round: 'QUARTER_FINAL', label: 'Tứ kết 2 (Nhất B vs Nhì A)', time: '13:50', venueId: v2.id, venueName: v2.name, referee: ref2 },
+
+      // 14:40 – 15:25: 2 Tứ kết nhánh C-D (kết thúc vòng bảng lúc 13:10, nghỉ đến 14:40)
+      { id: 'M27', matchNumber: 27, round: 'QUARTER_FINAL', label: 'Tứ kết 3 (Nhất C vs Nhì D)', time: '14:40', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M28', matchNumber: 28, round: 'QUARTER_FINAL', label: 'Tứ kết 4 (Nhất D vs Nhì C)', time: '14:40', venueId: v2.id, venueName: v2.name, referee: ref2 },
+
+      // 15:35 – 16:20: 2 trận Bán kết song song
+      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', time: '15:35', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', time: '15:35', venueId: v2.id, venueName: v2.name, referee: ref2 },
+
+      // 16:30 – 17:15: Tranh Hạng 3 & Chung Kết Vô Địch song song
+      { id: 'M31', matchNumber: 31, round: 'THIRD_PLACE', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', time: '16:30', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      { id: 'M32', matchNumber: 32, round: 'FINAL', label: 'CHUNG KẾT VÔ ĐỊCH (Thắng BK1 vs Thắng BK2)', time: '16:30', venueId: v1.id, venueName: v1.name, referee: ref1 },
     ];
 
-    return knockoutSlots.map((k, idx) => ({
+    return knockoutSlots.map((k) => ({
       id: k.id,
       matchNumber: k.matchNumber,
       round: k.round,
       roundLabel: k.label,
       venueId: k.venueId,
       venueName: k.venueName,
-      date: k.date,
+      date: startDate,
       time: k.time,
       homeTeamId: '',
       awayTeamId: '',
-      refereeId: referees[idx % referees.length]?.id || ref.id,
-      refereeName: referees[idx % referees.length]?.name || ref.name,
+      refereeId: k.referee.id,
+      refereeName: k.referee.name,
       homeScore: 0,
       awayScore: 0,
       status: 'SCHEDULED' as const,
@@ -188,7 +229,7 @@ export class ScheduleEngine {
   }
 
   /**
-   * Generates a completely synchronized full tournament schedule (32 matches).
+   * Generates a completely synchronized full tournament schedule (32 matches in 1 day).
    */
   static generateFullTournamentSchedule(
     teams: Team[],
@@ -223,7 +264,9 @@ export class ScheduleEngine {
         time: template.time,
         venueId: m.venueId || template.venueId,
         venueName: m.venueName || template.venueName,
-        roundLabel: m.roundLabel || template.roundLabel,
+        roundLabel: template.roundLabel || m.roundLabel,
+        homeTeamId: m.homeTeamId || template.homeTeamId,
+        awayTeamId: m.awayTeamId || template.awayTeamId,
       };
     });
   }

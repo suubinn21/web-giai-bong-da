@@ -24,7 +24,9 @@ import {
   LayoutGrid,
   Sun,
   Sunset,
-  Timer
+  Timer,
+  Coffee,
+  Trophy
 } from 'lucide-react';
 
 interface ScheduleViewProps {
@@ -85,12 +87,12 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       StorageService.logAction(
         currentRole,
         currentRole,
-        'TỰ ĐỘNG LẬP LỊCH THI ĐẤU (SCHEDULE ENGINE)',
-        '32 Trận Đấu (Vòng Bảng & Knockout)',
-        `Tự động phân bổ 32 trận đấu theo ngày khai mạc ${startDate}, ca sáng 07:30, 09:00 và ca chiều 15:00 không trùng sân bãi.`
+        'TỰ ĐỘNG LẬP LỊCH THI ĐẤU TRỌN GÓI 1 NGÀY',
+        '32 Trận Đấu (16 Đội • 4 Bảng • 3 Sân)',
+        `Tự động xếp 32 trận đấu trong 1 ngày duy nhất ${startDate}: 06:30 - 13:10 (24 trận vòng bảng), 13:10 - 13:50 (nghỉ trưa), 13:50 - 17:15 (Tứ kết, Bán kết, Tranh hạng 3 & Chung kết).`
       );
 
-      alert(`Đã tạo thành công lịch thi đấu 32 trận chuẩn xác theo ngày khởi tranh ${startDate}! 0 xung đột sân bãi.`);
+      alert(`Đã tạo thành công lịch thi đấu 32 trận trọn gói 1 ngày (${startDate})!\n\n• 06:30 – 13:10: 24 trận vòng bảng (8 ca thi đấu x 3 sân)\n• 13:10 – 13:50: Nghỉ trưa & tổng hợp BXH 4 bảng\n• 13:50 – 15:25: Tứ kết 1-2-3-4\n• 15:35 – 16:20: Bán kết 1 & 2\n• 16:30 – 17:15: Tranh Hạng 3 & Chung Kết\n• 17:15 – 17:45: Lễ Bế Mạc & Trao Cúp Vô Địch\n\nTuyệt đối 0 xung đột sân bãi và giờ thi đấu!`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Có lỗi khi tạo lịch thi đấu.';
       alert(`Lỗi: ${msg}`);
@@ -102,7 +104,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     if (!canGenerate) return;
     const startDate = tournament?.startDate || '2026-10-15';
     const confirmed = window.confirm(
-      `Đồng bộ toàn bộ thời gian 32 trận đấu theo ngày khai mạc giải (${startDate})?\n\n• Vòng bảng: 3 ngày thi đấu (3 ca/ngày: 07:30, 09:00, 15:00)\n• Vòng Tứ kết: Ngày thứ 5 (08:00 & 09:30)\n• Vòng Bán kết: Ngày thứ 7 (15:00)\n• Tranh Hạng 3 & Chung Kết: Ngày thứ 9 (14:30 & 16:00)\n• Tỉ số và sự kiện đã diễn ra được bảo toàn nguyên vẹn.`
+      `Đồng bộ toàn bộ lịch 32 trận đấu theo mô hình TRỌN GÓI 1 NGÀY DUY NHẤT (${startDate})?\n\n• 06:30 – 13:10: 24 trận vòng bảng (8 ca thi đấu x 3 sân không trùng đội)\n• 13:10 – 13:50: Nghỉ trưa + Tổng hợp xếp hạng 4 bảng A-B-C-D\n• 13:50 – 15:25: 4 trận Tứ kết (TK1 & TK2 lúc 13:50, TK3 & TK4 lúc 14:40)\n• 15:35 – 16:20: 2 trận Bán kết song song (Sân 1 & Sân 2)\n• 16:30 – 17:15: Tranh Hạng 3 & CHUNG KẾT VÔ ĐỊCH\n• 17:15 – 17:45: Lễ Bế Mạc & Trao Giải Cúp\n\nToàn bộ tỉ số và sự kiện đã diễn ra được bảo toàn nguyên vẹn.`
     );
     if (!confirmed) return;
 
@@ -118,11 +120,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     StorageService.logAction(
       currentRole,
       currentRole,
-      'ĐỒNG BỘ THỜI GIAN LỊCH THI ĐẤU TOÀN GIẢI',
+      'ĐỒNG BỘ LỊCH THI ĐẤU 1 NGÀY TOÀN GIẢI',
       '32 Trận Đấu',
-      `Tự động phân bổ lịch đấu đồng bộ từ ngày khai mạc ${startDate}, chia đều 3 ca/ngày không trùng sân và không trùng đội.`
+      `Đồng bộ 32 trận đấu trọn gói ngày ${startDate} từ 06:30 đến 17:30 trên 3 cụm sân không trùng lịch và tối ưu thời gian nghỉ.`
     );
-    alert(`Đã đồng bộ lịch thi đấu thành công theo ngày khai mạc ${startDate}! Tuyệt đối 0 xung đột sân bãi.`);
+    alert(`Đã đồng bộ lịch thi đấu 1 ngày thành công (${startDate})! 0 xung đột sân bãi.`);
   };
 
   // Open Edit Modal for a specific match
@@ -413,15 +415,15 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-              LỊCH THI ĐẤU & KẾT QUẢ 32 TRẬN
+              LỊCH THI ĐẤU TRỌN GÓI 1 NGÀY • 32 TRẬN
             </span>
-            <span className="text-xs text-slate-400">Quy định Điều 18 & 19</span>
+            <span className="text-xs text-slate-400">16 Đội • 4 Bảng • 3 Sân</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white">
-            Điều Hành Lịch & Kết Quả Giải Đấu
+            Điều Hành Lịch Đấu 1 Ngày (06:30 – 17:30)
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Thi đấu tại 3 cụm sân cỏ nhân tạo từ 06:30 – 17:00. Tối ưu thời gian nghỉ và kiểm soát xung đột tự động.
+            06:30 – 13:10: 24 trận vòng bảng (8 ca x 3 sân) • 13:10 – 13:50: Nghỉ trưa &amp; tổng hợp BXH • 13:50 – 17:15: Tứ kết, Bán kết, Tranh hạng 3 &amp; Chung kết.
           </p>
         </div>
 
@@ -444,10 +446,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               <button
                 onClick={handleSyncAllSchedule}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-bold text-xs shadow-sm transition-all active:scale-95"
-                title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo ngày khai mạc giải"
+                title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo lịch 1 ngày (06:30 - 17:30)"
               >
                 <Zap className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Đồng Bộ Giờ Toàn Giải</span>
+                <span>Đồng Bộ Giờ 1 Ngày</span>
               </button>
 
               <button
@@ -462,79 +464,115 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         </div>
       </div>
 
-      {/* Quick Matchday Selector Pills (1-Click xem trọn vẹn lịch đấu 1 ngày) */}
+      {/* Quick Stage & Round Selector Pills */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3.5 space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
             <CalendarDays className="w-4 h-4 text-emerald-400" />
-            <span>Chọn Nhanh Ngày Thi Đấu ({availableDates.length} Ngày)</span>
+            <span>Chọn Nhanh Giai Đoạn Thi Đấu (Lịch 1 Ngày • 3 Sân)</span>
           </div>
-          {filterDate !== 'ALL' && (
+          {(filterRound !== 'ALL' || filterTimeSlot !== 'ALL' || filterDate !== 'ALL') && (
             <button
-              onClick={() => setFilterDate('ALL')}
+              onClick={() => {
+                setFilterRound('ALL');
+                setFilterTimeSlot('ALL');
+                setFilterDate('ALL');
+              }}
               className="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold transition-colors flex items-center gap-1"
             >
-              <span>← Xem toàn bộ các ngày</span>
+              <span>← Xem toàn bộ 32 trận</span>
             </button>
           )}
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-thin">
           <button
-            onClick={() => setFilterDate('ALL')}
+            onClick={() => {
+              setFilterRound('ALL');
+              setFilterTimeSlot('ALL');
+              setFilterDate('ALL');
+            }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
-              filterDate === 'ALL'
+              filterRound === 'ALL' && filterTimeSlot === 'ALL' && filterDate === 'ALL'
                 ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
                 : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
-            <span>Tất Cả Các Ngày</span>
+            <span>Tất Cả 32 Trận</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 text-white/90 ml-0.5">
               {matches.length}
             </span>
           </button>
 
-          {availableDates.map((d, idx) => {
-            const dayMatches = matches.filter((m) => m.date === d);
-            const isSelected = filterDate === d;
+          {/* Quick Stage Filters */}
+          <button
+            onClick={() => {
+              setFilterRound('GROUP');
+              setFilterTimeSlot('ALL');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+              filterRound === 'GROUP'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+            }`}
+          >
+            <span>🌅 Vòng Bảng (06:30 – 13:10)</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-emerald-400 ml-0.5">
+              24 trận
+            </span>
+          </button>
 
-            let dayTitle = `Ngày ${idx + 1}`;
-            if (dayMatches.some((m) => m.round === 'FINAL' || m.round === 'THIRD_PLACE')) {
-              dayTitle = 'Chung Kết & Tranh Hạng 3';
-            } else if (dayMatches.some((m) => m.round === 'SEMI_FINAL')) {
-              dayTitle = 'Bán Kết';
-            } else if (dayMatches.some((m) => m.round === 'QUARTER_FINAL')) {
-              dayTitle = 'Tứ Kết';
-            } else if (dayMatches.some((m) => m.round === 'GROUP')) {
-              dayTitle = `Vòng Bảng • Ngày ${idx + 1}`;
-            }
+          <button
+            onClick={() => {
+              setFilterRound('QUARTER_FINAL');
+              setFilterTimeSlot('ALL');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+              filterRound === 'QUARTER_FINAL'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+            }`}
+          >
+            <span>⚡ Tứ Kết (13:50 – 15:25)</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-cyan-400 ml-0.5">
+              4 trận
+            </span>
+          </button>
 
-            const dParts = d.split('-');
-            const shortDate = dParts.length === 3 ? `${dParts[2]}/${dParts[1]}` : d;
+          <button
+            onClick={() => {
+              setFilterRound('SEMI_FINAL');
+              setFilterTimeSlot('ALL');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+              filterRound === 'SEMI_FINAL'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+            }`}
+          >
+            <span>🔥 Bán Kết (15:35 – 16:20)</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-amber-400 ml-0.5">
+              2 trận
+            </span>
+          </button>
 
-            return (
-              <button
-                key={d}
-                onClick={() => setFilterDate(d)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
-                  isSelected
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                    : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
-                }`}
-              >
-                <span>{dayTitle}</span>
-                <span className="font-mono text-[11px] opacity-75">({shortDate})</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
-                    isSelected ? 'bg-black/30 text-white' : 'bg-slate-900 text-emerald-400'
-                  }`}
-                >
-                  {dayMatches.length} trận
-                </span>
-              </button>
-            );
-          })}
+          <button
+            onClick={() => {
+              setFilterRound('FINAL');
+              setFilterTimeSlot('ALL');
+            }}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
+              filterRound === 'FINAL' || filterRound === 'THIRD_PLACE'
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+            }`}
+          >
+            <span>🏆 Chung Kết &amp; Tranh 3 (16:30 – 17:15)</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-rose-400 ml-0.5">
+              2 trận
+            </span>
+          </button>
         </div>
       </div>
 
@@ -770,46 +808,104 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                     );
 
                     return (
-                      <div key={slotTime} className="space-y-3">
-                        {/* Ca Thi Đấu Sub-Header Banner */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
-                          <div className="flex items-center gap-2.5">
-                            <div
-                              className={`p-1.5 rounded-lg ${
-                                isMorning
-                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                  : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
-                              }`}
-                            >
-                              {isMorning ? <Sun className="w-4 h-4" /> : <Sunset className="w-4 h-4" />}
+                      <React.Fragment key={slotTime}>
+                        {/* Mốc Nghỉ Trưa & Tổng Hợp BXH Vòng Bảng (Trước Ca Tứ Kết 13:50) */}
+                        {slotTime === '13:50' && (
+                          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-amber-950/20 my-2">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                                <Coffee className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
+                                    13:10 – 13:50 • NGHỈ TRƯA &amp; TỔNG HỢP KẾT QUẢ VÒNG BẢNG
+                                  </span>
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                                    Khoảng nghỉ 40 phút
+                                  </span>
+                                </div>
+                                <p className="text-xs text-amber-100/80 mt-0.5">
+                                  BTC hoàn tất nhập điểm 24 trận vòng bảng, công bố BXH 4 bảng A-B-C-D, xác định 8 đội vào Tứ kết &amp; các đội phục hồi thể lực.
+                                </p>
+                              </div>
                             </div>
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-300 bg-black/40 px-3 py-1.5 rounded-xl border border-amber-500/30 self-start sm:self-center shrink-0">
+                              <Timer className="w-4 h-4 text-amber-400" />
+                              <span>Hoàn tất 24/24 trận vòng bảng</span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="space-y-3">
+                          {/* Ca Thi Đấu Sub-Header Banner */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+                            <div className="flex items-center gap-2.5">
+                              <div
+                                className={`p-1.5 rounded-lg ${
+                                  isMorning
+                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                                    : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
+                                }`}
+                              >
+                                {isMorning ? <Sun className="w-4 h-4" /> : <Sunset className="w-4 h-4" />}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-black text-white tracking-wide">
+                                  CA {slotTime}
+                                </span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-700 text-slate-300">
+                                  {sessionLabel}
+                                </span>
+                              </div>
+                              <span className="text-slate-500 hidden sm:inline">•</span>
+                              <span className="text-[11px] text-slate-400 hidden sm:inline">
+                                Thi đấu đồng thời trên:{' '}
+                                <strong className="text-cyan-300 font-semibold">{pitchesUsed.join(', ')}</strong>
+                              </span>
+                            </div>
+
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-black text-white tracking-wide">
-                                CA {slotTime}
-                              </span>
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-700 text-slate-300">
-                                {sessionLabel}
+                              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold">
+                                {slotMatches.length} trận cùng giờ
                               </span>
                             </div>
-                            <span className="text-slate-500 hidden sm:inline">•</span>
-                            <span className="text-[11px] text-slate-400 hidden sm:inline">
-                              Thi đấu đồng thời trên:{' '}
-                              <strong className="text-cyan-300 font-semibold">{pitchesUsed.join(', ')}</strong>
-                            </span>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold">
-                              {slotMatches.length} trận cùng giờ
-                            </span>
+                          {/* Grid of Match Cards in this Ca */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {slotMatches.map((m) => renderMatchCard(m))}
                           </div>
                         </div>
 
-                        {/* Grid of Match Cards in this Ca */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {slotMatches.map((m) => renderMatchCard(m))}
-                        </div>
-                      </div>
+                        {/* Mốc Lễ Bế Mạc & Trao Cúp Vô Địch (Sau Ca Chung Kết 16:30) */}
+                        {slotTime === '16:30' && (
+                          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-cyan-500/10 to-emerald-500/15 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-emerald-950/20 mt-4">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
+                                <Trophy className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-black text-emerald-300 uppercase tracking-wider">
+                                    17:15 – 17:45 • LỄ BẾ MẠC &amp; TRAO CÚP VÔ ĐỊCH
+                                  </span>
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-200 border border-emerald-500/30">
+                                    Tổng kết giải
+                                  </span>
+                                </div>
+                                <p className="text-xs text-emerald-100/80 mt-0.5">
+                                  Trao Cúp Vô địch, Huy chương Vàng - Bạc - Đồng, Cầu thủ xuất sắc nhất, Vua phá lưới &amp; Thủ môn xuất sắc nhất.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-300 bg-black/40 px-3 py-1.5 rounded-xl border border-emerald-500/30 self-start sm:self-center shrink-0">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                              <span>Hoàn thành 32/32 trận trọn gói 1 ngày</span>
+                            </div>
+                          </div>
+                        )}
+                      </React.Fragment>
                     );
                   })}
                 </div>
@@ -886,7 +982,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                   <span>Giờ Thi Đấu</span>
                 </label>
                 <div className="flex flex-wrap gap-1.5 mb-2">
-                  {['07:30', '09:00', '10:30', '14:00', '15:00', '16:30'].map((preset) => (
+                  {['06:30', '07:20', '08:10', '09:00', '09:50', '10:40', '11:30', '12:20', '13:50', '14:40', '15:35', '16:30'].map((preset) => (
                     <button
                       key={preset}
                       type="button"
