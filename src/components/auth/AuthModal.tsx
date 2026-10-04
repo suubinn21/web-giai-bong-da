@@ -118,17 +118,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 400);
   };
 
-  const handleQuickLogin = (role: UserRole) => {
-    SoundFX.playClick();
-    const user = AuthService.quickLogin(role);
-    setSuccessMsg(`Đã đăng nhập nhanh với quyền: ${user.fullName}`);
-    SoundFX.playGoalCheer();
-    setTimeout(() => {
-      onLoginSuccess(user);
-      onClose();
-    }, 500);
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
       <div 
@@ -295,84 +284,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
-
-              {/* Quick Login Presets for testing & grading */}
-              <div className="mt-6 pt-5 border-t border-slate-800">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    Đăng Nhập Siêu Tốc 1-Chạm (Quick Test)
-                  </span>
-                  <span className="text-[10px] text-slate-400">Chọn vai trò trải nghiệm</span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {/* BTC */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickLogin('ORGANIZER')}
-                    className="p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-emerald-900/60 hover:border-emerald-500/60 text-left transition-all group flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-base">👑</span>
-                      <span className="text-xs font-bold text-emerald-400 group-hover:text-emerald-300">Ban Tổ Chức</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">@btc (Toàn quyền giải)</span>
-                  </button>
-
-                  {/* Trọng Tài */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickLogin('REFEREE')}
-                    className="p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-amber-900/60 hover:border-amber-500/60 text-left transition-all group flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-base">⚖️</span>
-                      <span className="text-xs font-bold text-amber-400 group-hover:text-amber-300">Trọng Tài FIFA</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">@referee (Chấm điểm & thẻ)</span>
-                  </button>
-
-                  {/* Đội Trưởng */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickLogin('TEAM_MANAGER')}
-                    className="p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-blue-900/60 hover:border-blue-500/60 text-left transition-all group flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-base">⚽</span>
-                      <span className="text-xs font-bold text-blue-400 group-hover:text-blue-300">Đội Trưởng</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">@captain (Khiếu nại & quân)</span>
-                  </button>
-
-                  {/* Super Admin */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickLogin('SUPER_ADMIN')}
-                    className="p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-purple-900/60 hover:border-purple-500/60 text-left transition-all group flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-base">🛡️</span>
-                      <span className="text-xs font-bold text-purple-400 group-hover:text-purple-300">Super Admin</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">@admin (Hệ thống & logs)</span>
-                  </button>
-
-                  {/* Sinh Viên */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickLogin('STUDENT')}
-                    className="p-2.5 rounded-xl bg-slate-950/90 hover:bg-slate-800 border border-cyan-900/60 hover:border-cyan-500/60 text-left transition-all group flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-base">🎓</span>
-                      <span className="text-xs font-bold text-cyan-400 group-hover:text-cyan-300">Sinh Viên</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">@sinhvien (Khán giả theo dõi)</span>
-                  </button>
-                </div>
-              </div>
             </div>
           ) : (
             /* Register Form */
