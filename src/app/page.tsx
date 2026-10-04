@@ -618,7 +618,7 @@ export default function Home() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#070B14] flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-transparent flex flex-col items-center justify-center text-white">
         <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <div className="text-sm font-bold text-emerald-400">Đang khởi tạo ITFTMS 2026...</div>
       </div>
@@ -628,7 +628,7 @@ export default function Home() {
   // View: Outer Portal of All Created Tournaments
   if (viewMode === 'portal') {
     return (
-      <div className="min-h-screen bg-[#070B14]">
+      <div className="min-h-screen bg-transparent">
         <TournamentPortal
           tournaments={allTournaments}
           onSelectTournament={handleSelectTournament}
@@ -676,7 +676,7 @@ export default function Home() {
   const suspendedPlayers = teams.flatMap((t) => t.players).filter((p) => p.isSuspended);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070B14] text-slate-100">
+    <div className="min-h-screen flex flex-col bg-transparent text-slate-100">
       
       {/* Header with Role Switcher, Tournament Stage, Sound FX, Clear & Load Data */}
       <Header

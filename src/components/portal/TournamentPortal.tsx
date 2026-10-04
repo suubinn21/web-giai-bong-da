@@ -154,9 +154,9 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
 
   return (
-    <div className="min-h-screen bg-[#070B14] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-transparent text-slate-100 flex flex-col">
       {/* Top Header of the Portal */}
-      <header className="sticky top-0 z-50 bg-[#0B132B]/95 backdrop-blur-md border-b border-slate-800">
+      <header className="sticky top-0 z-50 bg-[#0B132B]/90 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Logo & Platform Name */}
@@ -276,10 +276,20 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         {/* Hero Stadium Billboard */}
-        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-br from-[#070B14] via-[#0B132B] to-[#131D38] p-6 sm:p-10 shadow-2xl">
+        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-br from-[#060B19]/90 via-[#0B1530]/90 to-[#12224A]/90 p-6 sm:p-10 shadow-2xl backdrop-blur-sm">
           {/* Pitch ambient glow */}
-          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          {/* Stadium tactical pitch watermark & turf stripes */}
+          <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 pointer-events-none overflow-hidden">
+            <svg viewBox="0 0 400 400" className="w-full h-full stroke-emerald-400" fill="none">
+              <circle cx="200" cy="200" r="140" strokeWidth="2" />
+              <circle cx="200" cy="200" r="6" fill="#10B981" />
+              <line x1="200" y1="0" x2="200" y2="400" strokeWidth="2" strokeDasharray="6 6" />
+            </svg>
+          </div>
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl space-y-4">

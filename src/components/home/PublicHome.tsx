@@ -90,10 +90,21 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
     <div className="space-y-8">
       
       {/* Hero Stadium Banner */}
-      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-r from-[#070B14] via-[#0B132B] to-[#111C38] p-6 sm:p-12 shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/30 bg-gradient-to-r from-[#060B19]/90 via-[#0B1530]/90 to-[#12224A]/90 p-6 sm:p-12 shadow-2xl backdrop-blur-sm">
         {/* Animated pitch overlay glow */}
-        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Stadium tactical pitch watermark & turf stripes */}
+        <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
+        <div className="absolute -right-10 top-0 bottom-0 w-80 opacity-10 pointer-events-none overflow-hidden">
+          <svg viewBox="0 0 300 300" className="w-full h-full stroke-emerald-400" fill="none">
+            <rect x="20" y="20" width="260" height="260" rx="8" strokeWidth="2" />
+            <circle cx="150" cy="150" r="70" strokeWidth="2" />
+            <circle cx="150" cy="150" r="4" fill="#10B981" />
+            <line x1="20" y1="150" x2="280" y2="150" strokeWidth="1.5" strokeDasharray="4 4" />
+          </svg>
+        </div>
 
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider mb-4">
