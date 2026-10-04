@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --primary-glow: radial-gradient(rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0));
-  --electric-glow: radial-gradient(rgba(0, 245, 212, 0.2), rgba(0, 187, 249, 0));
+  --primary-glow: radial-gradient(rgba(16, 185, 129, 0.35), rgba(5, 150, 105, 0));
+  --electric-glow: radial-gradient(rgba(0, 245, 212, 0.25), rgba(0, 187, 249, 0));
+  --pitch-green: #10B981;
+  --pitch-dark: #064E3B;
 }
 
 body {
+  color: #f8fafc;
+  background-color: #060F1D;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   overflow-x: hidden;
 }
 
 /* ==========================================================================
-   DARK MODE BASE (MẶC ĐỊNH KHI Ở CHẾ ĐỘ BAN ĐÊM)
+   VIBRANT ATHLETIC EMERALD GREEN THEME (ITFTMS 2026 SIGNATURE IDENTITY)
    ========================================================================== */
-html.dark body {
-  color: #f8fafc;
-  background-color: #081120;
-}
 
-/* Stadium Turf Stripes (Vệt cắt sọc cỏ sân vận động thể thao) */
+/* Stadium Turf Stripes (Vệt cắt sọc cỏ sân vận động thể thao xanh tươi) */
 .sports-turf-stripes {
   background-image: repeating-linear-gradient(
     0deg,
-    rgba(16, 185, 129, 0.04) 0px,
-    rgba(16, 185, 129, 0.04) 70px,
+    rgba(16, 185, 129, 0.06) 0px,
+    rgba(16, 185, 129, 0.06) 70px,
     transparent 70px,
     transparent 140px
   );
@@ -34,14 +34,14 @@ html.dark body {
 /* Sports Hex Pattern (Lưới khung thành & kết cấu bóng đá lục giác công nghệ cao) */
 .sports-hex-pattern {
   background-image: 
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.16) 1.2px, transparent 1.2px),
-    radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.14) 1.2px, transparent 1.2px);
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.22) 1.2px, transparent 1.2px),
+    radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.16) 1.2px, transparent 1.2px);
   background-size: 28px 28px;
 }
 
-/* Stadium Radial Vignette */
+/* Stadium Radial Vignette (Độ sâu góc sân ban đêm - Giữ màu xanh sân bóng rực rỡ) */
 .bg-radial-vignette {
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(4, 10, 22, 0.55) 100%);
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(4, 10, 22, 0.65) 100%);
 }
 
 /* Stadium Floodlight Breathing Animation */
@@ -52,7 +52,7 @@ html.dark body {
   }
   50% {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 }
 
@@ -60,19 +60,20 @@ html.dark body {
   animation: stadium-pulse 7s ease-in-out infinite;
 }
 
-/* Custom modern scrollbar */
+/* Custom modern athletic scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B132B;
+  background: #071322;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1C2541;
+  background: #132A44;
   border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -81,16 +82,16 @@ html.dark body {
 
 /* Pitch & Stadium styles */
 .pitch-pattern {
-  background-color: #0d4229;
+  background-color: #093720;
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 40px, transparent 40px, transparent 80px);
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.12), rgba(0,0,0,0.12) 40px, transparent 40px, transparent 80px);
   background-size: 40px 40px, 40px 40px, 100% 100%;
 }
 
 .pitch-lines {
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   position: relative;
 }
 
@@ -100,7 +101,7 @@ html.dark body {
   left: 0;
   right: 0;
   height: 2px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .pitch-center-circle {
@@ -111,31 +112,35 @@ html.dark body {
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-/* Neon glow classes */
+/* Neon glow classes with prominent green */
 .glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 30px -4px rgba(16, 185, 129, 0.55);
+}
+
+.glow-emerald-lg {
+  box-shadow: 0 0 50px -5px rgba(16, 185, 129, 0.45);
 }
 
 .glow-cyan {
-  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.45);
 }
 
 .glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.45);
 }
 
 .glow-crimson {
-  box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.45);
 }
 
-/* Glassmorphism */
+/* Glassmorphism with Emerald Border Rim */
 .glass-panel {
-  background: rgba(17, 28, 56, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(11, 23, 42, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .glass-panel-hover {
@@ -143,373 +148,30 @@ html.dark body {
 }
 
 .glass-panel-hover:hover {
-  background: rgba(28, 37, 65, 0.85);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 32, 58, 0.9);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 8px 30px -10px rgba(16, 185, 129, 0.25);
   transform: translateY(-2px);
 }
 
-/* ==========================================================================
-   LIGHT MODE (GIAO DIỆN TRẮNG SÁNG THỂ THAO CHUYÊN NGHIỆP - ITFTMS 2026)
-   ========================================================================== */
-html.light {
-  color-scheme: light;
+/* Signature Emerald Green Card */
+.sports-emerald-card {
+  background: linear-gradient(135deg, rgba(10, 24, 43, 0.9) 0%, rgba(6, 17, 31, 0.95) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html.light body {
-  color: #0f172a !important;
-  background-color: #f8fafc !important;
+.sports-emerald-card:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 14px 40px -12px rgba(16, 185, 129, 0.3);
+  transform: translateY(-3px);
 }
 
-/* 1. Sports Stadium Background in Light / Daylight Arena Mode */
-html.light .sports-stadium-overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(248, 250, 252, 0.88) 0%,
-    rgba(241, 245, 249, 0.72) 40%,
-    rgba(248, 250, 252, 0.94) 100%
-  ) !important;
-}
-
-html.light .sports-pitch-boost {
-  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.12) 0%, transparent 70%) !important;
-}
-
-html.light .sports-turf-stripes {
-  background-image: repeating-linear-gradient(
-    0deg,
-    rgba(16, 185, 129, 0.05) 0px,
-    rgba(16, 185, 129, 0.05) 70px,
-    transparent 70px,
-    transparent 140px
-  ) !important;
-}
-
-html.light .sports-hex-pattern {
-  background-image: 
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 1.2px, transparent 1.2px),
-    radial-gradient(circle at 0% 0%, rgba(6, 182, 212, 0.10) 1.2px, transparent 1.2px) !important;
-}
-
-html.light .stadium-vignette {
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(203, 213, 225, 0.3) 100%) !important;
-  opacity: 0.25 !important;
-}
-
-html.light .pitch-blueprint-svg {
-  opacity: 0.14 !important;
-  stroke: #059669 !important;
-}
-
-/* 2. Header & Navigation Light Theme */
-html.light header {
-  background-color: rgba(255, 255, 255, 0.94) !important;
-  border-bottom-color: #e2e8f0 !important;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.04) !important;
-}
-
-html.light nav {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-bottom-color: #e2e8f0 !important;
-}
-
-/* 3. Cards & Main Containers (Pure White with Crisp Slate Borders) */
-html.light .bg-slate-900,
-html.light .bg-slate-900\/95,
-html.light .bg-slate-900\/90,
-html.light .bg-slate-900\/85,
-html.light .bg-slate-900\/80,
-html.light .bg-slate-900\/70,
-html.light .bg-slate-900\/60,
-html.light .bg-slate-900\/50,
-html.light .bg-slate-900\/40,
-html.light .bg-slate-900\/30,
-html.light .bg-slate-950,
-html.light .bg-slate-950\/95,
-html.light .bg-slate-950\/90,
-html.light .bg-slate-950\/85,
-html.light .bg-slate-950\/80,
-html.light .bg-slate-950\/70,
-html.light .bg-slate-950\/60,
-html.light .bg-slate-950\/50,
-html.light .bg-\[\#0B132B\],
-html.light .bg-\[\#0B132B\]\/95,
-html.light .bg-\[\#0B132B\]\/90,
-html.light .bg-\[\#0B132B\]\/80,
-html.light .bg-\[\#0B132B\]\/70,
-html.light .bg-\[\#050811\],
-html.light .bg-\[\#070b14\],
-html.light .bg-\[\#081120\],
-html.light .bg-\[\#111C38\],
-html.light .bg-\[\#1C2541\],
-html.light .glass-panel {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-}
-
-/* 4. Sub-cards, inner stat blocks, table header bars */
-html.light .bg-slate-800,
-html.light .bg-slate-800\/90,
-html.light .bg-slate-800\/80,
-html.light .bg-slate-800\/70,
-html.light .bg-slate-800\/60,
-html.light .bg-slate-800\/50,
-html.light .bg-slate-800\/40,
-html.light .bg-slate-800\/30 {
-  background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-}
-
-/* Hover surfaces */
-html.light .hover\:bg-slate-800:hover,
-html.light .hover\:bg-slate-800\/50:hover,
-html.light .hover\:bg-slate-900:hover,
-html.light .hover\:bg-slate-800\/80:hover {
-  background-color: #f1f5f9 !important;
-}
-
-/* 5. Borders */
-html.light .border-slate-800,
-html.light .border-slate-800\/80,
-html.light .border-slate-800\/60,
-html.light .border-slate-800\/50,
-html.light .border-slate-700,
-html.light .border-slate-700\/80,
-html.light .border-slate-700\/60,
-html.light .border-slate-900,
-html.light .border-slate-950 {
-  border-color: #e2e8f0 !important;
-}
-
-html.light .hover\:border-slate-700:hover,
-html.light .hover\:border-slate-600:hover {
-  border-color: #cbd5e1 !important;
-}
-
-/* 6. Typography & Text Colors */
-html.light .text-white,
-html.light .text-slate-100,
-html.light .text-slate-200 {
-  color: #0f172a !important;
-}
-
-html.light .text-slate-300,
-html.light .text-slate-400 {
-  color: #475569 !important;
-}
-
-html.light .text-slate-500 {
-  color: #64748b !important;
-}
-
-/* EXCEPTIONS: Preserve white text on buttons and gradient/colored fills */
-html.light button[class*="bg-emerald-"],
-html.light button[class*="bg-teal-"],
-html.light button[class*="bg-red-"],
-html.light button[class*="bg-blue-"],
-html.light button[class*="bg-indigo-"],
-html.light button[class*="bg-gradient-"],
-html.light [class*="bg-emerald-500"].text-white,
-html.light [class*="bg-emerald-600"].text-white,
-html.light [class*="bg-teal-600"].text-white,
-html.light [class*="bg-red-500"].text-white,
-html.light [class*="bg-red-600"].text-white,
-html.light [class*="bg-blue-600"].text-white,
-html.light [class*="from-emerald-500"].text-white,
-html.light [class*="from-teal-600"].text-white,
-html.light [class*="bg-gradient-"].text-white,
-html.light [class*="bg-emerald-500"] span.text-white,
-html.light [class*="bg-emerald-600"] span.text-white,
-html.light [class*="bg-teal-600"] span.text-white,
-html.light [class*="bg-red-500"] span.text-white,
-html.light [class*="bg-red-600"] span.text-white,
-html.light [class*="bg-blue-600"] span.text-white,
-html.light [class*="bg-gradient-"] span.text-white,
-html.light [class*="bg-emerald-500"] *,
-html.light [class*="bg-emerald-600"] *,
-html.light [class*="bg-teal-600"] *,
-html.light [class*="bg-red-500"] *,
-html.light [class*="bg-red-600"] *,
-html.light [class*="bg-blue-600"] *,
-html.light [class*="bg-gradient-to-"] * {
-  color: #ffffff !important;
-}
-
-/* Emerald accents on light mode */
-html.light .text-emerald-400 {
-  color: #059669 !important;
-}
-html.light .text-cyan-400 {
-  color: #0891b2 !important;
-}
-html.light .text-amber-400 {
-  color: #d97706 !important;
-}
-html.light .text-red-400 {
-  color: #dc2626 !important;
-}
-
-/* 7. Badges & Pills */
-html.light .bg-emerald-950\/80,
-html.light .bg-emerald-950,
-html.light .bg-emerald-900\/50 {
-  background-color: #ecfdf5 !important;
-  border-color: #a7f3d0 !important;
-  color: #047857 !important;
-}
-
-html.light .bg-cyan-950\/80,
-html.light .bg-cyan-950,
-html.light .bg-cyan-900\/50 {
-  background-color: #ecfeff !important;
-  border-color: #a5f3fc !important;
-  color: #0e7490 !important;
-}
-
-html.light .bg-amber-950\/80,
-html.light .bg-amber-950,
-html.light .bg-amber-900\/50 {
-  background-color: #fffbeb !important;
-  border-color: #fde68a !important;
-  color: #b45309 !important;
-}
-
-html.light .bg-red-950\/80,
-html.light .bg-red-950,
-html.light .bg-red-900\/50 {
-  background-color: #fef2f2 !important;
-  border-color: #fecaca !important;
-  color: #b91c1c !important;
-}
-
-html.light .bg-purple-950\/80,
-html.light .bg-purple-950 {
-  background-color: #faf5ff !important;
-  border-color: #e9d5ff !important;
-  color: #7e22ce !important;
-}
-
-/* 8. Forms & Inputs */
-html.light input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
-html.light select,
-html.light textarea {
-  background-color: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-html.light input::placeholder,
-html.light textarea::placeholder {
-  color: #94a3b8 !important;
-}
-
-html.light input:focus,
-html.light select:focus,
-html.light textarea:focus {
-  border-color: #10b981 !important;
-  outline: none !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
-}
-
-/* 9. Hero Billboard Light Gradient Overlays */
-html.light .hero-billboard-overlay {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.96) 0%,
-    rgba(248, 250, 252, 0.90) 50%,
-    rgba(241, 245, 249, 0.65) 100%
-  ) !important;
-}
-
-/* 10. Footer */
-html.light footer {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  color: #64748b !important;
-}
-
-/* 11. Modal Windows & Popups */
-html.light .modal-backdrop {
-  background-color: rgba(15, 23, 42, 0.45) !important;
-}
-html.light .modal-content {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* 12. Dropdowns */
-html.light .z-50.bg-slate-900,
-html.light .z-50.bg-\[\#0B132B\] {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* 13. Light Scrollbar */
-html.light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-html.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: #10b981;
-}
-
-/* 14. Mobile Bottom Nav in Light Mode */
-html.light nav[aria-label="Thanh điều hướng di động"],
-html.light .fixed.bottom-0 {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-top-color: #e2e8f0 !important;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06) !important;
-}
-
-html.light nav[aria-label="Thanh điều hướng di động"] button:not(.text-emerald-400):not(.text-red-400):not(.text-teal-400) {
-  color: #64748b !important;
-}
-
-/* 15. Tables & Divide Utilities */
-html.light table {
-  border-color: #e2e8f0 !important;
-}
-
-html.light th {
-  background-color: #f8fafc !important;
-  color: #475569 !important;
-  border-color: #e2e8f0 !important;
-}
-
-html.light td {
-  border-color: #f1f5f9 !important;
-}
-
-html.light tr:hover td {
-  background-color: rgba(16, 185, 129, 0.04) !important;
-}
-
-html.light .divide-slate-800 > * + *,
-html.light .divide-slate-700 > * + * {
-  border-color: #e2e8f0 !important;
-}
-
-/* 16. Select Options & Monospace Badges */
-html.light select option {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-}
-
-html.light code {
-  background-color: #f1f5f9 !important;
-  color: #047857 !important;
-}
-
-/* 17. Desktops Nav Tab Inactive State */
-html.light nav.hidden.md\:block button:not([class*="from-emerald-500"]) {
-  color: #475569 !important;
-}
-html.light nav.hidden.md\:block button:not([class*="from-emerald-500"]):hover {
-  color: #0f172a !important;
-  background-color: #f1f5f9 !important;
+/* Gradient Text for Headings */
+.emerald-heading-gradient {
+  background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

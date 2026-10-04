@@ -26,12 +26,9 @@ import {
   LogIn,
   LogOut,
   User,
-  ArrowLeft,
-  Sun,
-  Moon
+  ArrowLeft
 } from 'lucide-react';
 import { Tournament, TournamentStatus, UserRole, UserAccount } from '@/types';
-import { useTheme } from '@/utils/useTheme';
 
 interface TournamentPortalProps {
   tournaments: Tournament[];
@@ -67,7 +64,6 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | TournamentStatus>('ALL');
   const [yearFilter, setYearFilter] = useState<string>('ALL');
-  const { isLight, toggleTheme } = useTheme();
 
   // Stats across tournaments
   const totalTournaments = tournaments.length;
@@ -228,13 +224,13 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
             {/* User Profile / Login Button */}
             {currentUser ? (
-              <div className="flex items-center gap-2 bg-slate-900/90 border border-slate-700/80 px-2 sm:px-2.5 py-1 rounded-xl">
+              <div className="flex items-center gap-2 bg-[#091A2C] border border-emerald-500/40 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-sm">
                 <img
                   src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
                   alt={currentUser.fullName}
-                  className="w-6 h-6 rounded-lg object-cover border border-emerald-500/40"
+                  className="w-6 h-6 rounded-lg object-cover border border-emerald-400/50"
                 />
-                <span className="text-xs font-bold text-white hidden md:inline max-w-[100px] truncate">
+                <span className="text-xs font-bold text-white hidden md:inline max-w-[120px] truncate">
                   {currentUser.fullName}
                 </span>
                 {onLogout && (
@@ -251,38 +247,19 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onOpenAuthModal && (
                 <button
                   onClick={onOpenAuthModal}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-emerald-400 text-xs font-bold transition-all shadow-sm active:scale-95"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-black transition-all shadow-md shadow-emerald-500/30 border border-emerald-400/40 active:scale-95"
                 >
                   <LogIn className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Đăng Nhập</span>
+                  <span>Đăng Nhập</span>
                 </button>
               )
             )}
-
-            {/* Theme Mode Toggle (Sáng / Tối) */}
-            <button
-              onClick={toggleTheme}
-              title={isLight ? "Chuyển sang Giao diện Nền Tối" : "Chuyển sang Giao diện Nền Trắng"}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-900 text-xs font-bold transition-all shadow-sm active:scale-95 text-slate-700 dark:text-slate-300 hover:border-emerald-500 shrink-0"
-            >
-              {isLight ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-500" />
-                  <span className="hidden sm:inline">Nền Trắng</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="hidden sm:inline">Nền Tối</span>
-                </>
-              )}
-            </button>
 
             {/* Create Tournament Button */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onCreateTournament}
-                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40 shrink-0"
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40 shrink-0"
               >
                 <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">+ Tạo Mới Giải Đấu</span>
@@ -296,22 +273,22 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        {/* Hero Stadium Billboard */}
-        <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+        {/* Hero Stadium Billboard with Prominent Emerald Athletic Design */}
+        <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/40 bg-gradient-to-br from-[#091A2C]/95 via-[#071424]/95 to-[#040C18]/95 p-6 sm:p-10 shadow-2xl shadow-emerald-950/40 backdrop-blur-md">
           {/* Action Photo Background */}
           <div 
-            className="absolute inset-0 bg-cover bg-right sm:bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
+            className="absolute inset-0 bg-cover bg-right sm:bg-center bg-no-repeat opacity-35 transform scale-105 pointer-events-none"
             style={{ backgroundImage: `url('/images/tournament-hero.jpg')` }}
           />
-          <div className="hero-billboard-overlay absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#040C16]/95 via-[#061424]/85 to-[#061424]/35 pointer-events-none" />
 
           {/* Pitch ambient glow */}
-          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute -left-20 -top-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/30 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -left-20 -top-20 w-96 h-96 bg-teal-500/25 rounded-full blur-3xl pointer-events-none"></div>
 
           {/* Stadium tactical pitch watermark & turf stripes */}
-          <div className="absolute inset-0 sports-turf-stripes opacity-40 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-15 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 sports-turf-stripes opacity-45 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 pointer-events-none overflow-hidden">
             <svg viewBox="0 0 400 400" className="w-full h-full stroke-emerald-400" fill="none">
               <circle cx="200" cy="200" r="140" strokeWidth="2" />
               <circle cx="200" cy="200" r="6" fill="#10B981" />
@@ -321,77 +298,77 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
           <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="max-w-2xl space-y-4">
-              <div className="inline-flex items-center gap-2 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 bg-emerald-950/90 border border-emerald-400/50 text-emerald-300 text-xs font-black px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-sm shadow-emerald-500/20">
                 <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
                 <span>NỀN TẢNG QUẢN LÝ & CÔNG BỐ GIẢI BÓNG ĐÁ SINH VIÊN CHUYÊN NGHIỆP</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
                 CÁC MÙA GIẢI BÓNG ĐÁ <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 drop-shadow-[0_2px_15px_rgba(16,185,129,0.35)]">
                   KHOA CÔNG NGHỆ THÔNG TIN
                 </span>
               </h2>
 
-              <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-200 font-normal leading-relaxed">
                 Hệ thống điều hành trọn vẹn từ khâu tiếp nhận đăng ký, bốc thăm chia bảng 3D, lập lịch thi đấu, 
                 Live Match Center cập nhật từng phút, xếp hạng Ranking Engine tự động và sơ đồ nhánh đấu Knock-out.
               </p>
             </div>
 
-            {/* Metric Counters Grid */}
+            {/* Metric Counters Grid with High-Contrast Emerald Sports Theme */}
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-3.5 w-full lg:w-auto shrink-0">
-              <div className="bg-slate-900/80 backdrop-blur border border-slate-700/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-lg">
+              <div className="bg-[#091A2C]/90 backdrop-blur-md border border-emerald-500/30 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-xl hover:shadow-emerald-500/20 transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Tổng Số Giải</span>
+                  <span className="text-xs text-slate-300 font-semibold">Tổng Số Giải</span>
                   <Trophy className="w-4 h-4 text-amber-400" />
                 </div>
                 <div className="text-2xl sm:text-3xl font-black text-white">{totalTournaments}</div>
-                <div className="text-[11px] text-emerald-400 mt-1 font-semibold">Tất cả các mùa</div>
+                <div className="text-[11px] text-emerald-400 mt-1 font-bold">Tất cả các mùa</div>
               </div>
 
-              <div className="bg-slate-900/80 backdrop-blur border border-slate-700/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-lg">
+              <div className="bg-[#091A2C]/90 backdrop-blur-md border border-emerald-500/40 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-xl hover:shadow-emerald-500/25 transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Giải Đang Chạy</span>
+                  <span className="text-xs text-emerald-300 font-semibold">Giải Đang Chạy</span>
                   <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                 </div>
                 <div className="text-2xl sm:text-3xl font-black text-emerald-400">{activeTournaments}</div>
-                <div className="text-[11px] text-slate-400 mt-1 font-semibold">Đang tiếp diễn</div>
+                <div className="text-[11px] text-emerald-300 mt-1 font-bold">Đang tiếp diễn</div>
               </div>
 
-              <div className="bg-slate-900/80 backdrop-blur border border-slate-700/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-lg">
+              <div className="bg-[#091A2C]/90 backdrop-blur-md border border-emerald-500/30 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-xl hover:shadow-emerald-500/20 transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Đội Bóng</span>
+                  <span className="text-xs text-slate-300 font-semibold">Đội Bóng</span>
                   <Users className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div className="text-2xl sm:text-3xl font-black text-white">{totalTeams}</div>
-                <div className="text-[11px] text-cyan-400 mt-1 font-semibold">Đã đăng ký</div>
+                <div className="text-[11px] text-cyan-400 mt-1 font-bold">Đã đăng ký</div>
               </div>
 
-              <div className="bg-slate-900/80 backdrop-blur border border-slate-700/80 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-lg">
+              <div className="bg-[#091A2C]/90 backdrop-blur-md border border-emerald-500/30 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 flex flex-col justify-center shadow-xl hover:shadow-emerald-500/20 transition-all hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-slate-400 font-medium">Trận Đấu</span>
+                  <span className="text-xs text-slate-300 font-semibold">Trận Đấu</span>
                   <Radio className="w-4 h-4 text-rose-400" />
                 </div>
                 <div className="text-2xl sm:text-3xl font-black text-white">{totalMatches}</div>
-                <div className="text-[11px] text-rose-400 mt-1 font-semibold">Lịch & Kết quả</div>
+                <div className="text-[11px] text-rose-400 mt-1 font-bold">Lịch & Kết quả</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Search, Filter & Year Selection Toolbar */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-900/70 backdrop-blur border border-slate-800 p-4 rounded-2xl">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#091A2C]/85 backdrop-blur-md border border-emerald-500/25 p-4 rounded-2xl shadow-xl">
           
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-400" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Tìm kiếm giải đấu theo tên, năm, mã hiệu hoặc đơn vị tổ chức..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/80 transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 bg-[#061220]/90 border border-emerald-500/30 focus:border-emerald-400 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
             {searchTerm && (
               <button
@@ -409,8 +386,8 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onClick={() => setStatusFilter('ALL')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                 statusFilter === 'ALL'
-                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30 border border-emerald-400/40'
+                  : 'bg-[#0A1A2C] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
               }`}
             >
               Tất Cả ({tournaments.length})
@@ -420,8 +397,8 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onClick={() => setStatusFilter('REGISTRATION')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                 statusFilter === 'REGISTRATION'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30 border border-emerald-400/40'
+                  : 'bg-[#0A1A2C] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
               }`}
             >
               Đang Mở Đăng Ký
@@ -431,8 +408,8 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onClick={() => setStatusFilter('GROUP_STAGE')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                 statusFilter === 'GROUP_STAGE'
-                  ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
-                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/30 border border-teal-400/40'
+                  : 'bg-[#0A1A2C] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
               }`}
             >
               Vòng Bảng
@@ -442,8 +419,8 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onClick={() => setStatusFilter('COMPLETED')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                 statusFilter === 'COMPLETED'
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-slate-700 text-white border border-slate-500'
+                  : 'bg-[#0A1A2C] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
               }`}
             >
               Đã Bế Mạc
@@ -516,10 +493,10 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                 return (
                   <div
                     key={tour.id}
-                    className="group relative rounded-3xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 hover:border-emerald-500/60 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/15 hover:-translate-y-1 overflow-hidden"
+                    className="group relative rounded-3xl bg-gradient-to-b from-[#091A2C]/95 via-[#071524]/95 to-[#050E1A]/95 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400 flex flex-col justify-between transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/25 hover:-translate-y-1.5 overflow-hidden"
                   >
                     {/* Top ambient badge line */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 opacity-70 group-hover:opacity-100 transition-opacity z-10"></div>
+                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 opacity-80 group-hover:opacity-100 transition-opacity z-10"></div>
 
                     {/* Tournament Cover Banner Image */}
                     <div 
@@ -531,14 +508,14 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                         alt={tour.name} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-black/30" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#071524] via-[#071524]/40 to-transparent" />
 
                       {/* Floating Short Code & Year Badges */}
                       <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 z-10">
-                        <span className="font-mono text-[10px] font-black tracking-widest text-emerald-300 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-lg border border-emerald-500/40 shadow-sm">
+                        <span className="font-mono text-[10px] font-black tracking-widest text-emerald-300 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-emerald-500/40 shadow-sm">
                           {tour.shortCode || 'ITFTMS'}
                         </span>
-                        <span className="text-[10px] font-bold text-white bg-black/70 backdrop-blur-md px-2 py-1 rounded-lg border border-slate-700/60 shadow-sm">
+                        <span className="text-[10px] font-bold text-white bg-black/80 backdrop-blur-md px-2 py-1 rounded-lg border border-slate-700/60 shadow-sm">
                           {tour.year || 2026}
                         </span>
                       </div>
@@ -563,18 +540,18 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                           >
                             {tour.name}
                           </h4>
-                          <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-1.5">
-                            <Building2 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                          <div className="flex items-center gap-1.5 text-xs text-slate-300 mt-1.5">
+                            <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                             <span className="truncate">{tour.organizer || 'Khoa Công Nghệ Thông Tin'}</span>
                           </div>
                         </div>
 
                       {/* Format & Group Layout Pills */}
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <div className="bg-slate-900/90 border border-slate-800 text-[11px] text-slate-300 px-2.5 py-1 rounded-lg font-medium">
+                        <div className="bg-[#061220]/90 border border-slate-800 text-[11px] text-slate-300 px-2.5 py-1 rounded-lg font-medium">
                           ⚽ {tour.format || 'Bóng đá 5 người (Futsal)'} • {tour.matchDurationMinutes || 40} phút
                         </div>
-                        <div className="bg-emerald-950/70 border border-emerald-500/30 text-[11px] text-emerald-400 px-2.5 py-1 rounded-lg font-bold">
+                        <div className="bg-emerald-950/80 border border-emerald-500/40 text-[11px] text-emerald-300 px-2.5 py-1 rounded-lg font-bold">
                           {tour.numberOfGroups || 4} Bảng × {tour.teamsPerGroup || 4} Đội
                         </div>
                       </div>

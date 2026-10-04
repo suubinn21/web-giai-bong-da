@@ -89,14 +89,14 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
   return (
     <div className="space-y-8">
       
-      {/* Hero Stadium Banner */}
-      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-12 shadow-2xl backdrop-blur-md">
+      {/* Hero Stadium Banner with Prominent Emerald Athletic Design */}
+      <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/40 bg-gradient-to-br from-[#091A2C]/95 via-[#071424]/95 to-[#040C18]/95 p-6 sm:p-12 shadow-2xl shadow-emerald-950/40 backdrop-blur-md">
         {/* Action Photo Background */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-35 transform scale-105 pointer-events-none"
           style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
         />
-        <div className="hero-billboard-overlay absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#040C16]/95 via-[#061424]/85 to-[#061424]/35 pointer-events-none" />
 
         {/* Animated pitch overlay glow */}
         <div className="absolute -right-20 -bottom-20 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>

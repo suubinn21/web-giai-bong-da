@@ -31,14 +31,11 @@ import {
   LogOut,
   User,
   KeyRound,
-  ArrowLeft,
-  Sun,
-  Moon
+  ArrowLeft
 } from 'lucide-react';
 import { TabKey } from './Navigation';
 import { UserRole, Tournament, TournamentStatus, UserAccount } from '@/types';
 import { SoundFX } from '@/utils/soundEffects';
-import { useTheme } from '@/utils/useTheme';
 
 interface MobileMenuDrawerProps {
   isOpen: boolean;
@@ -90,7 +87,6 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   canGoBack,
 }) => {
   const [soundOn, setSoundOn] = React.useState(true);
-  const { isLight, toggleTheme } = useTheme();
 
   if (!isOpen) return null;
 
@@ -623,23 +619,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               </span>
             </button>
 
-            {/* Theme Toggle Button in Mobile Drawer */}
-            <button
-              onClick={toggleTheme}
-              className="w-full p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                {isLight ? (
-                  <Sun className="w-4 h-4 text-amber-500" />
-                ) : (
-                  <Moon className="w-4 h-4 text-cyan-400" />
-                )}
-                <span>Giao diện: {isLight ? 'Nền Trắng Sáng' : 'Nền Tối Thể Thao'}</span>
-              </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${isLight ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-800 text-slate-300 border border-slate-700'}`}>
-                {isLight ? '☀️ NỀN TRẮNG' : '🌙 NỀN TỐI'}
-              </span>
-            </button>
+
 
             {/* Clear / Demo Data (Admin / Organizer) */}
             {canManage && (

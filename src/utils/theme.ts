@@ -1,9 +1,15 @@
 export type ThemeMode = 'light' | 'dark';
 
 export const getTheme = (): ThemeMode => {
-  if (typeof window === 'undefined') return 'light';
+  if (typeof window === 'undefined') return 'dark';
+  const migrated = localStorage.getItem('itftms_theme_emerald_v1');
+  if (!migrated) {
+    localStorage.setItem('itftms_theme', 'dark');
+    localStorage.setItem('itftms_theme_emerald_v1', 'true');
+    return 'dark';
+  }
   const saved = localStorage.getItem('itftms_theme') as ThemeMode | null;
-  return saved === 'dark' ? 'dark' : 'light';
+  return saved === 'light' ? 'light' : 'dark';
 };
 
 export const setTheme = (theme: ThemeMode) => {
