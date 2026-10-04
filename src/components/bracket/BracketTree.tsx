@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Match, Team } from '@/types';
-import { Trophy, Award, Sparkles, ChevronRight, Radio } from 'lucide-react';
+import { Trophy, Award, Sparkles, ChevronRight, Radio, MapPin } from 'lucide-react';
 
 interface BracketTreeProps {
   matches: Match[];
@@ -64,19 +64,25 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         }`}
       >
         {/* Header of Match Card */}
-        <div className="px-3.5 py-2 border-b border-slate-800 flex items-center justify-between text-[11px]">
-          <span className="font-extrabold text-slate-300">{label || match.roundLabel}</span>
+        <div className="px-3.5 py-2 border-b border-slate-800 flex items-center justify-between text-[11px] gap-1.5">
+          <div className="flex items-center gap-1.5">
+            <span className="font-extrabold text-slate-300">{label || match.roundLabel}</span>
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-black bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+              <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+              <span>{(match.venueName ? match.venueName.match(/Sân\s*\d+/i)?.[0] || match.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
+            </span>
+          </div>
           {match.status === 'LIVE' && (
-            <span className="flex items-center gap-1 text-red-400 font-bold animate-pulse">
+            <span className="flex items-center gap-1 text-red-400 font-bold animate-pulse text-[10px]">
               <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
               LIVE
             </span>
           )}
           {match.status === 'FINISHED' && (
-            <span className="text-emerald-400 font-bold">FT</span>
+            <span className="text-emerald-400 font-bold text-[10px]">FT</span>
           )}
           {match.status === 'SCHEDULED' && (
-            <span className="text-slate-500">{match.time}</span>
+            <span className="text-slate-400 font-mono text-[10px]">{match.time}</span>
           )}
         </div>
 

@@ -73,6 +73,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     }
   };
 
+  const getVenueDetails = (venueId?: string, venueNameFallback?: string) => {
+    const v = venues.find((item) => item.id === venueId);
+    const fullName = v?.name || venueNameFallback || 'Sân 1 - Cỏ Nhân Tạo Ký Túc Xá';
+    const matchPitch = fullName.match(/Sân\s*\d+/i);
+    const shortPitch = matchPitch ? matchPitch[0] : (fullName.split(' - ')[0] || 'Sân 1');
+    return { fullName, shortPitch, location: v?.location || 'Khu phức hợp thể thao' };
+  };
+
   const filteredMatches = matches.filter((m) => {
     if (filterVenue !== 'ALL' && m.venueId !== filterVenue) return false;
     if (filterRound !== 'ALL' && m.round !== filterRound) return false;
@@ -126,33 +134,51 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Filter Bar with Quick Pitch Filter Chips */}
       <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex items-center gap-2 text-slate-400 font-bold uppercase">
           <Filter className="w-4 h-4 text-emerald-400" />
-          <span>Bộ Lọc Trận Đấu:</span>
+          <span>Bộ Lọc Trận Đấu &amp; Sân:</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Venue Filter */}
-          <select
-            value={filterVenue}
-            onChange={(e) => setFilterVenue(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5"
-          >
-            <option value="ALL">Tất Cả 3 Sân Thi Đấu</option>
-            {venues.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Quick Pitch Filter Chips */}
+          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 overflow-x-auto">
+            <button
+              onClick={() => setFilterVenue('ALL')}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                filterVenue === 'ALL'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Tất Cả Sân
+            </button>
+            {venues.map((v) => {
+              const short = v.name.match(/Sân\s*\d+/i)?.[0] || v.name.split(' - ')[0] || v.name;
+              const isActive = filterVenue === v.id;
+              return (
+                <button
+                  key={v.id}
+                  onClick={() => setFilterVenue(v.id)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 shrink-0 ${
+                    isActive
+                      ? 'bg-cyan-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <MapPin className="w-2.5 h-2.5" />
+                  <span>{short}</span>
+                </button>
+              );
+            })}
+          </div>
 
           {/* Round Filter */}
           <select
             value={filterRound}
             onChange={(e) => setFilterRound(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5"
+            className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium"
           >
             <option value="ALL">Tất Cả Các Vòng</option>
             <option value="GROUP">Vòng Bảng (24 trận)</option>
@@ -169,6 +195,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         {filteredMatches.map((m) => {
           const home = getTeam(m.homeTeamId);
           const away = getTeam(m.awayTeamId);
+          const { fullName, shortPitch } = getVenueDetails(m.venueId, m.venueName);
 
           return (
             <div
@@ -176,22 +203,37 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               onClick={() => onSelectMatch(m.id)}
               className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 flex flex-col justify-between"
             >
-              {/* Card Header */}
-              <div className="flex items-center justify-between text-[11px] pb-2 border-b border-slate-800/80 mb-3 text-slate-400">
-                <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
-                {m.status === 'LIVE' && (
-                  <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse">
-                    <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
+              {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
+              <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="font-mono font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+                    #{m.matchNumber || m.id}
                   </span>
-                )}
-                {m.status === 'FINISHED' && (
-                  <span className="text-emerald-400 font-bold">KẾT THÚC</span>
-                )}
-                {m.status === 'SCHEDULED' && (
-                  <span className="text-slate-400 font-mono flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {m.time}
+                  <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
+                  {/* SỐ SÂN THI ĐẤU NỔI BẬT */}
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide bg-cyan-950/90 border border-cyan-500/50 text-cyan-300 shadow-sm">
+                    <MapPin className="w-3 h-3 text-cyan-400 shrink-0" />
+                    <span>{shortPitch.toUpperCase()}</span>
                   </span>
-                )}
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {m.status === 'LIVE' && (
+                    <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse text-[10px] bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-lg">
+                      <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
+                    </span>
+                  )}
+                  {m.status === 'FINISHED' && (
+                    <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
+                      KẾT THÚC
+                    </span>
+                  )}
+                  {m.status === 'SCHEDULED' && (
+                    <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-slate-400" /> {m.time}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Match Teams & Score */}
@@ -246,13 +288,17 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 </div>
               )}
 
-              {/* Card Footer: Venue & Date */}
-              <div className="pt-2 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[10px] text-slate-500">
-                <span className="flex items-center gap-1 truncate max-w-[180px]">
-                  <MapPin className="w-3 h-3 text-slate-400" />
-                  <span className="truncate">{m.venueName || 'Sân 1'}</span>
-                </span>
-                <span className="font-mono">{m.date}</span>
+              {/* Card Footer: Detailed Pitch / Venue & Date */}
+              <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 truncate max-w-[210px]" title={fullName}>
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                  <span className="truncate font-semibold text-cyan-300">{fullName}</span>
+                </div>
+                <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-400 shrink-0">
+                  <Calendar className="w-3 h-3 text-slate-500" />
+                  <span>{m.date}</span>
+                  {m.time && <span>• {m.time}</span>}
+                </div>
               </div>
             </div>
           );

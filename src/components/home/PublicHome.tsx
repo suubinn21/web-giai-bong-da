@@ -16,7 +16,8 @@ import {
   ArrowRight,
   TrendingUp,
   Shirt,
-  Play
+  Play,
+  MapPin
 } from 'lucide-react';
 
 interface PublicHomeProps {
@@ -219,17 +220,27 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
                   }}
                   className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60"
                 >
-                  <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400">
-                    <span className="font-bold text-emerald-400">{m.roundLabel}</span>
+                  <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400 gap-1.5 flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono font-bold text-slate-400 bg-slate-800/80 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+                        #{m.matchNumber || m.id}
+                      </span>
+                      <span className="font-bold text-emerald-400">{m.roundLabel}</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black bg-cyan-950/90 text-cyan-300 border border-cyan-500/40">
+                        <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+                        <span>{(m.venueName ? m.venueName.match(/Sân\s*\d+/i)?.[0] || m.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
+                      </span>
+                    </div>
+
                     {m.status === 'LIVE' ? (
-                      <span className="bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 animate-pulse">
+                      <span className="bg-red-500/20 text-red-400 border border-red-500/40 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 animate-pulse text-[10px]">
                         <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                         LIVE {m.currentMinute}&apos;
                       </span>
                     ) : m.status === 'FINISHED' ? (
-                      <span className="text-emerald-400 font-bold">KẾT THÚC (FT)</span>
+                      <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">KẾT THÚC (FT)</span>
                     ) : (
-                      <span>{m.time} • {m.date}</span>
+                      <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">{m.time} • {m.date}</span>
                     )}
                   </div>
 
@@ -255,9 +266,12 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
-                    <span>{m.venueName || 'Sân 1'}</span>
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                    <span className="flex items-center gap-1 font-semibold text-cyan-300 truncate max-w-[200px]" title={m.venueName || 'Sân 1'}>
+                      <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      <span className="truncate">{m.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}</span>
+                    </span>
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1 text-[11px] shrink-0">
                       <span>Bấm xem Live</span>
                       <ArrowRight className="w-3 h-3" />
                     </span>

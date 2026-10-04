@@ -22,6 +22,7 @@ import {
   FileEdit,
   ArrowRightLeft,
   Award,
+  MapPin,
 } from 'lucide-react';
 
 interface LiveMatchCenterProps {
@@ -452,8 +453,13 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                   : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:bg-slate-800/60'
               }`}
             >
-              <div className="flex items-center justify-between gap-3 text-[10px] text-slate-400 mb-1">
-                <span>{m.roundLabel}</span>
+              <div className="flex items-center justify-between gap-2 text-[10px] text-slate-400 mb-1">
+                <div className="flex items-center gap-1">
+                  <span>{m.roundLabel}</span>
+                  <span className="font-bold text-cyan-300 bg-cyan-950/80 px-1.5 py-0.5 rounded text-[9px] border border-cyan-600/40">
+                    {(m.venueName ? m.venueName.match(/Sân\s*\d+/i)?.[0] || m.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}
+                  </span>
+                </div>
                 {m.status === 'LIVE' && (
                   <span className="flex items-center gap-1 text-red-400 font-extrabold animate-pulse">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
@@ -486,7 +492,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
           <div className="flex items-center gap-3">
             <span className="font-bold text-emerald-400 uppercase tracking-wider">{activeMatch.roundLabel}</span>
             <span>•</span>
-            <span>Sân: {activeMatch.venueName || 'Sân 1'}</span>
+            <span className="inline-flex items-center gap-1 font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-500/40 px-2.5 py-0.5 rounded-lg text-[11px]">
+              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              Sân: {activeMatch.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}
+            </span>
             <span>•</span>
             <span>Trọng tài: {activeMatch.refereeName || 'BTC'}</span>
           </div>
