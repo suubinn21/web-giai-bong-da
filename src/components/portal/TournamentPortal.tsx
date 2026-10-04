@@ -147,13 +147,6 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
     },
   };
 
-  const roleLabels: Record<UserRole, { label: string; badge: string }> = {
-    SUPER_ADMIN: { label: 'Super Admin', badge: 'Toàn quyền' },
-    ORGANIZER: { label: 'Ban Tổ Chức (BTC)', badge: 'Điều hành' },
-    REFEREE: { label: 'Trọng Tài', badge: 'Biên bản trận' },
-    TEAM_MANAGER: { label: 'Trưởng Đoàn / Đội Trưởng', badge: 'Quản lý đội' },
-    STUDENT: { label: 'Sinh Viên / Cổ Động Viên', badge: 'Công khai' },
-  };
 
   return (
     <div className="min-h-screen bg-[#070B14] text-slate-100 flex flex-col">
@@ -212,22 +205,6 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               <span className="hidden sm:inline font-mono font-bold text-[11px]">
                 {cloudStatus === 'connected' ? 'Cloud Sync' : 'Đang kết nối...'}
               </span>
-            </div>
-
-            {/* RBAC Role Selector (visible on mobile and desktop) */}
-            <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-700/80 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs">
-              <span className="text-slate-400 hidden lg:inline">Góc nhìn:</span>
-              <select
-                value={currentRole}
-                onChange={(e) => onRoleChange(e.target.value as UserRole)}
-                className="bg-transparent text-emerald-400 font-bold focus:outline-none cursor-pointer max-w-[85px] sm:max-w-none text-[11px] sm:text-xs"
-              >
-                {Object.entries(roleLabels).map(([role, item]) => (
-                  <option key={role} value={role} className="bg-slate-900 text-white">
-                    {item.label}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* User Profile / Login Button */}
