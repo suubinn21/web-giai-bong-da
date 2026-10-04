@@ -130,39 +130,39 @@ export const Header: React.FC<HeaderProps> = ({
             {onBackToPortal && (
               <button
                 onClick={onBackToPortal}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all"
+                className="hidden lg:flex items-center gap-1.5 h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
                 title="Quay lại cổng danh sách các giải đấu đã tạo"
               >
-                <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" />
+                <LayoutGrid className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>Danh Sách Giải</span>
               </button>
             )}
 
             <div className="flex-1 min-w-0 pr-2">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] sm:text-xs font-extrabold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 font-mono">
+                <span className="text-[10px] sm:text-xs font-extrabold tracking-widest text-emerald-400 uppercase bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60 font-mono shrink-0 whitespace-nowrap">
                   {tournament.shortCode || 'ITFTMS 2026'}
                 </span>
-                <span className="hidden sm:inline-block text-xs text-slate-400">| {tournament.format || 'Bóng Đá 5 Người'}</span>
+                <span className="hidden xl:inline-block text-xs text-slate-400 truncate">| {tournament.format || 'Bóng Đá 5 Người'}</span>
               </div>
-              <h1 className="text-xs sm:text-base lg:text-lg font-black tracking-tight text-white truncate max-w-[220px] sm:max-w-xs md:max-w-md lg:max-w-lg">
+              <h1 className="text-xs sm:text-sm lg:text-base font-black tracking-tight text-white truncate max-w-[140px] sm:max-w-[200px] md:max-w-xs lg:max-w-sm xl:max-w-md">
                 {tournament.name || 'GIẢI BÓNG ĐÁ KHOA CNTT 2026'}
               </h1>
             </div>
           </div>
 
           {/* Right Controls: Desktop controls hidden on mobile, mobile has only Hamburger Menu */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             
             {/* Edit Tournament Config Button (Desktop only, mobile in Menu Hamburger) */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onEditTournament && (
               <button
                 onClick={onEditTournament}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all"
-                title="Chỉnh sửa cấu hình số bảng đấu, số đội/bảng, lệ phí và thông tin giải đấu"
+                className="hidden md:inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
+                title={`Cấu hình giải đấu: ${tournament.numberOfGroups || 4} Bảng × ${tournament.teamsPerGroup || 4} Đội`}
               >
-                <Edit3 className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Cấu Hình ({tournament.numberOfGroups || 4} Bảng × {tournament.teamsPerGroup || 4} Đội)</span>
+                <Edit3 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Cấu Hình Bảng</span>
               </button>
             )}
 
@@ -170,25 +170,25 @@ export const Header: React.FC<HeaderProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onOpenCreateTournament}
-                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30"
+                className="hidden md:inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 title="Khởi tạo mùa giải bóng đá mới"
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>+ Tạo Mới Giải Đấu</span>
+                <Plus className="w-3.5 h-3.5 shrink-0" />
+                <span>+ Tạo Giải Mới</span>
               </button>
             )}
 
             {/* Tournament Stage Indicator */}
-            <div className="relative hidden xl:block">
+            <div className="relative hidden xl:block shrink-0">
               <button
                 onClick={() => setStatusMenuOpen(!statusMenuOpen)}
-                className="flex items-center gap-2 text-xs font-medium bg-slate-900/80 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors"
+                className="flex items-center gap-2 text-xs font-medium bg-slate-900/80 hover:bg-slate-800 h-9 px-3 rounded-xl border border-slate-700 transition-colors shrink-0 whitespace-nowrap"
                 title="Thay đổi giai đoạn giải đấu"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span className="text-slate-400">Giai đoạn:</span>
-                <span className="text-emerald-300 font-bold">{statusLabels[tournamentStatus]}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                <span className="text-slate-400 whitespace-nowrap">Giai đoạn:</span>
+                <span className="text-emerald-300 font-bold whitespace-nowrap">{statusLabels[tournamentStatus]}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               </button>
 
               {statusMenuOpen && (
@@ -217,7 +217,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Cloud Realtime Sync Status Indicator (Desktop only) */}
             <div
-              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition-all ${
+              className={`hidden lg:flex items-center gap-1.5 h-9 px-2.5 rounded-xl border text-xs font-semibold shadow-sm transition-all shrink-0 whitespace-nowrap ${
                 cloudStatus === 'connected'
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                   : cloudStatus === 'connecting'
@@ -232,7 +232,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : '⚪ Chế độ ngoại tuyến'
               }
             >
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2 shrink-0">
                 {cloudStatus === 'connected' && (
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 )}
@@ -246,8 +246,8 @@ export const Header: React.FC<HeaderProps> = ({
                   }`}
                 ></span>
               </span>
-              <Cloud className="w-3.5 h-3.5" />
-              <span className="font-mono font-bold text-[11px]">
+              <Cloud className="w-3.5 h-3.5 shrink-0" />
+              <span className="font-mono font-bold text-[11px] whitespace-nowrap">
                 {cloudStatus === 'connected' ? 'Cloud Sync' : cloudStatus === 'connecting' ? 'Kết nối...' : 'Offline'}
               </span>
             </div>
@@ -255,38 +255,38 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Sound FX Toggle Button (Desktop only, mobile in Menu Hamburger) */}
             <button
               onClick={toggleSound}
-              className={`hidden md:flex p-2 rounded-lg border transition-all ${
+              className={`hidden md:flex items-center justify-center h-9 w-9 rounded-xl border transition-all shrink-0 ${
                 soundOn
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400 hover:bg-emerald-900/50'
                   : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
               }`}
               title={soundOn ? 'Âm thanh còi & ăn mừng: BẬT' : 'Âm thanh: TẮT'}
             >
-              {soundOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              {soundOn ? <Volume2 className="w-4 h-4 shrink-0" /> : <VolumeX className="w-4 h-4 shrink-0" />}
             </button>
 
             {/* User Profile / Login System (Desktop only, mobile in Menu Hamburger) */}
             {currentUser ? (
-              <div className="relative hidden md:block">
+              <div className="relative hidden md:block shrink-0">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all"
+                  className="flex items-center gap-2 h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
                   title="Thông tin tài khoản & Đổi vai trò"
                 >
                   <img
                     src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
                     alt={currentUser.fullName}
-                    className="w-7 h-7 rounded-lg object-cover border border-emerald-500/40 shrink-0"
+                    className="w-6 h-6 rounded-lg object-cover border border-emerald-500/40 shrink-0"
                   />
                   <div className="flex flex-col text-left">
-                    <span className="text-xs font-bold text-white max-w-[120px] truncate leading-tight">
+                    <span className="text-xs font-bold text-white max-w-[110px] truncate leading-tight">
                       {currentUser.fullName}
                     </span>
                     <span className={`text-[10px] font-semibold text-emerald-400`}>
                       {roleLabels[currentRole]?.label || currentRole}
                     </span>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5 shrink-0" />
                 </button>
 
                 {userMenuOpen && (
@@ -367,9 +367,9 @@ export const Header: React.FC<HeaderProps> = ({
               onOpenAuthModal && (
                 <button
                   onClick={onOpenAuthModal}
-                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 active:scale-95"
+                  className="hidden md:inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 >
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-3.5 h-3.5 shrink-0" />
                   <span>Đăng Nhập</span>
                 </button>
               )
@@ -377,22 +377,22 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Action Buttons: Clear Mock Data & Load Demo Data */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
-              <div className="hidden lg:flex items-center gap-1.5">
+              <div className="hidden xl:flex items-center gap-1.5 shrink-0">
                 <button
                   onClick={onClearData}
-                  className="flex items-center gap-1.5 text-xs text-red-300 hover:text-white bg-red-950/60 hover:bg-red-900 px-2.5 py-1.5 rounded-lg border border-red-500/40 transition-colors"
+                  className="flex items-center gap-1.5 h-9 text-xs text-red-300 hover:text-white bg-red-950/60 hover:bg-red-900 px-3 rounded-xl border border-red-500/40 transition-colors shrink-0 whitespace-nowrap"
                   title="Xóa trắng toàn bộ dữ liệu để bắt đầu giải đấu"
                 >
-                  <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                  <Trash2 className="w-3.5 h-3.5 text-red-400 shrink-0" />
                   <span>Xóa Dữ Liệu</span>
                 </button>
 
                 <button
                   onClick={onLoadDemo}
-                  className="flex items-center gap-1.5 text-xs text-amber-300 hover:text-white bg-slate-900 hover:bg-slate-800 px-2.5 py-1.5 rounded-lg border border-amber-500/30 transition-colors"
+                  className="flex items-center gap-1.5 h-9 text-xs text-amber-300 hover:text-white bg-slate-900 hover:bg-slate-800 px-3 rounded-xl border border-amber-500/30 transition-colors shrink-0 whitespace-nowrap"
                   title="Nạp lại 16 đội và lịch thi đấu mẫu để thử nghiệm"
                 >
-                  <Database className="w-3.5 h-3.5 text-amber-400" />
+                  <Database className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span>Demo</span>
                 </button>
               </div>
