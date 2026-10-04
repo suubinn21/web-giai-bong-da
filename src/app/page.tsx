@@ -45,6 +45,7 @@ import { CreateTournamentModal } from '@/components/tournament/CreateTournamentM
 import { TournamentPortal } from '@/components/portal/TournamentPortal';
 import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 import { MobileMenuDrawer } from '@/components/layout/MobileMenuDrawer';
+import { SoundFX } from '@/utils/soundEffects';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -82,9 +83,112 @@ export default function Home() {
   const [currentRole, setCurrentRole] = useState<UserRole>('ORGANIZER');
   const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('GROUP_STAGE');
 
-  // Navigation
+  // Navigation & History Stack (Hỗ trợ lùi 1 trang trên điện thoại & trình duyệt)
   const [activeTab, setActiveTab] = useState<TabKey>('home');
   const [selectedMatchId, setSelectedMatchId] = useState<string>('');
+  const [navHistory, setNavHistory] = useState<{ viewMode: 'portal' | 'tournament'; tab: TabKey }[]>([]);
+
+  const handleNavigateTab = (tab: TabKey, pushToHistory = true) => {
+    if (tab === activeTab && viewMode === 'tournament') return;
+    if (pushToHistory) {
+      setNavHistory((prev) => {
+        const current = { viewMode, tab: activeTab };
+        if (prev.length > 0 && prev[prev.length - 1].viewMode === current.viewMode && prev[prev.length - 1].tab === current.tab) {
+          return prev;
+        }
+        return [...prev, current];
+      });
+      if (typeof window !== 'undefined') {
+        window.history.pushState({ viewMode: 'tournament', tab }, '');
+      }
+    }
+    setActiveTab(tab);
+    setAuditLogs(StorageService.getAuditLogs());
+  };
+
+  const handleNavigateViewMode = (mode: 'portal' | 'tournament', pushToHistory = true) => {
+    if (mode === viewMode) return;
+    if (pushToHistory) {
+      setNavHistory((prev) => {
+        const current = { viewMode, tab: activeTab };
+        if (prev.length > 0 && prev[prev.length - 1].viewMode === current.viewMode && prev[prev.length - 1].tab === current.tab) {
+          return prev;
+        }
+        return [...prev, current];
+      });
+      if (typeof window !== 'undefined') {
+        window.history.pushState({ viewMode: mode, tab: activeTab }, '');
+      }
+    }
+    setViewMode(mode);
+  };
+
+  const handleGoBack = () => {
+    SoundFX.playClick();
+    
+    // 1. Đóng menu mobile nếu đang mở
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+      return;
+    }
+    // 2. Đóng các modal nếu đang mở
+    if (editTournamentOpen) {
+      setEditTournamentOpen(false);
+      return;
+    }
+    if (createTournamentOpen) {
+      setCreateTournamentOpen(false);
+      return;
+    }
+    if (authModalOpen) {
+      setAuthModalOpen(false);
+      return;
+    }
+
+    // 3. Nếu có lịch sử trang trước trong ngăn xếp:
+    if (navHistory.length > 0) {
+      const prevEntry = navHistory[navHistory.length - 1];
+      setNavHistory((prev) => prev.slice(0, -1));
+      setViewMode(prevEntry.viewMode);
+      setActiveTab(prevEntry.tab);
+      return;
+    }
+
+    // 4. Mặc định thông minh nếu ngăn xếp rỗng:
+    if (viewMode === 'tournament') {
+      if (activeTab !== 'home') {
+        setActiveTab('home');
+      } else {
+        setViewMode('portal');
+      }
+      return;
+    }
+
+    // 5. Nếu ở portal và trình duyệt có history:
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back();
+    }
+  };
+
+  const canGoBack = navHistory.length > 0 || viewMode === 'tournament';
+
+  // Lắng nghe phím back điện thoại và cử chỉ vuốt cạnh trái màn hình (popstate)
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (e.state) {
+        if (e.state.viewMode) setViewMode(e.state.viewMode);
+        if (e.state.tab) setActiveTab(e.state.tab);
+      } else {
+        if (activeTab !== 'home') {
+          setActiveTab('home');
+        } else if (viewMode === 'tournament') {
+          setViewMode('portal');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activeTab, viewMode]);
 
   // Initial local data loading + Cloud Tournaments List subscription
   useEffect(() => {
@@ -242,6 +346,10 @@ export default function Home() {
     setAwards(StorageService.getAwards());
     setAuditLogs(StorageService.getAuditLogs());
     setTournamentStatus(tour.status || StorageService.getTournamentStatus());
+    setNavHistory((prev) => [...prev, { viewMode: 'portal', tab: 'home' }]);
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ viewMode: 'tournament', tab: 'home' }, '');
+    }
     setViewMode('tournament');
     setActiveTab('home');
   };
@@ -472,7 +580,7 @@ export default function Home() {
   // Quick navigation to live match
   const handleSelectMatchAndNavigateLive = (matchId: string) => {
     setSelectedMatchId(matchId);
-    setActiveTab('live');
+    handleNavigateTab('live');
   };
 
   // User Authentication handlers
@@ -520,6 +628,8 @@ export default function Home() {
           currentUser={currentUser}
           onOpenAuthModal={() => handleOpenAuthModal()}
           onLogout={handleLogout}
+          onGoBack={handleGoBack}
+          canGoBack={canGoBack}
         />
         <CreateTournamentModal
           isOpen={createTournamentOpen}
@@ -564,29 +674,29 @@ export default function Home() {
         onClearData={handleClearData}
         onLoadDemo={handleLoadDemo}
         liveMatchCount={liveMatches.length}
-        onNavigateToLive={() => setActiveTab('live')}
+        onNavigateToLive={() => handleNavigateTab('live')}
         tournament={tournament}
         onOpenCreateTournament={() => setCreateTournamentOpen(true)}
         onEditTournament={() => handleOpenEditTournament(tournament)}
-        onBackToPortal={() => setViewMode('portal')}
+        onBackToPortal={() => handleNavigateViewMode('portal')}
         cloudStatus={cloudStatus}
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
         currentUser={currentUser}
         onOpenAuthModal={() => handleOpenAuthModal()}
         onLogout={handleLogout}
+        onGoBack={handleGoBack}
+        canGoBack={canGoBack}
+        activeTab={activeTab}
       />
 
       {/* Navigation Tabs Bar */}
       <Navigation
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          setAuditLogs(StorageService.getAuditLogs());
-        }}
+        onTabChange={handleNavigateTab}
         liveMatchCount={liveMatches.length}
         activeComplaintsCount={activeComplaints.length}
         suspendedPlayersCount={suspendedPlayers.length}
-        onBackToPortal={() => setViewMode('portal')}
+        onBackToPortal={() => handleNavigateViewMode('portal')}
       />
 
       {/* Main Content Area */}
@@ -598,7 +708,7 @@ export default function Home() {
             matches={matches}
             finances={finances}
             complaints={complaints}
-            onNavigate={(tab) => setActiveTab(tab)}
+            onNavigate={handleNavigateTab}
             onSelectMatch={handleSelectMatchAndNavigateLive}
             currentRole={currentRole}
             tournament={tournament}
@@ -765,14 +875,13 @@ export default function Home() {
       {/* Mobile Smartphone Floating Bottom Navigation Bar */}
       <MobileBottomNav
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          setActiveTab(tab);
-          setAuditLogs(StorageService.getAuditLogs());
-        }}
+        onTabChange={handleNavigateTab}
         liveMatchCount={liveMatches.length}
         activeComplaintsCount={activeComplaints.length}
         suspendedPlayersCount={suspendedPlayers.length}
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        onGoBack={handleGoBack}
+        canGoBack={canGoBack}
       />
 
       {/* Mobile Full Screen Menu Drawer */}
@@ -780,10 +889,7 @@ export default function Home() {
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         activeTab={activeTab}
-        onSelectTab={(tab) => {
-          setActiveTab(tab);
-          setAuditLogs(StorageService.getAuditLogs());
-        }}
+        onSelectTab={handleNavigateTab}
         tournament={tournament}
         currentRole={currentRole}
         onRoleChange={handleRoleChange}
@@ -794,12 +900,14 @@ export default function Home() {
         activeComplaintsCount={activeComplaints.length}
         suspendedPlayersCount={suspendedPlayers.length}
         onOpenEditTournament={() => handleOpenEditTournament(tournament)}
-        onBackToPortal={() => setViewMode('portal')}
+        onBackToPortal={() => handleNavigateViewMode('portal')}
         onClearData={handleClearData}
         onLoadDemo={handleLoadDemo}
         currentUser={currentUser}
         onOpenAuthModal={() => handleOpenAuthModal()}
         onLogout={handleLogout}
+        onGoBack={handleGoBack}
+        canGoBack={canGoBack}
       />
 
       {/* Authentication Modal */}

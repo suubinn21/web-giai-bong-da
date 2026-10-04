@@ -30,7 +30,8 @@ import {
   LogIn,
   LogOut,
   User,
-  KeyRound
+  KeyRound,
+  ArrowLeft
 } from 'lucide-react';
 import { TabKey } from './Navigation';
 import { UserRole, Tournament, TournamentStatus, UserAccount } from '@/types';
@@ -57,6 +58,8 @@ interface MobileMenuDrawerProps {
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
   onLogout?: () => void;
+  onGoBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -80,6 +83,8 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   currentUser,
   onOpenAuthModal,
   onLogout,
+  onGoBack,
+  canGoBack,
 }) => {
   const [soundOn, setSoundOn] = React.useState(true);
 
@@ -192,6 +197,22 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* Quick Back Button inside drawer */}
+        {onGoBack && canGoBack && (
+          <div className="px-4 pt-3 pb-1 bg-slate-950/40 border-b border-slate-800/80">
+            <button
+              onClick={() => {
+                onClose();
+                onGoBack();
+              }}
+              className="w-full py-2.5 px-3 rounded-xl bg-slate-900 border border-emerald-500/40 hover:bg-slate-800 text-emerald-400 text-xs font-bold flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all"
+            >
+              <ArrowLeft className="w-4 h-4 text-emerald-400" />
+              <span>Lùi Lại Trang Trước (Trang Vừa Xem)</span>
+            </button>
+          </div>
+        )}
 
         {/* Drawer Scrollable Content */}
         <div className="p-4 space-y-4 overflow-y-auto pb-12">

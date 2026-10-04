@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Home, Radio, CalendarDays, Trophy, MoreHorizontal } from 'lucide-react';
+import { Home, Radio, CalendarDays, Trophy, MoreHorizontal, ArrowLeft } from 'lucide-react';
 import { TabKey } from './Navigation';
 import { SoundFX } from '@/utils/soundEffects';
 
@@ -12,6 +12,8 @@ interface MobileBottomNavProps {
   activeComplaintsCount: number;
   suspendedPlayersCount: number;
   onOpenMobileMenu: () => void;
+  onGoBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -21,6 +23,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   activeComplaintsCount,
   suspendedPlayersCount,
   onOpenMobileMenu,
+  onGoBack,
+  canGoBack,
 }) => {
   const hasAlerts = activeComplaintsCount > 0 || suspendedPlayersCount > 0;
 
@@ -138,6 +142,19 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         </button>
 
       </div>
+
+      {/* Floating Quick-Thumb Back Button (Lùi 1 trang cho ngón tay cái trên di động) */}
+      {canGoBack && onGoBack && (
+        <button
+          onClick={onGoBack}
+          className="fixed bottom-[74px] left-3 z-40 md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/95 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-xl backdrop-blur-md font-bold text-xs active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2"
+          title="Lùi lại 1 trang"
+          aria-label="Lùi lại 1 trang"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Lùi 1 trang</span>
+        </button>
+      )}
     </nav>
   );
 };

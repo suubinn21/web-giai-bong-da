@@ -22,7 +22,8 @@ import {
   LogOut,
   User,
   Shield,
-  KeyRound
+  KeyRound,
+  ArrowLeft
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -43,6 +44,9 @@ interface HeaderProps {
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
   onLogout?: () => void;
+  onGoBack?: () => void;
+  canGoBack?: boolean;
+  activeTab?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -63,6 +67,9 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   onOpenAuthModal,
   onLogout,
+  onGoBack,
+  canGoBack,
+  activeTab,
 }) => {
   const [soundOn, setSoundOn] = useState(true);
   const [statusMenuOpen, setStatusMenuOpen] = useState(false);
@@ -166,15 +173,30 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
-          {/* Brand Logo, Portal Button & Dynamic Tournament Title */}
-          <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-600 shadow-lg shadow-emerald-500/20 border border-emerald-400/30">
-              <Trophy className="w-6 h-6 text-white" />
-              <Sparkles className="absolute -top-1 -right-1 w-4 h-4 text-amber-300 animate-bounce" />
+          {/* Brand Logo, Back Button, Portal Button & Dynamic Tournament Title */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            {/* Dedicated Back Button (Lùi 1 trang) - Visible on mobile & desktop */}
+            {onGoBack && canGoBack && (
+              <button
+                onClick={onGoBack}
+                className="flex items-center gap-1.5 h-9 px-2.5 sm:px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 shadow-md transition-all active:scale-95 shrink-0"
+                title={activeTab && activeTab !== 'home' ? 'Lùi lại trang trước' : 'Quay lại cổng danh sách giải đấu'}
+                aria-label="Lùi lại 1 trang"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs font-bold text-emerald-300">
+                  {activeTab && activeTab !== 'home' ? 'Lùi' : 'Cổng Giải'}
+                </span>
+              </button>
+            )}
+
+            <div className="relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-600 shadow-lg shadow-emerald-500/20 border border-emerald-400/30 shrink-0">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 animate-bounce" />
             </div>
 
-            {/* Back to Portal Hub button (Desktop only, mobile in Menu Hamburger) */}
-            {onBackToPortal && (
+            {/* Back to Portal Hub button (Desktop only when not already showing onGoBack) */}
+            {onBackToPortal && (!onGoBack || !canGoBack) && (
               <button
                 onClick={onBackToPortal}
                 className="hidden lg:flex items-center gap-1.5 h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"

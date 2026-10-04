@@ -27,7 +27,8 @@ import {
   Cloud,
   LogIn,
   LogOut,
-  User
+  User,
+  ArrowLeft
 } from 'lucide-react';
 import { Tournament, TournamentStatus, UserRole, UserAccount } from '@/types';
 
@@ -43,6 +44,8 @@ interface TournamentPortalProps {
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
   onLogout?: () => void;
+  onGoBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export const TournamentPortal: React.FC<TournamentPortalProps> = ({
@@ -57,6 +60,8 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   currentUser,
   onOpenAuthModal,
   onLogout,
+  onGoBack,
+  canGoBack,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | TournamentStatus>('ALL');
@@ -155,7 +160,19 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Logo & Platform Name */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5">
+          <div className="flex items-center gap-2 sm:gap-3.5">
+            {onGoBack && canGoBack && (
+              <button
+                onClick={onGoBack}
+                className="flex items-center gap-1.5 h-9 px-2.5 sm:px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-md transition-all active:scale-95 shrink-0"
+                title="Lùi lại giải đấu vừa xem"
+                aria-label="Lùi lại 1 trang"
+              >
+                <ArrowLeft className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="text-xs font-bold text-emerald-300">Lùi</span>
+              </button>
+            )}
+
             <div className="relative flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-xl shadow-emerald-500/20 border border-emerald-400/30 shrink-0">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 animate-bounce" />
