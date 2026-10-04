@@ -185,13 +185,23 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
             <span className="text-[10px] text-slate-400">Tích lũy 2 thẻ = Treo</span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Tài Chính Quỹ</span>
-            <span className="text-base font-black font-mono text-emerald-400 mt-1">
-              {(totalIncome - totalExpense).toLocaleString()} đ
-            </span>
-            <span className="text-[10px] text-slate-400">Thu {(totalIncome/1000000).toFixed(1)}M / Chi {(totalExpense/1000000).toFixed(1)}M</span>
-          </div>
+          {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+            <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+              <span className="text-[10px] uppercase font-bold text-slate-400">Tài Chính Quỹ (BTC)</span>
+              <span className="text-base font-black font-mono text-emerald-400 mt-1">
+                {(totalIncome - totalExpense).toLocaleString()} đ
+              </span>
+              <span className="text-[10px] text-slate-400">Thu {(totalIncome/1000000).toFixed(1)}M / Chi {(totalExpense/1000000).toFixed(1)}M</span>
+            </div>
+          ) : (
+            <div className="p-4 rounded-2xl bg-[#0B132B]/90 border border-slate-800 flex flex-col justify-between">
+              <span className="text-[10px] uppercase font-bold text-slate-400">Hiệu Suất Ghi Bàn</span>
+              <span className="text-xl font-black font-mono text-emerald-400 mt-1">
+                {finishedMatches.length > 0 ? (totalGoals / finishedMatches.length).toFixed(1) : '0.0'} ⚽/trận
+              </span>
+              <span className="text-[10px] text-slate-400">{finishedMatches.length}/{matches.length} trận đã diễn ra</span>
+            </div>
+          )}
 
         </div>
       </div>

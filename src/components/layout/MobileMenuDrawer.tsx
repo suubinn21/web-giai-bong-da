@@ -533,20 +533,22 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 )}
               </button>
 
-              {/* Finance */}
-              <button
-                onClick={() => handlePickTab('finance')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
-                  activeTab === 'finance'
-                    ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
-                  <BadgeDollarSign className="w-4 h-4" />
-                </div>
-                <span>Tài Chính Lệ Phí</span>
-              </button>
+              {/* Finance - Only for Super Admin and BTC */}
+              {canManage && (
+                <button
+                  onClick={() => handlePickTab('finance')}
+                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                    activeTab === 'finance'
+                      ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <BadgeDollarSign className="w-4 h-4" />
+                  </div>
+                  <span>Tài Chính Lệ Phí</span>
+                </button>
+              )}
 
               {/* Awards */}
               <button
@@ -563,20 +565,22 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <span>Giải Thưởng</span>
               </button>
 
-              {/* Audit Log */}
-              <button
-                onClick={() => handlePickTab('audit')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
-                  activeTab === 'audit'
-                    ? 'bg-slate-800 border-slate-600 text-white font-bold'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
-                  <FileText className="w-4 h-4" />
-                </div>
-                <span>Audit Logs</span>
-              </button>
+              {/* Audit Log - Only for Super Admin and BTC */}
+              {canManage && (
+                <button
+                  onClick={() => handlePickTab('audit')}
+                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                    activeTab === 'audit'
+                      ? 'bg-slate-800 border-slate-600 text-white font-bold'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
+                    <FileText className="w-4 h-4" />
+                  </div>
+                  <span>Audit Logs</span>
+                </button>
+              )}
 
             </div>
           </div>

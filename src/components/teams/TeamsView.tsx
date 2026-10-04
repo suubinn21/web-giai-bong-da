@@ -467,33 +467,62 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
                 </div>
 
-                {/* Financial & Fee Status Strip */}
-                <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Lệ Phí Thi Đấu</span>
-                    <span className="font-mono font-bold text-emerald-400">
-                      {selectedTeam.registrationFee.toLocaleString()} đ
-                    </span>
+                {/* Financial & Fee Status Strip: Chỉ hiển thị cho Super Admin & BTC */}
+                {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+                  <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Lệ Phí Thi Đấu</span>
+                      <span className="font-mono font-bold text-emerald-400">
+                        {selectedTeam.registrationFee.toLocaleString()} đ
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Ký Quỹ Điều Lệ</span>
+                      <span className="font-mono font-bold text-cyan-400">
+                        {selectedTeam.depositFee.toLocaleString()} đ
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Trạng Thái Đóng Phí</span>
+                      <span className={`font-bold ${selectedTeam.feeStatus === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                        {selectedTeam.feeStatus === 'PAID' ? '✓ Đã Thanh Toán' : 'Chưa Thanh Toán'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Tổng Cầu Thủ</span>
+                      <span className="font-mono font-bold text-white">
+                        {selectedTeam.players.length} / 12 Cầu thủ
+                      </span>
+                    </div>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Ký Quỹ Điều Lệ</span>
-                    <span className="font-mono font-bold text-cyan-400">
-                      {selectedTeam.depositFee.toLocaleString()} đ
-                    </span>
+                ) : (
+                  <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Đội Hình Đăng Ký</span>
+                      <span className="font-mono font-bold text-emerald-400">
+                        {selectedTeam.players.length} / 12 Cầu thủ
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Bảng Thi Đấu</span>
+                      <span className="font-mono font-bold text-cyan-400">
+                        {selectedTeam.group ? `Bảng ${selectedTeam.group}` : 'Chưa chia bảng'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Hồ Sơ Đội Bóng</span>
+                      <span className="font-bold text-emerald-400">
+                        {selectedTeam.status === 'APPROVED' ? '✓ Hợp Lệ' : selectedTeam.status === 'WITHDRAWN' ? 'Bỏ Cuộc' : 'Chờ Phê Duyệt'}
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+                      <span className="text-[10px] text-slate-400 block">Chi Đoàn / Lớp</span>
+                      <span className="font-bold text-white truncate">
+                        {selectedTeam.class || 'Khoa CNTT'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Trạng Thái Đóng Phí</span>
-                    <span className={`font-bold ${selectedTeam.feeStatus === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                      {selectedTeam.feeStatus === 'PAID' ? '✓ Đã Thanh Toán' : 'Chưa Thanh Toán'}
-                    </span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block">Tổng Cầu Thủ</span>
-                    <span className="font-mono font-bold text-white">
-                      {selectedTeam.players.length} / 12 Cầu thủ
-                    </span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Players Table */}

@@ -12,7 +12,8 @@ import {
   Receipt, 
   CheckCircle2, 
   AlertCircle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Lock
 } from 'lucide-react';
 
 interface FinanceViewProps {
@@ -41,6 +42,27 @@ export const FinanceView: React.FC<FinanceViewProps> = ({
   const [txPayerOrRecipient, setTxPayerOrRecipient] = useState('');
 
   const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+
+  if (!canManage) {
+    return (
+      <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
+        <div className="w-16 h-16 rounded-3xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto shadow-lg shadow-red-500/10">
+          <Lock className="w-8 h-8" />
+        </div>
+        <div className="space-y-1">
+          <span className="text-xs uppercase tracking-widest font-black text-red-400 bg-red-950/60 px-3 py-1 rounded-full border border-red-500/30">
+            KHU VỰC BẢO MẬT NỘI BỘ
+          </span>
+          <h2 className="text-xl sm:text-2xl font-black text-white mt-2">
+            Không Có Quyền Truy Cập Tài Chính
+          </h2>
+        </div>
+        <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+          Thông tin thu / chi, tiền ký quỹ và quyết toán lệ phí là dữ liệu tài chính nội bộ chỉ dành riêng cho <strong>Ban Tổ Chức (BTC)</strong> và <strong>Super Admin</strong>. Trọng tài, Đội trưởng và Sinh viên không được cấp quyền xem dữ liệu này.
+        </p>
+      </div>
+    );
+  }
 
   const totalIncome = finances
     .filter((f) => f.type === 'INCOME')

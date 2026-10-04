@@ -90,6 +90,13 @@ export default function Home() {
 
   const handleNavigateTab = (tab: TabKey, pushToHistory = true) => {
     if (tab === activeTab && viewMode === 'tournament') return;
+
+    // Bảo mật phân quyền: Trọng tài, Đội trưởng, Sinh viên không được xem Tài chính và Audit Log
+    if ((tab === 'finance' || tab === 'audit') && currentRole !== 'SUPER_ADMIN' && currentRole !== 'ORGANIZER') {
+      alert('Quyền truy cập bị từ chối: Mục Tài Chính & Lệ Phí chỉ dành riêng cho Ban Tổ Chức (BTC) và Super Admin!');
+      return;
+    }
+
     if (pushToHistory) {
       setNavHistory((prev) => {
         const current = { viewMode, tab: activeTab };
@@ -588,6 +595,9 @@ export default function Home() {
     setCurrentUser(user);
     setCurrentRole(user.role);
     StorageService.setCurrentRole(user.role);
+    if ((activeTab === 'finance' || activeTab === 'audit') && user.role !== 'SUPER_ADMIN' && user.role !== 'ORGANIZER') {
+      setActiveTab('home');
+    }
     setAuthModalOpen(false);
   };
 
@@ -596,6 +606,9 @@ export default function Home() {
     setCurrentUser(null);
     setCurrentRole('STUDENT');
     StorageService.setCurrentRole('STUDENT');
+    if (activeTab === 'finance' || activeTab === 'audit') {
+      setActiveTab('home');
+    }
   };
 
   const handleOpenAuthModal = (notice?: string) => {
@@ -696,6 +709,7 @@ export default function Home() {
         liveMatchCount={liveMatches.length}
         activeComplaintsCount={activeComplaints.length}
         suspendedPlayersCount={suspendedPlayers.length}
+        currentRole={currentRole}
         onBackToPortal={() => handleNavigateViewMode('portal')}
       />
 
@@ -799,13 +813,25 @@ export default function Home() {
         )}
 
         {activeTab === 'finance' && (
-          <FinanceView
-            finances={finances}
-            teams={teams}
-            onFinancesUpdate={handleFinancesUpdate}
-            onTeamsUpdate={handleTeamsUpdate}
-            currentRole={currentRole}
-          />
+          (currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+            <FinanceView
+              finances={finances}
+              teams={teams}
+              onFinancesUpdate={handleFinancesUpdate}
+              onTeamsUpdate={handleTeamsUpdate}
+              currentRole={currentRole}
+            />
+          ) : (
+            <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-2xl">
+                🔒
+              </div>
+              <h3 className="text-xl font-black text-white">Khu Vực Bảo Mật Ban Tổ Chức</h3>
+              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                Thông tin tài chính, thu chi và lệ phí chỉ dành riêng cho Ban Tổ Chức (BTC) và Quản Trị Viên. Trọng tài, Đội trưởng và Sinh viên không được cấp quyền truy cập.
+              </p>
+            </div>
+          )
         )}
 
         {activeTab === 'awards' && (
@@ -817,10 +843,22 @@ export default function Home() {
         )}
 
         {activeTab === 'audit' && (
-          <AuditLogsView
-            logs={auditLogs}
-            currentRole={currentRole}
-          />
+          (currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+            <AuditLogsView
+              logs={auditLogs}
+              currentRole={currentRole}
+            />
+          ) : (
+            <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
+              <div className="w-14 h-14 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-2xl">
+                🔒
+              </div>
+              <h3 className="text-xl font-black text-white">Khu Vực Bảo Mật Ban Tổ Chức</h3>
+              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                Nhật ký hệ thống (Audit Logs) chỉ dành riêng cho Ban Tổ Chức và Quản Trị Viên kiểm soát dữ liệu.
+              </p>
+            </div>
+          )
         )}
 
       </main>

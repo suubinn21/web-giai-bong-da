@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { UserRole } from '@/types';
 import { 
   Home, 
   Radio, 
@@ -37,6 +38,7 @@ interface NavigationProps {
   liveMatchCount: number;
   activeComplaintsCount: number;
   suspendedPlayersCount: number;
+  currentRole: UserRole;
   onBackToPortal?: () => void;
 }
 
@@ -46,8 +48,12 @@ export const Navigation: React.FC<NavigationProps> = ({
   liveMatchCount,
   activeComplaintsCount,
   suspendedPlayersCount,
+  currentRole,
   onBackToPortal,
 }) => {
+  const canManageFinance = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+  const canViewAudit = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+
   const navItems = [
     { key: 'home' as TabKey, label: 'Trang Chủ', icon: Home },
     { 
@@ -76,9 +82,13 @@ export const Navigation: React.FC<NavigationProps> = ({
       badge: activeComplaintsCount > 0 ? `${activeComplaintsCount}` : undefined,
       badgeColor: 'bg-cyan-500 text-slate-950 font-bold'
     },
-    { key: 'finance' as TabKey, label: 'Tài Chính & Lệ Phí', icon: BadgeDollarSign },
+    ...(canManageFinance
+      ? [{ key: 'finance' as TabKey, label: 'Tài Chính & Lệ Phí', icon: BadgeDollarSign }]
+      : []),
     { key: 'awards' as TabKey, label: 'Giải Thưởng', icon: Award },
-    { key: 'audit' as TabKey, label: 'Audit Log', icon: FileText },
+    ...(canViewAudit
+      ? [{ key: 'audit' as TabKey, label: 'Audit Log', icon: FileText }]
+      : []),
   ];
 
   return (
