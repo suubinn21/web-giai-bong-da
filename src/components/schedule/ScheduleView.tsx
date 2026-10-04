@@ -18,7 +18,10 @@ import {
   Zap,
   X,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  CalendarDays,
+  ArrowUpDown,
+  LayoutGrid
 } from 'lucide-react';
 
 interface ScheduleViewProps {
@@ -45,6 +48,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
   const [filterVenue, setFilterVenue] = useState<string>('ALL');
   const [filterRound, setFilterRound] = useState<string>('ALL');
   const [filterDate, setFilterDate] = useState<string>('ALL');
+  const [sortOrder, setSortOrder] = useState<'TIME_ASC' | 'TIME_DESC' | 'MATCH_NUM'>('TIME_ASC');
+  const [viewLayout, setViewLayout] = useState<'GROUPED_BY_DATE' | 'GRID'>('GROUPED_BY_DATE');
 
   // Edit Single Match Modal State
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
@@ -180,12 +185,70 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     return { fullName, shortPitch, location: v?.location || 'Khu phức hợp thể thao' };
   };
 
+  // Lấy danh sách các ngày thi đấu thực tế và sắp xếp tăng dần
+  const availableDates = Array.from(
+    new Set(matches.map((m) => m.date).filter(Boolean))
+  ).sort();
+
+  const formatDateHeader = (dateStr: string) => {
+    if (!dateStr || dateStr === 'UNSCHEDULED') return 'Chưa xếp ngày thi đấu';
+    try {
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10);
+        const day = parseInt(parts[2], 10);
+        const dateObj = new Date(year, month - 1, day);
+        const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+        const dayName = days[dateObj.getDay()] || 'Ngày';
+        return `${dayName}, ${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+      }
+      return dateStr;
+    } catch {
+      return dateStr;
+    }
+  };
+
   const filteredMatches = matches.filter((m) => {
     if (filterVenue !== 'ALL' && m.venueId !== filterVenue) return false;
     if (filterRound !== 'ALL' && m.round !== filterRound) return false;
     if (filterDate !== 'ALL' && m.date !== filterDate) return false;
     return true;
   });
+
+  // Sắp xếp lịch thi đấu chuẩn xác theo thời gian (Ngày ➔ Giờ ➔ Sân)
+  const sortedMatches = [...filteredMatches].sort((a, b) => {
+    if (sortOrder === 'MATCH_NUM') {
+      return (a.matchNumber || 0) - (b.matchNumber || 0);
+    }
+    if (sortOrder === 'TIME_DESC') {
+      const dateComp = (b.date || '').localeCompare(a.date || '');
+      if (dateComp !== 0) return dateComp;
+      const timeComp = (b.time || '').localeCompare(a.time || '');
+      if (timeComp !== 0) return timeComp;
+      const pitchA = (a.venueName || '').match(/\d+/)?.[0] || '0';
+      const pitchB = (b.venueName || '').match(/\d+/)?.[0] || '0';
+      if (pitchA !== pitchB) return parseInt(pitchA, 10) - parseInt(pitchB, 10);
+      return (b.matchNumber || 0) - (a.matchNumber || 0);
+    }
+    // Mặc định: TIME_ASC (Sắp xếp theo thời gian từ sớm nhất đến muộn nhất)
+    const dateComp = (a.date || '').localeCompare(b.date || '');
+    if (dateComp !== 0) return dateComp;
+    const timeComp = (a.time || '').localeCompare(b.time || '');
+    if (timeComp !== 0) return timeComp;
+    const pitchA = (a.venueName || '').match(/\d+/)?.[0] || '0';
+    const pitchB = (b.venueName || '').match(/\d+/)?.[0] || '0';
+    if (pitchA !== pitchB) return parseInt(pitchA, 10) - parseInt(pitchB, 10);
+    return (a.matchNumber || 0) - (b.matchNumber || 0);
+  });
+
+  // Nhóm các trận đấu theo từng ngày thi đấu
+  const matchesByDate = sortedMatches.reduce((acc, m) => {
+    const key = m.date || 'UNSCHEDULED';
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(m);
+    return acc;
+  }, {} as Record<string, Match[]>);
 
   return (
     <div className="space-y-6">
@@ -244,19 +307,49 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         </div>
       </div>
 
-      {/* Filter Bar with Quick Pitch Filter Chips */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
-        <div className="flex items-center gap-2 text-slate-400 font-bold uppercase">
-          <Filter className="w-4 h-4 text-emerald-400" />
-          <span>Bộ Lọc Trận Đấu &amp; Sân:</span>
+      {/* Filter & Sort Bar */}
+      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-wider">
+            <Filter className="w-4 h-4 text-emerald-400" />
+            <span>Bộ Lọc &amp; Sắp Xếp Lịch Thi Đấu</span>
+          </div>
+
+          {/* View Mode Toggle: Grouped by date vs Flat Grid */}
+          <div className="flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700/60">
+            <button
+              onClick={() => setViewLayout('GROUPED_BY_DATE')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewLayout === 'GROUPED_BY_DATE'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Nhóm các trận đấu theo từng ngày thi đấu"
+            >
+              <CalendarDays className="w-3.5 h-3.5" />
+              <span>Theo Ngày</span>
+            </button>
+            <button
+              onClick={() => setViewLayout('GRID')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewLayout === 'GRID'
+                  ? 'bg-emerald-500 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Hiển thị toàn bộ dưới dạng lưới"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>Dạng Lưới</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 pt-1">
           {/* Quick Pitch Filter Chips */}
-          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 overflow-x-auto">
+          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 overflow-x-auto max-w-full">
             <button
               onClick={() => setFilterVenue('ALL')}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 ${
                 filterVenue === 'ALL'
                   ? 'bg-emerald-500 text-white shadow-sm'
                   : 'text-slate-400 hover:text-white'
@@ -284,151 +377,389 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             })}
           </div>
 
-          {/* Round Filter */}
-          <select
-            value={filterRound}
-            onChange={(e) => setFilterRound(e.target.value)}
-            className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium"
-          >
-            <option value="ALL">Tất Cả Các Vòng</option>
-            <option value="GROUP">Vòng Bảng (24 trận)</option>
-            <option value="QUARTER_FINAL">Vòng Tứ Kết</option>
-            <option value="SEMI_FINAL">Vòng Bán Kết</option>
-            <option value="THIRD_PLACE">Tranh Hạng 3</option>
-            <option value="FINAL">Chung Kết</option>
-          </select>
+          {/* Date Filter Dropdown */}
+          <div className="relative">
+            <select
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-emerald-500/50 transition-colors"
+            >
+              <option value="ALL">📅 Tất Cả Các Ngày</option>
+              {availableDates.map((d) => (
+                <option key={d} value={d}>
+                  📅 {formatDateHeader(d)} ({d})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Round Filter Dropdown */}
+          <div className="relative">
+            <select
+              value={filterRound}
+              onChange={(e) => setFilterRound(e.target.value)}
+              className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-emerald-500/50 transition-colors"
+            >
+              <option value="ALL">🏆 Tất Cả Vòng Đấu</option>
+              <option value="GROUP">Vòng Bảng (24 trận)</option>
+              <option value="QUARTER_FINAL">Vòng Tứ Kết</option>
+              <option value="SEMI_FINAL">Vòng Bán Kết</option>
+              <option value="THIRD_PLACE">Tranh Hạng 3</option>
+              <option value="FINAL">Chung Kết</option>
+            </select>
+          </div>
+
+          {/* Sort Order Selector */}
+          <div className="relative flex items-center">
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as 'TIME_ASC' | 'TIME_DESC' | 'MATCH_NUM')}
+              className="bg-slate-800 border border-slate-700 text-emerald-400 font-bold rounded-xl px-3 py-1.5 cursor-pointer hover:border-emerald-500/50 transition-colors"
+            >
+              <option value="TIME_ASC">⏱ Sắp Xếp: Giờ Sớm Đến Muộn (Mặc định)</option>
+              <option value="TIME_DESC">⏱ Sắp Xếp: Giờ Muộn Đến Sớm</option>
+              <option value="MATCH_NUM">🔢 Sắp Xếp: Số Trận Đấu (#1 - #32)</option>
+            </select>
+          </div>
+
+          {/* Active Filter Clear if filters applied */}
+          {(filterVenue !== 'ALL' || filterRound !== 'ALL' || filterDate !== 'ALL' || sortOrder !== 'TIME_ASC') && (
+            <button
+              onClick={() => {
+                setFilterVenue('ALL');
+                setFilterRound('ALL');
+                setFilterDate('ALL');
+                setSortOrder('TIME_ASC');
+              }}
+              className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-colors"
+              title="Đặt lại bộ lọc về mặc định"
+            >
+              <RefreshCw className="w-3 h-3 text-slate-400" />
+              <span>Đặt lại</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Match Cards List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredMatches.map((m) => {
-          const home = getTeam(m.homeTeamId);
-          const away = getTeam(m.awayTeamId);
-          const { fullName, shortPitch } = getVenueDetails(m.venueId, m.venueName);
-
-          return (
-            <div
-              key={m.id}
-              onClick={() => onSelectMatch(m.id)}
-              className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 flex flex-col justify-between"
-            >
-              {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
-              <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="font-mono font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
-                    #{m.matchNumber || m.id}
-                  </span>
-                  <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
-                  {/* SỐ SÂN THI ĐẤU NỔI BẬT */}
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide bg-cyan-950/90 border border-cyan-500/50 text-cyan-300 shadow-sm">
-                    <MapPin className="w-3 h-3 text-cyan-400 shrink-0" />
-                    <span>{shortPitch.toUpperCase()}</span>
+      {/* Matches Display: Grouped by Date or Flat Grid */}
+      {sortedMatches.length === 0 ? (
+        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-slate-800/80 text-slate-400 flex items-center justify-center mx-auto">
+            <Calendar className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-bold text-white">Không tìm thấy trận đấu nào</h3>
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            Không có trận đấu nào phù hợp với bộ lọc ngày, vòng đấu hoặc sân đã chọn. Vui lòng thử chọn bộ lọc khác.
+          </p>
+          <button
+            onClick={() => {
+              setFilterVenue('ALL');
+              setFilterRound('ALL');
+              setFilterDate('ALL');
+              setSortOrder('TIME_ASC');
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-bold hover:bg-emerald-900/80 transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Đặt lại tất cả bộ lọc</span>
+          </button>
+        </div>
+      ) : viewLayout === 'GROUPED_BY_DATE' ? (
+        <div className="space-y-8">
+          {Array.from(new Set(sortedMatches.map((m) => m.date || 'UNSCHEDULED'))).map((dateStr) => {
+            const dayMatches = sortedMatches.filter((m) => (m.date || 'UNSCHEDULED') === dateStr);
+            return (
+              <div key={dateStr} className="space-y-3">
+                {/* Matchday Header Banner */}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                      <CalendarDays className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm sm:text-base font-black text-white flex items-center gap-2">
+                        <span>{formatDateHeader(dateStr)}</span>
+                        {dateStr !== 'UNSCHEDULED' && (
+                          <span className="text-xs font-mono font-normal text-slate-400 hidden sm:inline">
+                            ({dateStr})
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 font-medium">
+                        {dateStr !== 'UNSCHEDULED'
+                          ? `Các ca thi đấu theo giờ đã sắp xếp từ sớm đến muộn`
+                          : `Các trận chưa xếp ngày`}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-xl border border-emerald-500/30">
+                    {dayMatches.length} trận đấu
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
-                  {m.status === 'LIVE' && (
-                    <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse text-[10px] bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-lg">
-                      <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
-                    </span>
-                  )}
-                  {m.status === 'FINISHED' && (
-                    <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
-                      KẾT THÚC
-                    </span>
-                  )}
-                  {m.status === 'SCHEDULED' && (
-                    <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-lg flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-400" /> {m.time}
-                    </span>
-                  )}
+                {/* Day Match Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {dayMatches.map((m) => {
+                    const home = getTeam(m.homeTeamId);
+                    const away = getTeam(m.awayTeamId);
+                    const { fullName, shortPitch } = getVenueDetails(m.venueId, m.venueName);
+
+                    return (
+                      <div
+                        key={m.id}
+                        onClick={() => onSelectMatch(m.id)}
+                        className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 flex flex-col justify-between"
+                      >
+                        {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
+                        <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-mono font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+                              #{m.matchNumber || m.id}
+                            </span>
+                            <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
+                            {/* SỐ SÂN THI ĐẤU NỔI BẬT */}
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide bg-cyan-950/90 border border-cyan-500/50 text-cyan-300 shadow-sm">
+                              <MapPin className="w-3 h-3 text-cyan-400 shrink-0" />
+                              <span>{shortPitch.toUpperCase()}</span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {m.status === 'LIVE' && (
+                              <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse text-[10px] bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-lg">
+                                <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
+                              </span>
+                            )}
+                            {m.status === 'FINISHED' && (
+                              <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
+                                KẾT THÚC
+                              </span>
+                            )}
+                            {m.status === 'SCHEDULED' && (
+                              <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-slate-400" /> {m.time}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Match Teams & Score */}
+                        <div className="space-y-2 py-1">
+                          {/* Home */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 truncate">
+                              {home ? (
+                                <span
+                                  className="w-3 h-3 rounded-full border flex-shrink-0"
+                                  style={{ backgroundColor: home.primaryColor, borderColor: home.secondaryColor }}
+                                ></span>
+                              ) : (
+                                <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                              )}
+                              <span className="text-xs font-bold text-white truncate">
+                                {home?.name || 'Đội chờ xác định'}
+                              </span>
+                            </div>
+
+                            <span className="font-mono font-black text-sm text-white">
+                              {m.status === 'FINISHED' || m.status === 'LIVE' ? m.homeScore : '-'}
+                            </span>
+                          </div>
+
+                          {/* Away */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 truncate">
+                              {away ? (
+                                <span
+                                  className="w-3 h-3 rounded-full border flex-shrink-0"
+                                  style={{ backgroundColor: away.primaryColor, borderColor: away.secondaryColor }}
+                                ></span>
+                              ) : (
+                                <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                              )}
+                              <span className="text-xs font-bold text-white truncate">
+                                {away?.name || 'Đội chờ xác định'}
+                              </span>
+                            </div>
+
+                            <span className="font-mono font-black text-sm text-white">
+                              {m.status === 'FINISHED' || m.status === 'LIVE' ? m.awayScore : '-'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Penalty shootout if applicable */}
+                        {m.penaltyShootout && (
+                          <div className="my-2 p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-[10px] text-amber-300 text-center font-bold">
+                            Luân lưu 6m: {m.penaltyShootout.homeScore} - {m.penaltyShootout.awayScore}
+                          </div>
+                        )}
+
+                        {/* Card Footer: Detailed Pitch / Venue & Synchronized Date/Time */}
+                        <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 truncate max-w-[190px]" title={fullName}>
+                            <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                            <span className="truncate font-semibold text-cyan-300">{fullName}</span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700/80">
+                              <Calendar className="w-3 h-3 text-slate-400" />
+                              <span>{m.date}</span>
+                              <Clock className="w-3 h-3 text-emerald-400 ml-1" />
+                              <span className="font-bold text-emerald-400">{m.time}</span>
+                            </div>
+
+                            {canGenerate && (
+                              <button
+                                onClick={(e) => handleOpenEditMatch(e, m)}
+                                className="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95"
+                                title="Chỉnh sửa ngày, giờ & sân thi đấu của trận này"
+                              >
+                                <Edit3 className="w-3 h-3 text-cyan-400" />
+                                <span>Sửa Lịch</span>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedMatches.map((m) => {
+            const home = getTeam(m.homeTeamId);
+            const away = getTeam(m.awayTeamId);
+            const { fullName, shortPitch } = getVenueDetails(m.venueId, m.venueName);
 
-              {/* Match Teams & Score */}
-              <div className="space-y-2 py-1">
-                {/* Home */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 truncate">
-                    {home ? (
-                      <span
-                        className="w-3 h-3 rounded-full border flex-shrink-0"
-                        style={{ backgroundColor: home.primaryColor, borderColor: home.secondaryColor }}
-                      ></span>
-                    ) : (
-                      <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+            return (
+              <div
+                key={m.id}
+                onClick={() => onSelectMatch(m.id)}
+                className="bg-[#0B132B]/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 flex flex-col justify-between"
+              >
+                {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
+                <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-mono font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+                      #{m.matchNumber || m.id}
+                    </span>
+                    <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
+                    {/* SỐ SÂN THI ĐẤU NỔI BẬT */}
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide bg-cyan-950/90 border border-cyan-500/50 text-cyan-300 shadow-sm">
+                      <MapPin className="w-3 h-3 text-cyan-400 shrink-0" />
+                      <span>{shortPitch.toUpperCase()}</span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {m.status === 'LIVE' && (
+                      <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse text-[10px] bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-lg">
+                        <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
+                      </span>
                     )}
-                    <span className="text-xs font-bold text-white truncate">
-                      {home?.name || 'Đội chờ xác định'}
-                    </span>
-                  </div>
-
-                  <span className="font-mono font-black text-sm text-white">
-                    {m.status === 'FINISHED' || m.status === 'LIVE' ? m.homeScore : '-'}
-                  </span>
-                </div>
-
-                {/* Away */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 truncate">
-                    {away ? (
-                      <span
-                        className="w-3 h-3 rounded-full border flex-shrink-0"
-                        style={{ backgroundColor: away.primaryColor, borderColor: away.secondaryColor }}
-                      ></span>
-                    ) : (
-                      <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                    {m.status === 'FINISHED' && (
+                      <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
+                        KẾT THÚC
+                      </span>
                     )}
-                    <span className="text-xs font-bold text-white truncate">
-                      {away?.name || 'Đội chờ xác định'}
+                    {m.status === 'SCHEDULED' && (
+                      <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-slate-400" /> {m.time}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Match Teams & Score */}
+                <div className="space-y-2 py-1">
+                  {/* Home */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 truncate">
+                      {home ? (
+                        <span
+                          className="w-3 h-3 rounded-full border flex-shrink-0"
+                          style={{ backgroundColor: home.primaryColor, borderColor: home.secondaryColor }}
+                        ></span>
+                      ) : (
+                        <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                      )}
+                      <span className="text-xs font-bold text-white truncate">
+                        {home?.name || 'Đội chờ xác định'}
+                      </span>
+                    </div>
+
+                    <span className="font-mono font-black text-sm text-white">
+                      {m.status === 'FINISHED' || m.status === 'LIVE' ? m.homeScore : '-'}
                     </span>
                   </div>
 
-                  <span className="font-mono font-black text-sm text-white">
-                    {m.status === 'FINISHED' || m.status === 'LIVE' ? m.awayScore : '-'}
-                  </span>
-                </div>
-              </div>
+                  {/* Away */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 truncate">
+                      {away ? (
+                        <span
+                          className="w-3 h-3 rounded-full border flex-shrink-0"
+                          style={{ backgroundColor: away.primaryColor, borderColor: away.secondaryColor }}
+                        ></span>
+                      ) : (
+                        <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                      )}
+                      <span className="text-xs font-bold text-white truncate">
+                        {away?.name || 'Đội chờ xác định'}
+                      </span>
+                    </div>
 
-              {/* Penalty shootout if applicable */}
-              {m.penaltyShootout && (
-                <div className="my-2 p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-[10px] text-amber-300 text-center font-bold">
-                  Luân lưu 6m: {m.penaltyShootout.homeScore} - {m.penaltyShootout.awayScore}
-                </div>
-              )}
-
-              {/* Card Footer: Detailed Pitch / Venue & Synchronized Date/Time */}
-              <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5 truncate max-w-[190px]" title={fullName}>
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                  <span className="truncate font-semibold text-cyan-300">{fullName}</span>
+                    <span className="font-mono font-black text-sm text-white">
+                      {m.status === 'FINISHED' || m.status === 'LIVE' ? m.awayScore : '-'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700/80">
-                    <Calendar className="w-3 h-3 text-slate-400" />
-                    <span>{m.date}</span>
-                    <Clock className="w-3 h-3 text-emerald-400 ml-1" />
-                    <span className="font-bold text-emerald-400">{m.time}</span>
+                {/* Penalty shootout if applicable */}
+                {m.penaltyShootout && (
+                  <div className="my-2 p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-[10px] text-amber-300 text-center font-bold">
+                    Luân lưu 6m: {m.penaltyShootout.homeScore} - {m.penaltyShootout.awayScore}
+                  </div>
+                )}
+
+                {/* Card Footer: Detailed Pitch / Venue & Synchronized Date/Time */}
+                <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 truncate max-w-[190px]" title={fullName}>
+                    <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span className="truncate font-semibold text-cyan-300">{fullName}</span>
                   </div>
 
-                  {canGenerate && (
-                    <button
-                      onClick={(e) => handleOpenEditMatch(e, m)}
-                      className="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95"
-                      title="Chỉnh sửa ngày, giờ & sân thi đấu của trận này"
-                    >
-                      <Edit3 className="w-3 h-3 text-cyan-400" />
-                      <span>Sửa Lịch</span>
-                    </button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700/80">
+                      <Calendar className="w-3 h-3 text-slate-400" />
+                      <span>{m.date}</span>
+                      <Clock className="w-3 h-3 text-emerald-400 ml-1" />
+                      <span className="font-bold text-emerald-400">{m.time}</span>
+                    </div>
+
+                    {canGenerate && (
+                      <button
+                        onClick={(e) => handleOpenEditMatch(e, m)}
+                        className="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95"
+                        title="Chỉnh sửa ngày, giờ & sân thi đấu của trận này"
+                      >
+                        <Edit3 className="w-3 h-3 text-cyan-400" />
+                        <span>Sửa Lịch</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Edit Match Schedule Modal */}
       {editingMatch && (

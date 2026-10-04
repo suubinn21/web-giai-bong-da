@@ -78,6 +78,19 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
   const homeTeam = teams.find((t) => t.id === activeMatch?.homeTeamId);
   const awayTeam = teams.find((t) => t.id === activeMatch?.awayTeamId);
 
+  // Sắp xếp danh sách trận đấu trên thanh chọn: LIVE trước -> sắp đá theo thời gian sớm nhất -> đã kết thúc
+  const sortedStripMatches = [...matches].sort((a, b) => {
+    if (a.status === 'LIVE' && b.status !== 'LIVE') return -1;
+    if (b.status === 'LIVE' && a.status !== 'LIVE') return 1;
+    if (a.status === 'SCHEDULED' && b.status === 'FINISHED') return -1;
+    if (b.status === 'SCHEDULED' && a.status === 'FINISHED') return 1;
+    const dateComp = (a.date || '').localeCompare(b.date || '');
+    if (dateComp !== 0) return dateComp;
+    const timeComp = (a.time || '').localeCompare(b.time || '');
+    if (timeComp !== 0) return timeComp;
+    return (a.matchNumber || 0) - (b.matchNumber || 0);
+  });
+
   // Synchronize timer with match state
   useEffect(() => {
     if (activeMatch) {
@@ -439,7 +452,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
     <div className="space-y-6">
       {/* Match Selector Strip */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-        {matches.slice(0, 12).map((m) => {
+        {sortedStripMatches.map((m) => {
           const h = teams.find((t) => t.id === m.homeTeamId);
           const a = teams.find((t) => t.id === m.awayTeamId);
           const isSelected = m.id === activeMatch.id;
