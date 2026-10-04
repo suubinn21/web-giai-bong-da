@@ -495,16 +495,18 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
       </div>
 
       {/* Main Stadium Live Scoreboard Card */}
-      <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.6)] bg-slate-900/95 backdrop-blur-md">
-        {/* Stadium Action Photo Overlay */}
+      <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/40 shadow-[0_12px_50px_rgba(0,0,0,0.7)] bg-[#071322] backdrop-blur-md">
+        {/* Stadium Action Photo Overlay with balanced floodlights */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 transform scale-105 pointer-events-none"
-          style={{ backgroundImage: `url('/images/goalkeeper-save.jpg')` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 transform scale-105 pointer-events-none mix-blend-luminosity"
+          style={{ backgroundImage: `url('/images/tournament-hero.jpg')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/85 to-slate-950/70 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#071526]/95 via-[#06101c]/92 to-[#030810]/98 pointer-events-none" />
         
-        {/* Stadium lighting glow top overlay */}
-        <div className="absolute top-0 left-1/4 right-1/4 h-24 bg-emerald-500/20 blur-3xl pointer-events-none"></div>
+        {/* Stadium lighting glow overlays */}
+        <div className="absolute top-0 left-1/4 right-1/4 h-32 bg-emerald-500/25 blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-10 left-10 w-48 h-48 bg-cyan-500/15 blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-10 right-10 w-48 h-48 bg-emerald-500/15 blur-3xl pointer-events-none"></div>
 
         {/* Top Info Bar */}
         <div className="px-6 py-3.5 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs bg-[#071322]/90 backdrop-blur-sm">
@@ -561,69 +563,132 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
           </div>
         </div>
 
-        {/* Score & Teams Display */}
-        <div className="p-4 sm:p-10">
-          <div className="grid grid-cols-12 items-center gap-1 sm:gap-6">
+        {/* Score & Teams Display - Balanced 12-Column Full Width Broadcast Layout */}
+        <div className="px-4 py-8 sm:px-10 sm:py-12 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-6 lg:gap-8">
             
-            {/* Home Team */}
-            <div className="col-span-4 md:col-span-3 flex flex-col items-center md:items-end text-center md:text-right">
-              <div 
-                className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-extrabold shadow-xl border-2 mb-2 sm:mb-3"
-                style={{ backgroundColor: homeTeam?.primaryColor || '#1e3a8a', borderColor: homeTeam?.secondaryColor || '#ffffff' }}
-              >
-                ⚽
+            {/* Home Team (5 columns on desktop, text-right) */}
+            <div className="col-span-1 md:col-span-5 flex flex-col items-center md:items-end text-center md:text-right">
+              {/* Crest with glowing ring */}
+              <div className="relative group mb-3">
+                <div 
+                  className="absolute -inset-1 rounded-3xl blur-lg opacity-80 group-hover:opacity-100 transition duration-300"
+                  style={{ backgroundColor: homeTeam?.primaryColor || '#1e3a8a' }}
+                />
+                <div 
+                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50 backdrop-blur-md"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${homeTeam?.primaryColor || '#1e3a8a'} 0%, #08111e 100%)`, 
+                    borderColor: homeTeam?.secondaryColor || '#34d399' 
+                  }}
+                >
+                  <span className="drop-shadow-lg transform group-hover:scale-110 transition-transform">⚽</span>
+                  <div className="absolute -bottom-2.5 px-3 py-0.5 rounded-full bg-[#081525] border-2 border-emerald-400 text-[10px] sm:text-xs font-black text-emerald-300 uppercase tracking-widest shadow-md">
+                    Chủ Nhà
+                  </div>
+                </div>
               </div>
-              <h2 className="text-sm sm:text-2xl font-black text-white tracking-wide line-clamp-2 md:line-clamp-none drop-shadow-md">
+
+              {/* Team Name */}
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-wide uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 {homeTeam?.name || 'Đội Nhà'}
               </h2>
-              <p className="hidden sm:block text-xs text-slate-300 font-medium mt-1">Lớp {homeTeam?.class} • {homeTeam?.department}</p>
-              <div className="hidden sm:flex items-center gap-2 mt-2">
-                <span className="text-[11px] bg-slate-900/95 border border-slate-700 px-2.5 py-1 rounded-md text-emerald-300 font-mono font-bold shadow-sm">
-                  Đội trưởng: #{homeTeam?.captainName}
+
+              {/* Badges: Class & Captain */}
+              <div className="mt-2.5 flex flex-wrap items-center justify-center md:justify-end gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#071c2f]/90 border border-emerald-500/50 text-emerald-300 text-xs font-bold shadow-md">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Lớp {homeTeam?.class || 'N/A'} • {homeTeam?.department || 'Khoa CNTT'}</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900/95 border border-amber-400/60 text-amber-300 text-xs font-bold shadow-md">
+                  <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>Đội trưởng: #{homeTeam?.captainName || 'Cầu thủ'}</span>
                 </span>
               </div>
             </div>
 
-            {/* Score & Live Clock Center */}
-            <div className="col-span-4 md:col-span-1 flex flex-col items-center justify-center my-0">
-              <div className="bg-slate-950/95 px-3 sm:px-5 py-1.5 rounded-full border-2 border-emerald-400 text-emerald-300 font-mono text-xs sm:text-base font-black tracking-widest mb-1.5 sm:mb-3 shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                {formatMinSec(seconds)}
+            {/* Score & Live Clock Center (2 columns on desktop, perfectly centered) */}
+            <div className="col-span-1 md:col-span-2 flex flex-col items-center justify-center my-4 md:my-0">
+              
+              {/* Live Digital Clock Badge */}
+              <div className="relative mb-3 group">
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-400 opacity-70 blur-md group-hover:opacity-100 transition duration-300"></div>
+                <div className="relative bg-[#030c18] px-5 sm:px-6 py-1.5 rounded-full border-2 border-emerald-400 flex items-center gap-2 shadow-2xl">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                  <span className="text-emerald-300 font-mono text-sm sm:text-xl font-black tracking-widest drop-shadow-[0_0_12px_rgba(52,211,153,0.9)]">
+                    {formatMinSec(seconds)}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-3">
-                <span className="text-3xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-lg">
-                  {activeMatch.homeScore}
-                </span>
-                <span className="text-xl sm:text-3xl font-extrabold text-emerald-400/80">-</span>
-                <span className="text-3xl sm:text-6xl font-black font-mono text-white tracking-tight drop-shadow-lg">
-                  {activeMatch.awayScore}
-                </span>
+              {/* Big Stadium LED Scoreboard Display */}
+              <div className="flex items-center gap-2.5 sm:gap-4 my-1">
+                {/* Home Score Box */}
+                <div className="w-20 h-24 sm:w-26 sm:h-32 rounded-2xl bg-gradient-to-b from-[#0e2744] via-[#061424] to-[#02070f] border-2 border-emerald-400/80 shadow-[0_0_35px_rgba(16,185,129,0.35)] flex items-center justify-center">
+                  <span className="text-5xl sm:text-7xl font-mono font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+                    {activeMatch.homeScore}
+                  </span>
+                </div>
+
+                {/* Center Colon / VS Separator */}
+                <div className="flex flex-col items-center justify-center px-1">
+                  <span className="text-2xl sm:text-4xl font-mono font-black text-emerald-400 animate-pulse">:</span>
+                  <span className="text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest">VS</span>
+                </div>
+
+                {/* Away Score Box */}
+                <div className="w-20 h-24 sm:w-26 sm:h-32 rounded-2xl bg-gradient-to-b from-[#0e2744] via-[#061424] to-[#02070f] border-2 border-emerald-400/80 shadow-[0_0_35px_rgba(16,185,129,0.35)] flex items-center justify-center">
+                  <span className="text-5xl sm:text-7xl font-mono font-black text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+                    {activeMatch.awayScore}
+                  </span>
+                </div>
               </div>
 
               {/* Penalty shootout badge if exists (Rule #8) */}
               {activeMatch.penaltyShootout && (
-                <div className="mt-2 bg-amber-500/25 border-2 border-amber-400 text-amber-200 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-black flex items-center gap-1 text-center shadow-md">
-                  <Award className="w-3.5 h-3.5 hidden sm:inline text-amber-400" />
-                  <span>Pen: {activeMatch.penaltyShootout.homeScore}-{activeMatch.penaltyShootout.awayScore}</span>
+                <div className="mt-3 bg-amber-500/20 border-2 border-amber-400 text-amber-200 px-4 py-1 rounded-full text-xs font-black flex items-center gap-1.5 text-center shadow-lg shadow-amber-500/25">
+                  <Award className="w-4 h-4 text-amber-400" />
+                  <span>PEN: {activeMatch.penaltyShootout.homeScore} - {activeMatch.penaltyShootout.awayScore}</span>
                 </div>
               )}
             </div>
 
-            {/* Away Team */}
-            <div className="col-span-4 md:col-span-3 flex flex-col items-center md:items-start text-center md:text-left">
-              <div 
-                className="w-12 h-12 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-extrabold shadow-xl border-2 mb-2 sm:mb-3"
-                style={{ backgroundColor: awayTeam?.primaryColor || '#059669', borderColor: awayTeam?.secondaryColor || '#ffffff' }}
-              >
-                ⚽
+            {/* Away Team (5 columns on desktop, text-left) */}
+            <div className="col-span-1 md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left">
+              {/* Crest with glowing ring */}
+              <div className="relative group mb-3">
+                <div 
+                  className="absolute -inset-1 rounded-3xl blur-lg opacity-80 group-hover:opacity-100 transition duration-300"
+                  style={{ backgroundColor: awayTeam?.primaryColor || '#059669' }}
+                />
+                <div 
+                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50 backdrop-blur-md"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${awayTeam?.primaryColor || '#059669'} 0%, #08111e 100%)`, 
+                    borderColor: awayTeam?.secondaryColor || '#38bdf8' 
+                  }}
+                >
+                  <span className="drop-shadow-lg transform group-hover:scale-110 transition-transform">⚽</span>
+                  <div className="absolute -bottom-2.5 px-3 py-0.5 rounded-full bg-[#081525] border-2 border-cyan-400 text-[10px] sm:text-xs font-black text-cyan-300 uppercase tracking-widest shadow-md">
+                    Đội Khách
+                  </div>
+                </div>
               </div>
-              <h2 className="text-sm sm:text-2xl font-black text-white tracking-wide line-clamp-2 md:line-clamp-none drop-shadow-md">
+
+              {/* Team Name */}
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-wide uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 {awayTeam?.name || 'Đội Khách'}
               </h2>
-              <p className="hidden sm:block text-xs text-slate-300 font-medium mt-1">Lớp {awayTeam?.class} • {awayTeam?.department}</p>
-              <div className="hidden sm:flex items-center gap-2 mt-2">
-                <span className="text-[11px] bg-slate-900/95 border border-slate-700 px-2.5 py-1 rounded-md text-emerald-300 font-mono font-bold shadow-sm">
-                  Đội trưởng: #{awayTeam?.captainName}
+
+              {/* Badges: Class & Captain */}
+              <div className="mt-2.5 flex flex-wrap items-center justify-center md:justify-start gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#071c2f]/90 border border-emerald-500/50 text-emerald-300 text-xs font-bold shadow-md">
+                  <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>Lớp {awayTeam?.class || 'N/A'} • {awayTeam?.department || 'Khoa CNTT'}</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900/95 border border-amber-400/60 text-amber-300 text-xs font-bold shadow-md">
+                  <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>Đội trưởng: #{awayTeam?.captainName || 'Cầu thủ'}</span>
                 </span>
               </div>
             </div>
