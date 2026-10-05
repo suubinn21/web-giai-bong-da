@@ -24,7 +24,8 @@ import {
   Copy,
   Check,
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  LogIn
 } from 'lucide-react';
 
 interface TeamsViewProps {
@@ -33,6 +34,7 @@ interface TeamsViewProps {
   currentRole: UserRole;
   tournament?: Tournament;
   currentUser?: UserAccount | null;
+  onOpenAuthModal?: (notice?: string, initialUsername?: string, initialPassword?: string) => void;
 }
 
 export const TeamsView: React.FC<TeamsViewProps> = ({
@@ -41,6 +43,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   currentRole,
   tournament,
   currentUser,
+  onOpenAuthModal,
 }) => {
   const groups = getGroupLetters(tournament?.numberOfGroups || 4);
   const [selectedTeamId, setSelectedTeamId] = useState<string>(teams[0]?.id || '');
@@ -111,13 +114,16 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   // Phân quyền chuẩn hóa
   const isOrganizerOrAdmin = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
   const isCaptain = currentRole === 'TEAM_MANAGER';
+  const captainAcc = selectedTeam ? AuthService.getCaptainAccountForTeam(selectedTeam.id) : null;
+  const captainUsername = captainAcc?.username || (selectedTeam ? `captain_${(selectedTeam.shortName || selectedTeam.name).toLowerCase().replace(/[^a-z0-9]/g, '')}` : '');
   const isMyTeam =
     isCaptain &&
     currentUser != null &&
     (currentUser.teamId === selectedTeam?.id ||
       (currentUser.teamName &&
         selectedTeam?.name &&
-        currentUser.teamName.toLowerCase().trim() === selectedTeam.name.toLowerCase().trim()));
+        currentUser.teamName.toLowerCase().trim() === selectedTeam.name.toLowerCase().trim()) ||
+      (captainUsername && currentUser.username?.toLowerCase() === captainUsername.toLowerCase()));
 
   // Quyền quản lý thành viên (Cầu thủ): BTC toàn quyền, Đội trưởng chỉ đội mình
   const canManageThisTeamPlayers = isOrganizerOrAdmin || isMyTeam;
@@ -630,188 +636,286 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               )}
 
               {/* Team Hero Header with athletic match photo */}
-              <div className="relative rounded-3xl overflow-hidden border border-slate-700/60 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-md">
+              <div className="relative rounded-3xl overflow-hidden border-2 border-slate-700/80 bg-slate-950 p-6 shadow-2xl backdrop-blur-md">
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 transform scale-105 pointer-events-none"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 transform scale-105 pointer-events-none"
                   style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/50 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80 pointer-events-none" />
 
-                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  
-                  <div className="flex items-center gap-4">
-                    {/* Jersey Visualizer Graphic */}
-                    <div 
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center border-2 shadow-xl"
-                      style={{ backgroundColor: selectedTeam.primaryColor, borderColor: selectedTeam.secondaryColor }}
-                    >
-                      <Shirt className="w-6 h-6 text-white drop-shadow" />
-                      <span className="text-[11px] font-black font-mono text-white drop-shadow">#10</span>
+                <div className="relative z-10 space-y-4">
+                  {/* Top Row: Team Identity & Action Buttons */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      {/* Jersey Visualizer Graphic */}
+                      <div 
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center border-2 shadow-xl shrink-0"
+                        style={{ backgroundColor: selectedTeam.primaryColor, borderColor: selectedTeam.secondaryColor }}
+                      >
+                        <Shirt className="w-6 h-6 text-white drop-shadow" />
+                        <span className="text-[11px] font-black font-mono text-white drop-shadow">#10</span>
+                      </div>
+
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide">
+                            {selectedTeam.name}
+                          </h3>
+                          <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-500/50 px-2.5 py-0.5 rounded font-mono font-bold">
+                            BẢNG {selectedTeam.group || 'CHƯA GÁN'}
+                          </span>
+                          {isMyTeam && (
+                            <span className="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/60 px-2.5 py-0.5 rounded-full font-bold">
+                              ⭐ ĐỘI CỦA BẠN (Toàn quyền quản lý)
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-slate-300 mt-1 font-medium">
+                          {selectedTeam.department?.toLowerCase().startsWith('khoa') ? selectedTeam.department : `Khoa ${selectedTeam.department}`} • Lớp {selectedTeam.class}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-200">
+                          <span>Trưởng đoàn: <strong className="text-white">{selectedTeam.leaderName}</strong></span>
+                          <span className="text-slate-500">•</span>
+                          <span>Đội trưởng: <strong className="text-white">{selectedTeam.captainName}</strong></span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-xl sm:text-2xl font-black text-white">
-                          {selectedTeam.name}
-                        </h3>
-                        <span className="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono font-bold">
-                          BẢNG {selectedTeam.group || 'CHƯA GÁN'}
+                    {/* Team Controls: Phân quyền rõ ràng */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Sửa đội / Đổi bảng: CHỈ DÀNH CHO BTC/ADMIN */}
+                      {isOrganizerOrAdmin && (
+                        <button
+                          onClick={handleOpenEditTeam}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition-all shadow-md"
+                          title="BTC sửa tên đội, đổi bảng đấu, màu áo"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>Sửa Đội / Đổi Bảng</span>
+                        </button>
+                      )}
+
+                      {/* Thêm cầu thủ: BTC HOẶC Đội trưởng đội mình */}
+                      {canManageThisTeamPlayers && (
+                        <button
+                          onClick={() => setPlayerModalOpen(true)}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>{isMyTeam ? '+ Thêm Cầu Thủ Đội Mình' : '+ Thêm Cầu Thủ'}</span>
+                        </button>
+                      )}
+
+                      {/* Báo bỏ cuộc: CHỈ DÀNH CHO BTC */}
+                      {isOrganizerOrAdmin && (
+                        <button
+                          onClick={() => handleToggleWithdrawn(selectedTeam.id)}
+                          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
+                            selectedTeam.status === 'WITHDRAWN'
+                              ? 'bg-emerald-950 text-emerald-400 border-emerald-500/40 hover:bg-emerald-900/60'
+                              : 'bg-red-950/80 text-red-300 border-red-500/50 hover:bg-red-900/60'
+                          }`}
+                          title="Quy định Điều 13: Xử lý đội bỏ cuộc"
+                        >
+                          <Ban className="w-3.5 h-3.5" />
+                          <span>{selectedTeam.status === 'WITHDRAWN' ? 'Hồi Phục Đội' : 'Báo Bỏ Cuộc (Điều 13)'}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section: Hộp Tài Khoản Đội Trưởng & Trạng Thái Quyền */}
+                  {isMyTeam ? (
+                    <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-emerald-900/50 to-teal-950/90 border-2 border-emerald-500/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                          <ShieldCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-black text-white">⭐ BẠN ĐANG ĐĂNG NHẬP VỚI TƯ CÁCH ĐỘI TRƯỞNG</span>
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 text-[10px] font-bold">
+                              ĐÃ KÍCH HOẠT
+                            </span>
+                          </div>
+                          <p className="text-xs text-emerald-200/90 mt-0.5">
+                            Bạn có toàn quyền thêm mới, cập nhật số áo, vị trí và thông tin cầu thủ cho đội <strong>{selectedTeam.name}</strong>.
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setPlayerModalOpen(true)}
+                        className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Thêm Cầu Thủ</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border-2 border-emerald-500/40 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                      <div className="flex items-start sm:items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40 mt-0.5 sm:mt-0">
+                          <KeyRound className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs sm:text-sm font-bold text-white">Tài khoản Đội trưởng:</span>
+                            <code className="px-2.5 py-1 rounded-lg bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-mono font-bold text-xs sm:text-sm tracking-wide">
+                              {captainUsername}
+                            </code>
+                            <span className="text-slate-500">•</span>
+                            <span className="text-xs sm:text-sm font-medium text-slate-300">Mật khẩu:</span>
+                            <code className="px-2.5 py-1 rounded-lg bg-slate-900 text-amber-300 border border-amber-500/50 font-mono font-bold text-xs sm:text-sm">
+                              123
+                            </code>
+                          </div>
+                          <p className="text-[11px] text-slate-300 mt-1">
+                            💡 Đội trưởng có thể đăng nhập bằng tài khoản <strong className="text-emerald-400 font-mono">{captainUsername}</strong> hoặc nhập trực tiếp tên đội <strong className="text-emerald-400 font-mono">"{selectedTeam.name}"</strong> (mật khẩu: 123) để vào thêm/sửa cầu thủ.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-start lg:self-auto shrink-0">
+                        <button
+                          onClick={() => {
+                            const text = `TÀI KHOẢN ĐỘI TRƯỞNG - ĐỘI ${selectedTeam.name.toUpperCase()}\nTài khoản: ${captainUsername}\nMật khẩu: 123\nĐội trưởng có thể đăng nhập bằng tài khoản hoặc tên đội "${selectedTeam.name}" để cập nhật danh sách cầu thủ.`;
+                            navigator.clipboard.writeText(text);
+                            setHeaderCopied(true);
+                            setTimeout(() => setHeaderCopied(false), 2000);
+                          }}
+                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all"
+                          title="Sao chép tài khoản và mật khẩu cho Đội trưởng"
+                        >
+                          {headerCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép'}</span>
+                        </button>
+
+                        {onOpenAuthModal && (
+                          <button
+                            onClick={() => onOpenAuthModal(undefined, captainUsername, '123')}
+                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition-all active:scale-95"
+                            title="Đăng nhập ngay vào tài khoản Đội trưởng đội này"
+                          >
+                            <LogIn className="w-3.5 h-3.5" />
+                            <span>Đăng Nhập Đội Trưởng</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Section: 4 Stat Cards hiển thị rõ ràng, tương phản cao, sắc nét */}
+                  <div className="pt-2 border-t border-slate-700/60 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    {/* Đội Hình Đăng Ký */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-300">Đội Hình Đăng Ký</span>
+                        <Users className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
+                          {selectedTeam.players.length}
                         </span>
-                        {isMyTeam && (
-                          <span className="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-bold">
-                            ⭐ ĐỘI CỦA BẠN (Được thêm &amp; sửa thành viên)
+                        <span className="text-xs font-semibold text-slate-300 font-mono">/ 12 Cầu thủ</span>
+                      </div>
+                      <span className="text-[10px] font-medium text-emerald-300/80 mt-1 block">
+                        {selectedTeam.players.length >= 5 ? '✓ Đủ tối thiểu 5 cầu thủ' : 'Cần tối thiểu 5 cầu thủ'}
+                      </span>
+                    </div>
+
+                    {/* Bảng Thi Đấu */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-cyan-500/50 transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-300">Bảng Thi Đấu</span>
+                        <Shirt className="w-4 h-4 text-cyan-400" />
+                      </div>
+                      <div className="text-lg sm:text-xl font-black text-cyan-300 font-mono">
+                        {selectedTeam.group ? `BẢNG ${selectedTeam.group}` : 'CHƯA CHIA BẢNG'}
+                      </div>
+                      <span className="text-[10px] font-medium text-cyan-300/80 mt-1 block">
+                        {selectedTeam.group ? 'Vòng Bảng Chính Thức' : 'Chờ bốc thăm chia bảng'}
+                      </span>
+                    </div>
+
+                    {/* Hồ Sơ Đội Bóng */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-300">Hồ Sơ Đội Bóng</span>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div>
+                        {selectedTeam.status === 'APPROVED' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-bold text-xs">
+                            ✓ ĐÃ DUYỆT HỢP LỆ
+                          </span>
+                        ) : selectedTeam.status === 'WITHDRAWN' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-950/90 text-red-300 border border-red-500/50 font-bold text-xs">
+                            BỎ CUỘC (ĐIỀU 13)
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold text-xs">
+                            CHỜ PHÊ DUYỆT
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-400 mt-1">
-                        Khoa {selectedTeam.department} • Lớp {selectedTeam.class}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-300">
-                        <span>Trưởng đoàn: <strong>{selectedTeam.leaderName}</strong></span>
-                        <span>•</span>
-                        <span>Đội trưởng: <strong>{selectedTeam.captainName}</strong></span>
+                      <span className="text-[10px] font-medium text-slate-400 mt-1 block">
+                        Theo Điều lệ Giải đấu
+                      </span>
+                    </div>
+
+                    {/* Chi Đoàn / Lớp */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-blue-500/50 transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-300">Chi Đoàn / Đơn Vị</span>
+                        <Users className="w-4 h-4 text-blue-400" />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Team Controls: Phân quyền rõ ràng */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {/* Sửa đội / Đổi bảng: CHỈ DÀNH CHO BTC/ADMIN */}
-                    {isOrganizerOrAdmin && (
-                      <button
-                        onClick={handleOpenEditTeam}
-                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition-all"
-                        title="BTC sửa tên đội, đổi bảng đấu, màu áo"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span>Sửa Đội / Đổi Bảng</span>
-                      </button>
-                    )}
-
-                    {/* Thêm cầu thủ: BTC HOẶC Đội trưởng đội mình */}
-                    {canManageThisTeamPlayers && (
-                      <button
-                        onClick={() => setPlayerModalOpen(true)}
-                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>{isMyTeam ? '+ Thêm Cầu Thủ Đội Mình' : '+ Thêm Cầu Thủ'}</span>
-                      </button>
-                    )}
-
-                    {/* Báo bỏ cuộc: CHỈ DÀNH CHO BTC */}
-                    {isOrganizerOrAdmin && (
-                      <button
-                        onClick={() => handleToggleWithdrawn(selectedTeam.id)}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
-                          selectedTeam.status === 'WITHDRAWN'
-                            ? 'bg-emerald-950 text-emerald-400 border-emerald-500/40 hover:bg-emerald-900/60'
-                            : 'bg-red-950/60 text-red-300 border-red-500/40 hover:bg-red-900/60'
-                        }`}
-                        title="Quy định Điều 13: Xử lý đội bỏ cuộc"
-                      >
-                        <Ban className="w-3.5 h-3.5" />
-                        <span>{selectedTeam.status === 'WITHDRAWN' ? 'Hồi Phục Đội' : 'Báo Bỏ Cuộc (Điều 13)'}</span>
-                      </button>
-                    )}
-                  </div>
-
-                </div>
-
-                {/* Box hiển thị tài khoản Đội trưởng dành riêng cho BTC tra cứu và bàn giao */}
-                {isOrganizerOrAdmin && (
-                  <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-cyan-950/30 p-3 rounded-2xl border border-cyan-500/30">
-                    <div className="flex items-center gap-2.5 text-xs">
-                      <div className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
-                        <KeyRound className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <span className="font-bold text-white">Tài khoản Đội trưởng: </span>
-                        <span className="font-mono text-cyan-300 font-bold">
-                          @{AuthService.getCaptainAccountForTeam(selectedTeam.id)?.username || `captain_${selectedTeam.shortName.toLowerCase()}`}
-                        </span>
-                        <span className="text-slate-400 mx-2">•</span>
-                        <span className="text-slate-300">Mật khẩu: </span>
-                        <span className="font-mono text-emerald-400 font-bold">
-                          {AuthService.getCaptainAccountForTeam(selectedTeam.id)?.password || '123'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        const cap = AuthService.getCaptainAccountForTeam(selectedTeam.id);
-                        const u = cap?.username || `captain_${selectedTeam.shortName.toLowerCase()}`;
-                        const p = cap?.password || '123';
-                        const text = `TÀI KHOẢN ĐỘI TRƯỞNG - ĐỘI ${selectedTeam.name.toUpperCase()}\nTài khoản: ${u}\nMật khẩu: ${p}\nĐội trưởng đăng nhập để cập nhật danh sách cầu thủ của đội mình.`;
-                        navigator.clipboard.writeText(text);
-                        setHeaderCopied(true);
-                        setTimeout(() => setHeaderCopied(false), 2000);
-                      }}
-                      className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold flex items-center gap-1.5 self-start sm:self-auto transition-all"
-                    >
-                      {headerCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                      <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép Cho Đội Trưởng'}</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Financial & Fee Status Strip: Chỉ hiển thị cho Super Admin & BTC */}
-                {isOrganizerOrAdmin ? (
-                  <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Lệ Phí Thi Đấu</span>
-                      <span className="font-mono font-bold text-emerald-400">
-                        {selectedTeam.registrationFee.toLocaleString()} đ
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Ký Quỹ Điều Lệ</span>
-                      <span className="font-mono font-bold text-cyan-400">
-                        {selectedTeam.depositFee.toLocaleString()} đ
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Trạng Thái Đóng Phí</span>
-                      <span className={`font-bold ${selectedTeam.feeStatus === 'PAID' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                        {selectedTeam.feeStatus === 'PAID' ? '✓ Đã Thanh Toán' : 'Chưa Thanh Toán'}
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Tổng Cầu Thủ</span>
-                      <span className="font-mono font-bold text-white">
-                        {selectedTeam.players.length} / 12 Cầu thủ
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Đội Hình Đăng Ký</span>
-                      <span className="font-mono font-bold text-emerald-400">
-                        {selectedTeam.players.length} / 12 Cầu thủ
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Bảng Thi Đấu</span>
-                      <span className="font-mono font-bold text-cyan-400">
-                        {selectedTeam.group ? `Bảng ${selectedTeam.group}` : 'Chưa chia bảng'}
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Hồ Sơ Đội Bóng</span>
-                      <span className="font-bold text-emerald-400">
-                        {selectedTeam.status === 'APPROVED' ? '✓ Hợp Lệ' : selectedTeam.status === 'WITHDRAWN' ? 'Bỏ Cuộc' : 'Chờ Phê Duyệt'}
-                      </span>
-                    </div>
-                    <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
-                      <span className="text-[10px] text-slate-400 block">Chi Đoàn / Lớp</span>
-                      <span className="font-bold text-white truncate">
+                      <div className="text-sm font-black text-white truncate" title={selectedTeam.class || 'Khoa CNTT'}>
                         {selectedTeam.class || 'Khoa CNTT'}
+                      </div>
+                      <span className="text-[10px] font-medium text-slate-300 truncate mt-1 block" title={selectedTeam.department}>
+                        {selectedTeam.department?.toLowerCase().startsWith('khoa') ? selectedTeam.department : `Khoa ${selectedTeam.department}`}
                       </span>
                     </div>
                   </div>
-                )}
+
+                  {/* Strip Tài Chính: Chỉ hiển thị cho Super Admin & BTC */}
+                  {isOrganizerOrAdmin && (
+                    <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
+                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Lệ Phí Thi Đấu</span>
+                        <span className="font-mono font-bold text-base text-emerald-400 block">
+                          {selectedTeam.registrationFee.toLocaleString()} đ
+                        </span>
+                        <span className="text-[10px] text-slate-500">Quy định Điều lệ</span>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
+                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Ký Quỹ Điều Lệ</span>
+                        <span className="font-mono font-bold text-base text-cyan-400 block">
+                          {selectedTeam.depositFee.toLocaleString()} đ
+                        </span>
+                        <span className="text-[10px] text-slate-500">Ký quỹ kỷ luật</span>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
+                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Trạng Thái Đóng Phí</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-md font-bold text-xs ${
+                          selectedTeam.feeStatus === 'PAID'
+                            ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/40'
+                            : 'bg-amber-950/90 text-amber-300 border border-amber-500/40'
+                        }`}>
+                          {selectedTeam.feeStatus === 'PAID' ? '✓ Đã Thanh Toán' : 'Chưa Thanh Toán'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 block mt-1">BTC xác nhận</span>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
+                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Chỉ Số Nhân Sự</span>
+                        <span className="font-mono font-bold text-base text-white block">
+                          {selectedTeam.players.length} / 12 Cầu thủ
+                        </span>
+                        <span className="text-[10px] text-slate-500">Tối đa 12 người</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Players Table */}

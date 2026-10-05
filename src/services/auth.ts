@@ -97,8 +97,9 @@ export class AuthService {
    * Tự động sinh tên đăng nhập chuẩn từ tên viết tắt hoặc ID đội bóng
    */
   static generateCaptainUsername(shortNameOrId: string): string {
-    const clean = shortNameOrId
-      .toLowerCase()
+    const raw = (shortNameOrId || '').toLowerCase().trim();
+    const unPrefixed = raw.replace(/^captain_+/, '');
+    const clean = unPrefixed
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '');
@@ -114,13 +115,13 @@ export class AuthService {
     customPassword?: string
   ): UserAccount {
     const users = this.getAllUsers();
-    const rawUsername = (customUsername || this.generateCaptainUsername(team.shortName || team.id)).toLowerCase().trim();
+    const rawUsername = (customUsername || this.generateCaptainUsername(team.shortName || team.name || team.id)).toLowerCase().trim();
     const username = rawUsername || this.generateCaptainUsername(team.id);
     const password = (customPassword || '123').trim() || '123';
 
-    // Tìm xem đã có tài khoản gắn với teamId này chưa
+    // Tìm xem đã có tài khoản gắn với teamId hoặc username này chưa
     const existingIndex = users.findIndex(
-      (u) => u.teamId === team.id || u.username.toLowerCase() === username
+      (u) => (u.teamId && u.teamId === team.id) || u.username.toLowerCase() === username
     );
 
     const captainAccount: UserAccount = {
@@ -167,22 +168,42 @@ export class AuthService {
     let hasChanges = false;
 
     for (const team of teams) {
-      const hasAccount = users.some(
-        (u) => u.role === 'TEAM_MANAGER' && (u.teamId === team.id || u.teamName === team.name)
+      const existing = users.find(
+        (u) => u.role === 'TEAM_MANAGER' && (u.teamId === team.id || (u.teamName && u.teamName.toLowerCase().trim() === team.name.toLowerCase().trim()))
       );
-      if (!hasAccount) {
-        const username = this.generateCaptainUsername(team.shortName || team.id);
+      const targetUsername = this.generateCaptainUsername(team.shortName || team.name || team.id);
+
+      if (existing) {
+        let modified = false;
+        if (existing.teamId !== team.id) {
+          existing.teamId = team.id;
+          modified = true;
+        }
+        if (existing.teamName !== team.name) {
+          existing.teamName = team.name;
+          modified = true;
+        }
+        if (!existing.password) {
+          existing.password = '123';
+          modified = true;
+        }
+        if (team.captainName && (!existing.fullName || existing.fullName.startsWith('Đội trưởng'))) {
+          existing.fullName = team.captainName.trim();
+          modified = true;
+        }
+        if (modified) hasChanges = true;
+      } else {
         const newCap: UserAccount = {
           id: `USR-CAP-${team.id}`,
-          username,
+          username: targetUsername,
           password: '123',
           fullName: team.captainName?.trim() || `Đội trưởng ${team.name}`,
           role: 'TEAM_MANAGER',
-          email: team.email || `${username}@itftms.vn`,
+          email: team.email || `${targetUsername}@itftms.vn`,
           phone: team.phoneNumber || '',
           teamId: team.id,
           teamName: team.name,
-          avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+          avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${targetUsername}`,
           createdAt: new Date().toISOString(),
         };
         users.push(newCap);
@@ -200,7 +221,19 @@ export class AuthService {
    */
   static getCaptainAccountForTeam(teamId: string): UserAccount | undefined {
     const users = this.getAllUsers();
-    return users.find((u) => u.role === 'TEAM_MANAGER' && u.teamId === teamId);
+    let found = users.find((u) => u.role === 'TEAM_MANAGER' && u.teamId === teamId);
+    if (!found) {
+      try {
+        const teams = StorageService.getTeams();
+        const team = teams.find((t) => t.id === teamId);
+        if (team) {
+          this.syncCaptainAccountsForTeams(teams);
+          const reloaded = this.getAllUsers();
+          found = reloaded.find((u) => u.role === 'TEAM_MANAGER' && u.teamId === teamId);
+        }
+      } catch {}
+    }
+    return found;
   }
 
   /**
@@ -255,40 +288,76 @@ export class AuthService {
   }
 
   /**
-   * Đăng nhập bằng username/email/fullName + mật khẩu
-   * Hỗ trợ gõ linh hoạt tiếng Việt hoặc không dấu (vd: SU BIN, subin, Thành Công, thanhcong)
+   * Đăng nhập bằng username/email/fullName/tên đội + mật khẩu
+   * Hỗ trợ gõ linh hoạt tiếng Việt hoặc không dấu, tự động bỏ ký tự '@'
    */
   static login(identifier: string, password: string): { success: boolean; user?: UserAccount; error?: string } {
-    const rawId = identifier.trim();
-    const cleanId = rawId.toLowerCase();
-    const cleanPass = password.trim();
+    const rawId = (identifier || '').trim();
+    const cleanPass = (password || '').trim();
 
-    if (!cleanId || !cleanPass) {
-      return { success: false, error: 'Vui lòng nhập tài khoản/email và mật khẩu!' };
+    if (!rawId || !cleanPass) {
+      return { success: false, error: 'Vui lòng nhập tài khoản/email/tên đội và mật khẩu!' };
     }
 
+    // Đảm bảo đồng bộ toàn bộ tài khoản Đội trưởng ngay khi bấm đăng nhập
+    try {
+      const allTeams = StorageService.getTeams();
+      if (allTeams && allTeams.length > 0) {
+        this.syncCaptainAccountsForTeams(allTeams);
+      }
+    } catch {}
+
+    // Bỏ ký tự '@' nếu người dùng gõ hoặc copy @captain_...
+    const strippedId = rawId.replace(/^@+/, '').trim();
+    const cleanId = strippedId.toLowerCase();
+
     const normalize = (s: string) =>
-      s
+      (s || '')
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[\s\-_]+/g, '');
+        .replace(/[@\s\-_.]+/g, '');
 
-    const normTarget = normalize(rawId);
+    const normTarget = normalize(strippedId);
 
     const users = this.getAllUsers();
+    const teams = StorageService.getTeams();
+
     const found = users.find((u) => {
-      const isMatch =
-        u.username.toLowerCase() === cleanId ||
-        u.email.toLowerCase() === cleanId ||
-        normalize(u.username) === normTarget ||
-        normalize(u.fullName) === normTarget ||
-        normalize(u.fullName).includes(normTarget);
-      return isMatch && u.password === cleanPass;
+      // 1. Khớp theo username hoặc email
+      const matchUsername = u.username.toLowerCase() === cleanId || normalize(u.username) === normTarget;
+      const matchEmail = u.email.toLowerCase() === cleanId;
+
+      // 2. Khớp theo họ tên người dùng
+      const matchFullName = normalize(u.fullName) === normTarget || normalize(u.fullName).includes(normTarget);
+
+      // 3. Nếu là Đội trưởng, cho phép đăng nhập linh hoạt bằng:
+      // - Tên đội bóng (VD: "xcsd", "CNTT K21")
+      // - Tên viết tắt đội bóng (VD: "xcsd", "CNTT-K21")
+      // - Mã đội bóng (VD: "T01")
+      // - Gõ "xcsd" trong khi username là "captain_xcsd"
+      let matchCaptainInfo = false;
+      if (u.role === 'TEAM_MANAGER') {
+        const matchTeamName = u.teamName && (normalize(u.teamName) === normTarget || u.teamName.toLowerCase() === cleanId);
+        const matchTeamId = u.teamId && (u.teamId.toLowerCase() === cleanId || normalize(u.teamId) === normTarget);
+        const matchCaptainPrefix = normalize(u.username) === `captain${normTarget}`;
+
+        const teamObj = teams.find((t) => t.id === u.teamId);
+        const matchShortName = teamObj && (teamObj.shortName.toLowerCase() === cleanId || normalize(teamObj.shortName) === normTarget);
+
+        matchCaptainInfo = Boolean(matchTeamName || matchTeamId || matchCaptainPrefix || matchShortName);
+      }
+
+      const isMatch = matchUsername || matchEmail || matchFullName || matchCaptainInfo;
+      const userPassword = (u.password || '123').trim();
+      return isMatch && userPassword === cleanPass;
     });
 
     if (!found) {
-      return { success: false, error: 'Tên đăng nhập hoặc mật khẩu không chính xác!' };
+      return { 
+        success: false, 
+        error: 'Tên đăng nhập hoặc mật khẩu không chính xác! Đội trưởng có thể nhập trực tiếp tên đội (VD: xcsd) hoặc tài khoản captain_... với mật khẩu mặc định 123.' 
+      };
     }
 
     this.setCurrentUser(found);

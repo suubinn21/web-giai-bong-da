@@ -624,8 +624,13 @@ export default function Home() {
     }
   };
 
-  const handleOpenAuthModal = (notice?: string) => {
+  const [authInitialUsername, setAuthInitialUsername] = useState<string>('');
+  const [authInitialPassword, setAuthInitialPassword] = useState<string>('');
+
+  const handleOpenAuthModal = (notice?: string, initialUsername?: string, initialPassword?: string) => {
     setAuthNotice(notice);
+    setAuthInitialUsername(initialUsername || '');
+    setAuthInitialPassword(initialPassword || '');
     setAuthModalOpen(true);
   };
 
@@ -794,6 +799,7 @@ export default function Home() {
             currentRole={currentRole}
             tournament={tournament}
             currentUser={currentUser}
+            onOpenAuthModal={handleOpenAuthModal}
           />
         )}
 
@@ -981,6 +987,8 @@ export default function Home() {
         onClose={() => setAuthModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         messageNotice={authNotice}
+        initialIdentifier={authInitialUsername}
+        initialPassword={authInitialPassword}
       />
 
     </div>
