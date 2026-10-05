@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, Firestore } from 'firebase/firestore';
 
 export const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBefArRNbcnvO6Kr55PPAT3jM7I1jONayQ",
@@ -16,5 +16,19 @@ export const isFirebaseConfigured = (): boolean => {
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const db = getFirestore(app);
+
+// Khởi tạo Firestore với cấu hình Long Polling
+// Giúp tránh lỗi ngắt kết nối WebChannel streaming (channel?VER=8... failed)
+// trên các mạng di động (3G/4G/5G), mạng chặn stream hoặc trình duyệt có extension chặn quảng cáo
+let dbInstance: Firestore;
+try {
+  dbInstance = initializeFirestore(app, {
+    experimentalForceLongPolling: true,
+  });
+} catch {
+  dbInstance = getFirestore(app);
+}
+
+export const db = dbInstance;
 export default app;
+
