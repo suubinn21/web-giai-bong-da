@@ -369,10 +369,10 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
           </div>
 
 
-          {/* Primary Operations Grid (12 Feature Tabs) */}
+          {/* Primary Operations Grid */}
           <div className="space-y-2">
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              12 Chức Năng Nghiệp Vụ Của Giải
+              Danh Mục Chức Năng Giải Đấu
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
@@ -459,20 +459,22 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <span>Đội &amp; Cầu Thủ</span>
               </button>
 
-              {/* Draw Studio */}
-              <button
-                onClick={() => handlePickTab('draw')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
-                  activeTab === 'draw'
-                    ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
-                  <Dices className="w-4 h-4" />
-                </div>
-                <span>Bốc Thăm Bảng</span>
-              </button>
+              {/* Draw Studio - Only for Super Admin and BTC */}
+              {canManage && (
+                <button
+                  onClick={() => handlePickTab('draw')}
+                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                    activeTab === 'draw'
+                      ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                    <Dices className="w-4 h-4" />
+                  </div>
+                  <span>Bốc Thăm Bảng</span>
+                </button>
+              )}
 
               {/* Knockout Bracket */}
               <button
@@ -511,27 +513,29 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 )}
               </button>
 
-              {/* Complaints */}
-              <button
-                onClick={() => handlePickTab('complaints')}
-                className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
-                  activeTab === 'complaints'
-                    ? 'bg-cyan-950/80 border-cyan-500 text-white font-bold'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
-                    <Clock className="w-4 h-4" />
+              {/* Complaints - Only for Super Admin, BTC, and Team Captains */}
+              {(canManage || currentRole === 'TEAM_MANAGER') && (
+                <button
+                  onClick={() => handlePickTab('complaints')}
+                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                    activeTab === 'complaints'
+                      ? 'bg-cyan-950/80 border-cyan-500 text-white font-bold'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <span>Khiếu Nại 15 Phút</span>
                   </div>
-                  <span>Khiếu Nại 15 Phút</span>
-                </div>
-                {activeComplaintsCount > 0 && (
-                  <span className="text-[10px] bg-cyan-400 text-slate-950 px-1.5 py-0.2 rounded-full font-bold">
-                    {activeComplaintsCount}
-                  </span>
-                )}
-              </button>
+                  {activeComplaintsCount > 0 && (
+                    <span className="text-[10px] bg-cyan-400 text-slate-950 px-1.5 py-0.2 rounded-full font-bold">
+                      {activeComplaintsCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
               {/* Finance - Only for Super Admin and BTC */}
               {canManage && (

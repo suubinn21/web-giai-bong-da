@@ -51,8 +51,10 @@ export const Navigation: React.FC<NavigationProps> = ({
   currentRole,
   onBackToPortal,
 }) => {
+  const canManageDraw = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
   const canManageFinance = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
   const canViewAudit = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+  const canViewComplaints = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER' || currentRole === 'TEAM_MANAGER';
 
   const navItems = [
     { key: 'home' as TabKey, label: 'Trang Chủ', icon: Home },
@@ -67,7 +69,9 @@ export const Navigation: React.FC<NavigationProps> = ({
     { key: 'standings' as TabKey, label: 'Bảng Xếp Hạng', icon: Trophy },
     { key: 'bracket' as TabKey, label: 'Nhánh Knockout', icon: GitFork },
     { key: 'teams' as TabKey, label: 'Đội Bóng & Cầu Thủ', icon: Users },
-    { key: 'draw' as TabKey, label: 'Bốc Thăm Chia Bảng', icon: Dices },
+    ...(canManageDraw
+      ? [{ key: 'draw' as TabKey, label: 'Bốc Thăm Chia Bảng', icon: Dices }]
+      : []),
     { 
       key: 'discipline' as TabKey, 
       label: 'Kỷ Luật & Treo Giò', 
@@ -75,13 +79,17 @@ export const Navigation: React.FC<NavigationProps> = ({
       badge: suspendedPlayersCount > 0 ? `${suspendedPlayersCount}` : undefined,
       badgeColor: 'bg-amber-500 text-slate-950 font-bold'
     },
-    { 
-      key: 'complaints' as TabKey, 
-      label: 'Khiếu Nại (15 Phút)', 
-      icon: Clock,
-      badge: activeComplaintsCount > 0 ? `${activeComplaintsCount}` : undefined,
-      badgeColor: 'bg-cyan-500 text-slate-950 font-bold'
-    },
+    ...(canViewComplaints
+      ? [
+          { 
+            key: 'complaints' as TabKey, 
+            label: 'Khiếu Nại (15 Phút)', 
+            icon: Clock,
+            badge: activeComplaintsCount > 0 ? `${activeComplaintsCount}` : undefined,
+            badgeColor: 'bg-cyan-500 text-slate-950 font-bold'
+          }
+        ]
+      : []),
     ...(canManageFinance
       ? [{ key: 'finance' as TabKey, label: 'Tài Chính & Lệ Phí', icon: BadgeDollarSign }]
       : []),

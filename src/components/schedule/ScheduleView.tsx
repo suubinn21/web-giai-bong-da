@@ -420,7 +420,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <span className="text-xs text-slate-400">16 Đội • 4 Bảng • 3 Sân</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white">
-            Điều Hành Lịch Đấu 1 Ngày (06:30 – 17:30)
+            {canGenerate ? 'Điều Hành Lịch Đấu 1 Ngày (06:30 – 17:30)' : 'Lịch Thi Đấu & Kết Quả (06:30 – 17:30)'}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
             06:30 – 13:10: 24 trận vòng bảng (8 ca x 3 sân) • 13:10 – 13:50: Nghỉ trưa &amp; tổng hợp BXH • 13:50 – 17:15: Tứ kết, Bán kết, Tranh hạng 3 &amp; Chung kết.
@@ -429,16 +429,18 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
         {/* Schedule Generator & Conflict Status */}
         <div className="flex flex-wrap items-center gap-2">
-          {validationResult.valid ? (
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>0 Xung Đột Sân/Giờ</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-xs text-red-400 bg-red-950/60 border border-red-500/30 px-3 py-1.5 rounded-xl font-bold">
-              <AlertCircle className="w-4 h-4" />
-              <span>{validationResult.conflicts.length} Xung Đột</span>
-            </div>
+          {canGenerate && (
+            validationResult.valid ? (
+              <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>0 Xung Đột Sân/Giờ</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs text-red-400 bg-red-950/60 border border-red-500/30 px-3 py-1.5 rounded-xl font-bold">
+                <AlertCircle className="w-4 h-4" />
+                <span>{validationResult.conflicts.length} Xung Đột</span>
+              </div>
+            )
           )}
 
           {canGenerate && (

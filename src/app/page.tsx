@@ -314,6 +314,12 @@ export default function Home() {
   const handleRoleChange = (newRole: UserRole) => {
     setCurrentRole(newRole);
     StorageService.setCurrentRole(newRole);
+    if ((activeTab === 'finance' || activeTab === 'audit' || activeTab === 'draw') && newRole !== 'SUPER_ADMIN' && newRole !== 'ORGANIZER') {
+      setActiveTab('home');
+    }
+    if (activeTab === 'complaints' && (newRole !== 'SUPER_ADMIN' && newRole !== 'ORGANIZER' && newRole !== 'TEAM_MANAGER')) {
+      setActiveTab('home');
+    }
     StorageService.logAction(
       newRole,
       newRole,
@@ -599,7 +605,10 @@ export default function Home() {
     setCurrentUser(user);
     setCurrentRole(user.role);
     StorageService.setCurrentRole(user.role);
-    if ((activeTab === 'finance' || activeTab === 'audit') && user.role !== 'SUPER_ADMIN' && user.role !== 'ORGANIZER') {
+    if ((activeTab === 'finance' || activeTab === 'audit' || activeTab === 'draw') && user.role !== 'SUPER_ADMIN' && user.role !== 'ORGANIZER') {
+      setActiveTab('home');
+    }
+    if (activeTab === 'complaints' && (user.role !== 'SUPER_ADMIN' && user.role !== 'ORGANIZER' && user.role !== 'TEAM_MANAGER')) {
       setActiveTab('home');
     }
     setAuthModalOpen(false);
@@ -610,7 +619,7 @@ export default function Home() {
     setCurrentUser(null);
     setCurrentRole('STUDENT');
     StorageService.setCurrentRole('STUDENT');
-    if (activeTab === 'finance' || activeTab === 'audit') {
+    if (activeTab === 'finance' || activeTab === 'audit' || activeTab === 'draw' || activeTab === 'complaints') {
       setActiveTab('home');
     }
   };
@@ -789,13 +798,19 @@ export default function Home() {
         )}
 
         {activeTab === 'draw' && (
-          <DrawStudio
-            teams={teams}
-            onTeamsUpdate={handleTeamsUpdate}
-            currentRole={currentRole}
-            tournament={tournament}
-            onTournamentUpdate={handleTournamentUpdate}
-          />
+          (currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+            <DrawStudio
+              teams={teams}
+              onTeamsUpdate={handleTeamsUpdate}
+              currentRole={currentRole}
+              tournament={tournament}
+              onTournamentUpdate={handleTournamentUpdate}
+            />
+          ) : (
+            <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-10 text-center text-slate-400">
+              Chức năng Bốc thăm chia bảng chỉ dành riêng cho Ban Tổ Chức (BTC) điều hành.
+            </div>
+          )
         )}
 
         {activeTab === 'discipline' && (
@@ -808,14 +823,20 @@ export default function Home() {
         )}
 
         {activeTab === 'complaints' && (
-          <ComplaintsView
-            complaints={complaints}
-            matches={matches}
-            teams={teams}
-            onComplaintsUpdate={handleComplaintsUpdate}
-            currentRole={currentRole}
-            currentUser={currentUser}
-          />
+          (currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER' || currentRole === 'TEAM_MANAGER') ? (
+            <ComplaintsView
+              complaints={complaints}
+              matches={matches}
+              teams={teams}
+              onComplaintsUpdate={handleComplaintsUpdate}
+              currentRole={currentRole}
+              currentUser={currentUser}
+            />
+          ) : (
+            <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-10 text-center text-slate-400">
+              Chức năng Khiếu nại 15 phút chỉ dành riêng cho Đội trưởng và Ban Tổ Chức theo Điều 17.
+            </div>
+          )
         )}
 
         {activeTab === 'finance' && (
