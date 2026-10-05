@@ -311,112 +311,67 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               </form>
 
-              {/* Quick Select Preset Accounts (BTC, Admin, Referee, Captain) */}
+              {/* Quick Select Preset Accounts (BTC SU BIN & Thành Công) */}
               <div className="mt-5 pt-4 border-t border-slate-800">
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Tài khoản Ban Tổ Chức (BTC) & Mẫu:</span>
+                    <span>Tài khoản Ban Tổ Chức (BTC):</span>
                   </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Mật khẩu: 123</span>
+                  <span className="text-[10px] text-slate-400 font-mono">Mật khẩu chung: 123</span>
                 </div>
 
                 {/* BTC Highlight Cards */}
-                <div className="space-y-2">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {/* SU BIN (BTC) */}
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('subin')}
-                      className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border-2 border-emerald-500/50 hover:border-emerald-400 text-left flex items-center gap-2.5 group transition-all shadow-md active:scale-95 cursor-pointer"
-                      title="Nhấn để đăng nhập ngay tài khoản BTC SU BIN"
-                    >
-                      <img
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
-                        alt="SU BIN"
-                        className="w-10 h-10 rounded-xl object-cover border-2 border-emerald-400/70 shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs font-black text-white group-hover:text-emerald-300 transition-colors truncate">
-                            SU BIN
-                          </span>
-                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 uppercase">
-                            BTC
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-mono">@subin • pass: 123</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {/* SU BIN (BTC) */}
+                  <button
+                    type="button"
+                    onClick={() => handleQuickSelectAccount('subin')}
+                    className="p-3 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 border-2 border-emerald-500/60 hover:border-emerald-400 text-left flex items-center gap-3 group transition-all shadow-lg active:scale-95 cursor-pointer"
+                    title="Nhấn để đăng nhập ngay tài khoản BTC SU BIN"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+                      alt="SU BIN"
+                      className="w-11 h-11 rounded-xl object-cover border-2 border-emerald-400/80 shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-sm font-black text-white group-hover:text-emerald-300 transition-colors truncate">
+                          SU BIN
+                        </span>
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-400/60 uppercase">
+                          BTC
+                        </span>
                       </div>
-                    </button>
+                      <div className="text-[11px] text-slate-400 font-mono mt-0.5">@subin • pass: 123</div>
+                    </div>
+                  </button>
 
-                    {/* Thành Công (BTC) */}
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('thanhcong')}
-                      className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border-2 border-emerald-500/50 hover:border-emerald-400 text-left flex items-center gap-2.5 group transition-all shadow-md active:scale-95 cursor-pointer"
-                      title="Nhấn để đăng nhập ngay tài khoản BTC Thành Công"
-                    >
-                      <img
-                        src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150"
-                        alt="Thành Công"
-                        className="w-10 h-10 rounded-xl object-cover border-2 border-emerald-400/70 shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs font-black text-white group-hover:text-emerald-300 transition-colors truncate">
-                            Thành Công
-                          </span>
-                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 uppercase">
-                            BTC
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-mono">@thanhcong • pass: 123</div>
+                  {/* Thành Công (BTC) */}
+                  <button
+                    type="button"
+                    onClick={() => handleQuickSelectAccount('thanhcong')}
+                    className="p-3 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 border-2 border-emerald-500/60 hover:border-emerald-400 text-left flex items-center gap-3 group transition-all shadow-lg active:scale-95 cursor-pointer"
+                    title="Nhấn để đăng nhập ngay tài khoản BTC Thành Công"
+                  >
+                    <img
+                      src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150"
+                      alt="Thành Công"
+                      className="w-11 h-11 rounded-xl object-cover border-2 border-emerald-400/80 shrink-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-sm font-black text-white group-hover:text-emerald-300 transition-colors truncate">
+                          Thành Công
+                        </span>
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-400/60 uppercase">
+                          BTC
+                        </span>
                       </div>
-                    </button>
-                  </div>
-
-                  {/* Other accounts in compact row */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('admin')}
-                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-red-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
-                      title="Super Admin Hệ Thống (@admin)"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
-                      <span className="truncate">@admin</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('btc')}
-                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-emerald-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
-                      title="ThS. Nguyễn Văn An - Trưởng BTC (@btc)"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                      <span className="truncate">@btc (ThS. An)</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('referee')}
-                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-amber-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
-                      title="Trọng Tài FIFA (@referee)"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
-                      <span className="truncate">@referee</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleQuickSelectAccount('captain')}
-                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-cyan-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
-                      title="Đội Trưởng (@captain)"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
-                      <span className="truncate">@captain</span>
-                    </button>
-                  </div>
+                      <div className="text-[11px] text-slate-400 font-mono mt-0.5">@thanhcong • pass: 123</div>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -470,59 +425,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                  Vai trò đăng ký <span className="text-red-400">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRegRole('STUDENT')}
-                    className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
-                      regRole === 'STUDENT'
-                        ? 'bg-emerald-950/60 border-emerald-500 text-emerald-300 font-bold'
-                        : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <GraduationCap className="w-5 h-5 text-emerald-400" />
-                    <div>
-                      <div className="text-xs">Sinh Viên / Cổ Động Viên</div>
-                      <div className="text-[10px] font-normal text-slate-400">Theo dõi lịch & BXH</div>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRegRole('TEAM_MANAGER')}
-                    className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
-                      regRole === 'TEAM_MANAGER'
-                        ? 'bg-blue-950/60 border-blue-500 text-blue-300 font-bold'
-                        : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <Shirt className="w-5 h-5 text-blue-400" />
-                    <div>
-                      <div className="text-xs">Đại Diện / Đội Trưởng</div>
-                      <div className="text-[10px] font-normal text-slate-400">Đăng ký & quản lý đội</div>
-                    </div>
-                  </button>
+              {/* Registration Account Type Notice */}
+              <div className="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Tài khoản: Sinh Viên / Cổ Động Viên</div>
+                  <div className="text-[11px] text-slate-400">Theo dõi lịch thi đấu, diễn biến trực tiếp và bảng xếp hạng giải đấu</div>
                 </div>
               </div>
-
-              {regRole === 'TEAM_MANAGER' && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
-                    Tên Đội Bóng đại diện
-                  </label>
-                  <input
-                    type="text"
-                    value={regTeamName}
-                    onChange={(e) => setRegTeamName(e.target.value)}
-                    placeholder="Ví dụ: Kỹ Thuật Máy Tính K22, MMT K20..."
-                    className="w-full px-3.5 py-2.5 bg-slate-950/70 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                  />
-                </div>
-              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

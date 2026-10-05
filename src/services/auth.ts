@@ -29,67 +29,6 @@ export const DEFAULT_ACCOUNTS: UserAccount[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
     createdAt: '2026-09-01T08:30:00.000Z',
   },
-  {
-    id: 'USR-BTC-01',
-    username: 'btc',
-    password: '123',
-    fullName: 'ThS. Nguyễn Văn An (Trưởng BTC)',
-    role: 'ORGANIZER',
-    email: 'btc@itftms.vn',
-    phone: '0901 234 567',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-    createdAt: '2026-09-01T08:00:00.000Z',
-  },
-  {
-    id: 'USR-REF-01',
-    username: 'referee',
-    password: '123',
-    fullName: 'Trọng tài FIFA Trần Quốc Bảo',
-    role: 'REFEREE',
-    email: 'referee@itftms.vn',
-    phone: '0912 345 678',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    createdAt: '2026-09-02T08:00:00.000Z',
-  },
-  {
-    id: 'USR-CAP-01',
-    username: 'captain',
-    password: '123',
-    fullName: 'Lê Hoàng Long (Đội trưởng)',
-    role: 'TEAM_MANAGER',
-    email: 'captain@itftms.vn',
-    phone: '0988 777 666',
-    studentId: '21520001',
-    class: 'KTPM2021',
-    teamId: 'T02',
-    teamName: 'Kỹ Thuật Phần Mềm K21',
-    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
-    createdAt: '2026-09-05T08:00:00.000Z',
-  },
-  {
-    id: 'USR-ADM-01',
-    username: 'admin',
-    password: '123',
-    fullName: 'Super Administrator Hệ Thống',
-    role: 'SUPER_ADMIN',
-    email: 'admin@itftms.vn',
-    phone: '0909 999 999',
-    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
-    createdAt: '2026-08-01T08:00:00.000Z',
-  },
-  {
-    id: 'USR-STU-01',
-    username: 'sinhvien',
-    password: '123',
-    fullName: 'Phạm Minh Tuấn (Sinh Viên K22)',
-    role: 'STUDENT',
-    email: 'sinhvien@itftms.vn',
-    phone: '0933 222 111',
-    studentId: '23521234',
-    class: 'KHMT2023',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-    createdAt: '2026-09-10T08:00:00.000Z',
-  },
 ];
 
 export class AuthService {
@@ -98,7 +37,7 @@ export class AuthService {
   }
 
   /**
-   * Lấy danh sách toàn bộ tài khoản người dùng và tự động đồng bộ tài khoản BTC mới
+   * Lấy danh sách toàn bộ tài khoản người dùng và tự động đồng bộ tài khoản BTC
    */
   static getAllUsers(): UserAccount[] {
     if (!this.isClient) return DEFAULT_ACCOUNTS;
@@ -108,9 +47,19 @@ export class AuthService {
         localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_ACCOUNTS));
         return DEFAULT_ACCOUNTS;
       }
-      const parsed: UserAccount[] = JSON.parse(stored);
-      // Đảm bảo các tài khoản mặc định (như BTC SU BIN, Thành Công) luôn có mặt
-      let hasChanges = false;
+      let parsed: UserAccount[] = JSON.parse(stored);
+
+      // Loại bỏ các tài khoản mẫu cũ (admin, btc ThS An, referee, captain, sinhvien) theo yêu cầu người dùng
+      const DEMO_USERNAMES = ['btc', 'referee', 'captain', 'admin', 'sinhvien'];
+      const DEMO_IDS = ['USR-BTC-01', 'USR-REF-01', 'USR-CAP-01', 'USR-ADM-01', 'USR-STU-01'];
+      const filtered = parsed.filter(
+        (u) => !DEMO_USERNAMES.includes(u.username.toLowerCase()) && !DEMO_IDS.includes(u.id)
+      );
+
+      let hasChanges = filtered.length !== parsed.length;
+      parsed = filtered;
+
+      // Đảm bảo 2 tài khoản BTC chính thức luôn có mặt
       for (const def of DEFAULT_ACCOUNTS) {
         const exists = parsed.some(
           (u) =>
