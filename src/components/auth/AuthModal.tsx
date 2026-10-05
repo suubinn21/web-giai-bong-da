@@ -85,30 +85,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 300);
   };
 
-  const handleQuickSelectAccount = (username: string, pass: string = '123') => {
-    SoundFX.playClick();
-    setLoginIdentifier(username);
-    setLoginPassword(pass);
-    setErrorMsg(null);
-    setLoading(true);
-
-    setTimeout(() => {
-      const res = AuthService.login(username, pass);
-      setLoading(false);
-      if (res.success && res.user) {
-        SoundFX.playGoalCheer();
-        setSuccessMsg(`Chào mừng ${res.user.fullName} (${res.user.role})!`);
-        setTimeout(() => {
-          onLoginSuccess(res.user!);
-          onClose();
-        }, 500);
-      } else {
-        SoundFX.playWhistle();
-        setErrorMsg(res.error || 'Đăng nhập không thành công');
-      }
-    }, 200);
-  };
-
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -310,70 +286,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
-
-              {/* Quick Select Preset Accounts (BTC SU BIN & Thành Công) */}
-              <div className="mt-5 pt-4 border-t border-slate-800">
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Tài khoản Ban Tổ Chức (BTC):</span>
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">Mật khẩu chung: 123</span>
-                </div>
-
-                {/* BTC Highlight Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {/* SU BIN (BTC) */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickSelectAccount('subin')}
-                    className="p-3 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 border-2 border-emerald-500/60 hover:border-emerald-400 text-left flex items-center gap-3 group transition-all shadow-lg active:scale-95 cursor-pointer"
-                    title="Nhấn để đăng nhập ngay tài khoản BTC SU BIN"
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
-                      alt="SU BIN"
-                      className="w-11 h-11 rounded-xl object-cover border-2 border-emerald-400/80 shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-sm font-black text-white group-hover:text-emerald-300 transition-colors truncate">
-                          SU BIN
-                        </span>
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-400/60 uppercase">
-                          BTC
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-slate-400 font-mono mt-0.5">@subin • pass: 123</div>
-                    </div>
-                  </button>
-
-                  {/* Thành Công (BTC) */}
-                  <button
-                    type="button"
-                    onClick={() => handleQuickSelectAccount('thanhcong')}
-                    className="p-3 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 border-2 border-emerald-500/60 hover:border-emerald-400 text-left flex items-center gap-3 group transition-all shadow-lg active:scale-95 cursor-pointer"
-                    title="Nhấn để đăng nhập ngay tài khoản BTC Thành Công"
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150"
-                      alt="Thành Công"
-                      className="w-11 h-11 rounded-xl object-cover border-2 border-emerald-400/80 shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-sm font-black text-white group-hover:text-emerald-300 transition-colors truncate">
-                          Thành Công
-                        </span>
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-400/60 uppercase">
-                          BTC
-                        </span>
-                      </div>
-                      <div className="text-[11px] text-slate-400 font-mono mt-0.5">@thanhcong • pass: 123</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
             </div>
           ) : (
             /* Register Form */
