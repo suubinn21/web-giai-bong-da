@@ -8,6 +8,28 @@ const AUTH_STORAGE_KEYS = {
 
 export const DEFAULT_ACCOUNTS: UserAccount[] = [
   {
+    id: 'USR-BTC-SUBIN',
+    username: 'subin',
+    password: '123',
+    fullName: 'SU BIN',
+    role: 'ORGANIZER',
+    email: 'subin@itftms.vn',
+    phone: '0908 123 456',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+    createdAt: '2026-09-01T08:00:00.000Z',
+  },
+  {
+    id: 'USR-BTC-THANHCONG',
+    username: 'thanhcong',
+    password: '123',
+    fullName: 'Thành Công',
+    role: 'ORGANIZER',
+    email: 'thanhcong@itftms.vn',
+    phone: '0909 654 321',
+    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
+    createdAt: '2026-09-01T08:30:00.000Z',
+  },
+  {
     id: 'USR-BTC-01',
     username: 'btc',
     password: '123',
@@ -76,7 +98,7 @@ export class AuthService {
   }
 
   /**
-   * Lấy danh sách toàn bộ tài khoản người dùng
+   * Lấy danh sách toàn bộ tài khoản người dùng và tự động đồng bộ tài khoản BTC mới
    */
   static getAllUsers(): UserAccount[] {
     if (!this.isClient) return DEFAULT_ACCOUNTS;
@@ -86,7 +108,25 @@ export class AuthService {
         localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_ACCOUNTS));
         return DEFAULT_ACCOUNTS;
       }
-      return JSON.parse(stored);
+      const parsed: UserAccount[] = JSON.parse(stored);
+      // Đảm bảo các tài khoản mặc định (như BTC SU BIN, Thành Công) luôn có mặt
+      let hasChanges = false;
+      for (const def of DEFAULT_ACCOUNTS) {
+        const exists = parsed.some(
+          (u) =>
+            u.username.toLowerCase() === def.username.toLowerCase() ||
+            u.id === def.id ||
+            u.fullName.toLowerCase() === def.fullName.toLowerCase()
+        );
+        if (!exists) {
+          parsed.unshift(def);
+          hasChanges = true;
+        }
+      }
+      if (hasChanges) {
+        localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(parsed));
+      }
+      return parsed;
     } catch {
       return DEFAULT_ACCOUNTS;
     }
@@ -156,22 +196,37 @@ export class AuthService {
   }
 
   /**
-   * Đăng nhập bằng username/email + mật khẩu
+   * Đăng nhập bằng username/email/fullName + mật khẩu
+   * Hỗ trợ gõ linh hoạt tiếng Việt hoặc không dấu (vd: SU BIN, subin, Thành Công, thanhcong)
    */
   static login(identifier: string, password: string): { success: boolean; user?: UserAccount; error?: string } {
-    const cleanId = identifier.trim().toLowerCase();
+    const rawId = identifier.trim();
+    const cleanId = rawId.toLowerCase();
     const cleanPass = password.trim();
 
     if (!cleanId || !cleanPass) {
       return { success: false, error: 'Vui lòng nhập tài khoản/email và mật khẩu!' };
     }
 
+    const normalize = (s: string) =>
+      s
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\s\-_]+/g, '');
+
+    const normTarget = normalize(rawId);
+
     const users = this.getAllUsers();
-    const found = users.find(
-      (u) =>
-        (u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId) &&
-        u.password === cleanPass
-    );
+    const found = users.find((u) => {
+      const isMatch =
+        u.username.toLowerCase() === cleanId ||
+        u.email.toLowerCase() === cleanId ||
+        normalize(u.username) === normTarget ||
+        normalize(u.fullName) === normTarget ||
+        normalize(u.fullName).includes(normTarget);
+      return isMatch && u.password === cleanPass;
+    });
 
     if (!found) {
       return { success: false, error: 'Tên đăng nhập hoặc mật khẩu không chính xác!' };
@@ -185,7 +240,7 @@ export class AuthService {
       found.role,
       'ĐĂNG NHẬP HỆ THỐNG',
       'Xác thực người dùng',
-      `Tài khoản @${found.username} đăng nhập thành công vào hệ thống ITFTMS 2026.`
+      `Tài khoản @${found.username} (${found.fullName}) đăng nhập thành công với vai trò ${found.role}.`
     );
 
     return { success: true, user: found };

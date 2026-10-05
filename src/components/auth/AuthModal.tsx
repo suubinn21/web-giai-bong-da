@@ -85,6 +85,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }, 300);
   };
 
+  const handleQuickSelectAccount = (username: string, pass: string = '123') => {
+    SoundFX.playClick();
+    setLoginIdentifier(username);
+    setLoginPassword(pass);
+    setErrorMsg(null);
+    setLoading(true);
+
+    setTimeout(() => {
+      const res = AuthService.login(username, pass);
+      setLoading(false);
+      if (res.success && res.user) {
+        SoundFX.playGoalCheer();
+        setSuccessMsg(`Chào mừng ${res.user.fullName} (${res.user.role})!`);
+        setTimeout(() => {
+          onLoginSuccess(res.user!);
+          onClose();
+        }, 500);
+      } else {
+        SoundFX.playWhistle();
+        setErrorMsg(res.error || 'Đăng nhập không thành công');
+      }
+    }, 200);
+  };
+
   const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -286,6 +310,115 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
               </form>
+
+              {/* Quick Select Preset Accounts (BTC, Admin, Referee, Captain) */}
+              <div className="mt-5 pt-4 border-t border-slate-800">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Tài khoản Ban Tổ Chức (BTC) & Mẫu:</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Mật khẩu: 123</span>
+                </div>
+
+                {/* BTC Highlight Cards */}
+                <div className="space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {/* SU BIN (BTC) */}
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('subin')}
+                      className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border-2 border-emerald-500/50 hover:border-emerald-400 text-left flex items-center gap-2.5 group transition-all shadow-md active:scale-95 cursor-pointer"
+                      title="Nhấn để đăng nhập ngay tài khoản BTC SU BIN"
+                    >
+                      <img
+                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+                        alt="SU BIN"
+                        className="w-10 h-10 rounded-xl object-cover border-2 border-emerald-400/70 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black text-white group-hover:text-emerald-300 transition-colors truncate">
+                            SU BIN
+                          </span>
+                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 uppercase">
+                            BTC
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">@subin • pass: 123</div>
+                      </div>
+                    </button>
+
+                    {/* Thành Công (BTC) */}
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('thanhcong')}
+                      className="p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-900 border-2 border-emerald-500/50 hover:border-emerald-400 text-left flex items-center gap-2.5 group transition-all shadow-md active:scale-95 cursor-pointer"
+                      title="Nhấn để đăng nhập ngay tài khoản BTC Thành Công"
+                    >
+                      <img
+                        src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150"
+                        alt="Thành Công"
+                        className="w-10 h-10 rounded-xl object-cover border-2 border-emerald-400/70 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-xs font-black text-white group-hover:text-emerald-300 transition-colors truncate">
+                            Thành Công
+                          </span>
+                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 uppercase">
+                            BTC
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-slate-400 font-mono">@thanhcong • pass: 123</div>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Other accounts in compact row */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('admin')}
+                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-red-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
+                      title="Super Admin Hệ Thống (@admin)"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-red-400 shrink-0"></span>
+                      <span className="truncate">@admin</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('btc')}
+                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-emerald-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
+                      title="ThS. Nguyễn Văn An - Trưởng BTC (@btc)"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                      <span className="truncate">@btc (ThS. An)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('referee')}
+                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-amber-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
+                      title="Trọng Tài FIFA (@referee)"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                      <span className="truncate">@referee</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleQuickSelectAccount('captain')}
+                      className="px-2 py-1.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-cyan-500/50 text-[11px] text-slate-300 hover:text-white flex items-center gap-1.5 truncate cursor-pointer transition-colors"
+                      title="Đội Trưởng (@captain)"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                      <span className="truncate">@captain</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             /* Register Form */
