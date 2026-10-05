@@ -94,6 +94,116 @@ export class AuthService {
   }
 
   /**
+   * Tự động sinh tên đăng nhập chuẩn từ tên viết tắt hoặc ID đội bóng
+   */
+  static generateCaptainUsername(shortNameOrId: string): string {
+    const clean = shortNameOrId
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '');
+    return `captain_${clean || 'team'}`;
+  }
+
+  /**
+   * Tạo hoặc cập nhật tài khoản Đội Trưởng cho một Đội bóng khi BTC tạo đội mới
+   */
+  static createCaptainAccountForTeam(
+    team: { id: string; name: string; shortName: string; captainName?: string; email?: string; phoneNumber?: string },
+    customUsername?: string,
+    customPassword?: string
+  ): UserAccount {
+    const users = this.getAllUsers();
+    const rawUsername = (customUsername || this.generateCaptainUsername(team.shortName || team.id)).toLowerCase().trim();
+    const username = rawUsername || this.generateCaptainUsername(team.id);
+    const password = (customPassword || '123').trim() || '123';
+
+    // Tìm xem đã có tài khoản gắn với teamId này chưa
+    const existingIndex = users.findIndex(
+      (u) => u.teamId === team.id || u.username.toLowerCase() === username
+    );
+
+    const captainAccount: UserAccount = {
+      id: existingIndex >= 0 ? users[existingIndex].id : `USR-CAP-${team.id}`,
+      username,
+      password,
+      fullName: team.captainName?.trim() || `Đội trưởng ${team.name}`,
+      role: 'TEAM_MANAGER',
+      email: team.email || `${username}@itftms.vn`,
+      phone: team.phoneNumber || '',
+      teamId: team.id,
+      teamName: team.name,
+      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+      createdAt: existingIndex >= 0 ? users[existingIndex].createdAt : new Date().toISOString(),
+    };
+
+    if (existingIndex >= 0) {
+      users[existingIndex] = { ...users[existingIndex], ...captainAccount };
+    } else {
+      users.push(captainAccount);
+    }
+
+    this.saveUsers(users);
+
+    StorageService.logAction(
+      'HỆ THỐNG',
+      'ORGANIZER',
+      'TỰ ĐỘNG TẠO TÀI KHOẢN ĐỘI TRƯỞNG',
+      team.name,
+      `Tự động tạo tài khoản @${captainAccount.username} cho Đội trưởng đội ${team.name} (Mật khẩu: ${password}).`
+    );
+
+    return captainAccount;
+  }
+
+  /**
+   * Đồng bộ tài khoản Đội Trưởng cho toàn bộ danh sách đội bóng trong giải
+   */
+  static syncCaptainAccountsForTeams(
+    teams: { id: string; name: string; shortName: string; captainName?: string; email?: string; phoneNumber?: string }[]
+  ): void {
+    if (!this.isClient || !teams || teams.length === 0) return;
+    const users = this.getAllUsers();
+    let hasChanges = false;
+
+    for (const team of teams) {
+      const hasAccount = users.some(
+        (u) => u.role === 'TEAM_MANAGER' && (u.teamId === team.id || u.teamName === team.name)
+      );
+      if (!hasAccount) {
+        const username = this.generateCaptainUsername(team.shortName || team.id);
+        const newCap: UserAccount = {
+          id: `USR-CAP-${team.id}`,
+          username,
+          password: '123',
+          fullName: team.captainName?.trim() || `Đội trưởng ${team.name}`,
+          role: 'TEAM_MANAGER',
+          email: team.email || `${username}@itftms.vn`,
+          phone: team.phoneNumber || '',
+          teamId: team.id,
+          teamName: team.name,
+          avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${username}`,
+          createdAt: new Date().toISOString(),
+        };
+        users.push(newCap);
+        hasChanges = true;
+      }
+    }
+
+    if (hasChanges) {
+      this.saveUsers(users);
+    }
+  }
+
+  /**
+   * Lấy thông tin tài khoản Đội Trưởng của một đội bóng
+   */
+  static getCaptainAccountForTeam(teamId: string): UserAccount | undefined {
+    const users = this.getAllUsers();
+    return users.find((u) => u.role === 'TEAM_MANAGER' && u.teamId === teamId);
+  }
+
+  /**
    * Dọn dẹp phiên tự động đăng nhập cũ trước đây (chỉ chạy 1 lần khi cập nhật)
    */
   static clearLegacyAutoLogin(): void {

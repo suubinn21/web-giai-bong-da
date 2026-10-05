@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Complaint, Match, Team, UserRole, ComplaintType, ComplaintStatus } from '@/types';
+import { Complaint, Match, Team, UserRole, ComplaintType, ComplaintStatus, UserAccount } from '@/types';
 import { StorageService } from '@/services/storage';
 import { 
   Clock, 
@@ -11,8 +11,9 @@ import {
   XCircle, 
   FileText, 
   Lock, 
-  MessageSquare,
-  ShieldCheck
+  MessageSquare, 
+  ShieldCheck,
+  ShieldAlert
 } from 'lucide-react';
 
 interface ComplaintsViewProps {
@@ -21,6 +22,7 @@ interface ComplaintsViewProps {
   teams: Team[];
   onComplaintsUpdate: (complaints: Complaint[]) => void;
   currentRole: UserRole;
+  currentUser?: UserAccount | null;
 }
 
 export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
@@ -29,10 +31,17 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
   teams,
   onComplaintsUpdate,
   currentRole,
+  currentUser,
 }) => {
   // Recently finished match eligible for complaints
   const finishedMatches = matches.filter((m) => m.status === 'FINISHED' && m.completedAt);
   
+  // Phân quyền đội trưởng
+  const isCaptain = currentRole === 'TEAM_MANAGER';
+  const myTeam = isCaptain && currentUser?.teamId
+    ? teams.find((t) => t.id === currentUser.teamId) || { id: currentUser.teamId, name: currentUser.teamName || 'Đội của bạn' }
+    : null;
+
   // Timer state for 15-minute countdown
   const [timeLeftSec, setTimeLeftSec] = useState<number>(0);
   const [selectedMatchForComplaint, setSelectedMatchForComplaint] = useState<Match | null>(
@@ -79,7 +88,9 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
   const isWindowExpired = timeLeftSec <= 0;
 
   const handleCreateComplaint = () => {
-    if (!selectedMatchForComplaint || !formTeamId || !formTitle || !formContent) {
+    const targetTeamId = isCaptain && currentUser?.teamId ? currentUser.teamId : formTeamId;
+
+    if (!selectedMatchForComplaint || !targetTeamId || !formTitle || !formContent) {
       alert('Vui lòng điền đầy đủ tiêu đề và nội dung khiếu nại!');
       return;
     }
@@ -89,12 +100,25 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
       return;
     }
 
-    const team = teams.find((t) => t.id === formTeamId);
+    // Đội trưởng chỉ được khiếu nại trận đấu có đội mình thi đấu
+    if (isCaptain && currentUser?.teamId) {
+      const matchInvolvesMyTeam =
+        selectedMatchForComplaint.homeTeamId === currentUser.teamId ||
+        selectedMatchForComplaint.awayTeamId === currentUser.teamId;
+      if (!matchInvolvesMyTeam) {
+        alert(
+          `Theo Điều 17 Điều lệ giải, chỉ 2 đội trực tiếp thi đấu trong trận (${selectedMatchForComplaint.roundLabel}) mới có quyền gửi khiếu nại. Đội của bạn không tham gia trận này!`
+        );
+        return;
+      }
+    }
+
+    const team = teams.find((t) => t.id === targetTeamId);
     const newComplaint: Complaint = {
       id: `CMP-${Date.now().toString().slice(-4)}`,
       matchId: selectedMatchForComplaint.id,
-      teamId: formTeamId,
-      teamName: team?.name || 'Đội khiếu nại',
+      teamId: targetTeamId,
+      teamName: team?.name || currentUser?.teamName || 'Đội khiếu nại',
       submittedAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + timeLeftSec * 1000).toISOString(),
       type: formType,
@@ -114,11 +138,11 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
     setFormEvidenceUrl('');
 
     StorageService.logAction(
-      currentRole,
+      currentUser?.fullName || currentRole,
       currentRole,
       'GỬI ĐƠN KHIẾU NẠI TRẬN ĐẤU (ĐIỀU 17)',
       selectedMatchForComplaint.roundLabel,
-      `Đội ${team?.name} khiếu nại: "${newComplaint.title}" trong khung giờ 15 phút hợp lệ.`
+      `Đội ${team?.name || targetTeamId} khiếu nại: "${newComplaint.title}" trong khung giờ 15 phút hợp lệ.`
     );
   };
 
@@ -209,18 +233,22 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             <button
               onClick={() => {
                 if (!canSubmit) {
-                  alert('Chỉ Đội Trưởng / Trưởng Đoàn hoặc Ban Tổ Chức mới có thẩm quyền gửi khiếu nại trận đấu theo Điều lệ!');
+                  alert('Chỉ Đội Trưởng hoặc Ban Tổ Chức mới có thẩm quyền gửi khiếu nại trận đấu theo Điều lệ!');
                   return;
                 }
                 if (isWindowExpired) {
                   alert('Cửa sổ khiếu nại 15 phút đã khép lại!');
                   return;
                 }
-                setFormTeamId(selectedMatchForComplaint?.homeTeamId || '');
+                if (isCaptain && currentUser?.teamId) {
+                  setFormTeamId(currentUser.teamId);
+                } else {
+                  setFormTeamId(selectedMatchForComplaint?.homeTeamId || teams[0]?.id || '');
+                }
                 setModalOpen(true);
               }}
               disabled={isWindowExpired || !canSubmit}
-              title={!canSubmit ? 'Chỉ dành cho Trưởng đoàn/Đội trưởng hoặc BTC' : undefined}
+              title={!canSubmit ? 'Chỉ dành cho Đội trưởng hoặc Ban Tổ Chức' : undefined}
               className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-slate-950 font-bold text-xs shadow-lg transition-all"
             >
               + Gửi Khiếu Nại
@@ -330,18 +358,40 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
 
             <div>
               <label className="text-xs font-semibold text-white block mb-1">Đội Khiếu Nại</label>
-              <select
-                value={formTeamId}
-                onChange={(e) => setFormTeamId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
-              >
-                {teams.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+              {isCaptain && currentUser?.teamId ? (
+                <div className="w-full bg-slate-800 border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-xl p-2.5 flex items-center justify-between">
+                  <span>{myTeam?.name || currentUser.teamName || 'Đội của bạn'}</span>
+                  <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">
+                    Đội của bạn (Đã khóa)
+                  </span>
+                </div>
+              ) : (
+                <select
+                  value={formTeamId}
+                  onChange={(e) => setFormTeamId(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                >
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
+
+            {/* Cảnh báo nếu Đội trưởng chọn trận đấu không có đội mình thi đấu */}
+            {isCaptain && currentUser?.teamId && selectedMatchForComplaint && (
+              selectedMatchForComplaint.homeTeamId !== currentUser.teamId &&
+              selectedMatchForComplaint.awayTeamId !== currentUser.teamId
+            ) && (
+              <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>
+                  Trận đấu <strong>{selectedMatchForComplaint.roundLabel}</strong> không có sự tham gia của đội bạn ({myTeam?.name}). Theo Điều 17 Điều lệ giải, chỉ 2 đội trực tiếp thi đấu mới được gửi khiếu nại.
+                </span>
+              </div>
+            )}
 
             <div>
               <label className="text-xs font-semibold text-white block mb-1">Loại Khiếu Nại</label>
@@ -402,7 +452,14 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
               <button
                 type="button"
                 onClick={handleCreateComplaint}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg"
+                disabled={
+                  Boolean(isCaptain &&
+                  currentUser?.teamId &&
+                  selectedMatchForComplaint &&
+                  selectedMatchForComplaint.homeTeamId !== currentUser.teamId &&
+                  selectedMatchForComplaint.awayTeamId !== currentUser.teamId)
+                }
+                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 text-xs font-bold shadow-lg transition-all"
               >
                 Nộp Đơn Khiếu Nại
               </button>

@@ -205,6 +205,7 @@ export default function Home() {
     setTournament(curr);
     const cleaned = StorageService.cleanExcessGroupsData(curr);
     setTeams(cleaned.teams);
+    AuthService.syncCaptainAccountsForTeams(cleaned.teams);
     setMatches(cleaned.matches);
     setVenues(StorageService.getVenues());
     setReferees(StorageService.getReferees());
@@ -265,6 +266,7 @@ export default function Home() {
         if (Array.isArray(cloudData.teams)) {
           setTeams(cloudData.teams);
           StorageService.saveTeams(cloudData.teams);
+          AuthService.syncCaptainAccountsForTeams(cloudData.teams);
         }
         if (Array.isArray(cloudData.matches)) {
           setMatches(cloudData.matches);
@@ -541,6 +543,7 @@ export default function Home() {
   const handleTeamsUpdate = (newTeams: Team[]) => {
     setTeams(newTeams);
     StorageService.saveTeams(newTeams);
+    AuthService.syncCaptainAccountsForTeams(newTeams);
     const updatedLogs = StorageService.getAuditLogs();
     setAuditLogs(updatedLogs);
     pushTournamentCloud(tournament.id, {
@@ -781,6 +784,7 @@ export default function Home() {
             onTeamsUpdate={handleTeamsUpdate}
             currentRole={currentRole}
             tournament={tournament}
+            currentUser={currentUser}
           />
         )}
 
@@ -810,6 +814,7 @@ export default function Home() {
             teams={teams}
             onComplaintsUpdate={handleComplaintsUpdate}
             currentRole={currentRole}
+            currentUser={currentUser}
           />
         )}
 

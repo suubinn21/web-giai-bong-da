@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Team, Player, UserRole, PlayerPosition, TeamStatus, Tournament, getGroupLetters } from '@/types';
+import React, { useState, useEffect } from 'react';
+import { Team, Player, UserRole, PlayerPosition, TeamStatus, Tournament, getGroupLetters, UserAccount } from '@/types';
 import { StorageService } from '@/services/storage';
+import { AuthService } from '@/services/auth';
 import { 
   Users, 
   Shirt, 
@@ -17,7 +18,13 @@ import {
   CheckCircle2,
   X,
   Sparkles,
-  Edit3
+  Edit3,
+  Trash2,
+  KeyRound,
+  Copy,
+  Check,
+  ShieldCheck,
+  ArrowRight
 } from 'lucide-react';
 
 interface TeamsViewProps {
@@ -25,6 +32,7 @@ interface TeamsViewProps {
   onTeamsUpdate: (teams: Team[]) => void;
   currentRole: UserRole;
   tournament?: Tournament;
+  currentUser?: UserAccount | null;
 }
 
 export const TeamsView: React.FC<TeamsViewProps> = ({
@@ -32,12 +40,13 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   onTeamsUpdate,
   currentRole,
   tournament,
+  currentUser,
 }) => {
   const groups = getGroupLetters(tournament?.numberOfGroups || 4);
   const [selectedTeamId, setSelectedTeamId] = useState<string>(teams[0]?.id || '');
   const [filterGroup, setFilterGroup] = useState<string>('ALL');
 
-  // Team registration modal state (Rule #14)
+  // Team registration modal state (Rule #14) - Chỉ dành cho BTC
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [newTeamName, setNewTeamName] = useState('');
   const [newTeamShortName, setNewTeamShortName] = useState('');
@@ -50,6 +59,20 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   const [newTeamPrimaryColor, setNewTeamPrimaryColor] = useState('#2563EB');
   const [newTeamSecondaryColor, setNewTeamSecondaryColor] = useState('#FFFFFF');
   const [newTeamGroup, setNewTeamGroup] = useState<string>('NONE');
+  const [newCaptainUsername, setNewCaptainUsername] = useState('');
+  const [newCaptainPassword, setNewCaptainPassword] = useState('123');
+
+  // Modal thông báo tạo tài khoản Đội trưởng thành công cho BTC
+  const [createdCaptainModal, setCreatedCaptainModal] = useState<{
+    open: boolean;
+    teamName: string;
+    shortName: string;
+    captainName: string;
+    username: string;
+    password: string;
+  } | null>(null);
+  const [copiedCaptainCreds, setCopiedCaptainCreds] = useState(false);
+  const [headerCopied, setHeaderCopied] = useState(false);
 
   // Player registration modal state (Rule #15)
   const [playerModalOpen, setPlayerModalOpen] = useState(false);
@@ -60,6 +83,17 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   const [newPlayerDob, setNewPlayerDob] = useState('2004-05-15');
   const [newPlayerJersey, setNewPlayerJersey] = useState<number>(10);
   const [newPlayerPos, setNewPlayerPos] = useState<PlayerPosition>('FW');
+
+  // Edit player modal state
+  const [editPlayerModalOpen, setEditPlayerModalOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [editPlayerName, setEditPlayerName] = useState('');
+  const [editPlayerStudentId, setEditPlayerStudentId] = useState('');
+  const [editPlayerCohort, setEditPlayerCohort] = useState('K23');
+  const [editPlayerClass, setEditPlayerClass] = useState('');
+  const [editPlayerDob, setEditPlayerDob] = useState('2004-05-15');
+  const [editPlayerJersey, setEditPlayerJersey] = useState<number>(10);
+  const [editPlayerPos, setEditPlayerPos] = useState<PlayerPosition>('FW');
 
   // Edit team modal state
   const [editTeamModalOpen, setEditTeamModalOpen] = useState(false);
@@ -73,7 +107,36 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
   const [editSecondaryColor, setEditSecondaryColor] = useState('#FFFFFF');
 
   const selectedTeam = teams.find((t) => t.id === selectedTeamId) || teams[0];
-  const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER' || currentRole === 'TEAM_MANAGER';
+
+  // Phân quyền chuẩn hóa
+  const isOrganizerOrAdmin = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
+  const isCaptain = currentRole === 'TEAM_MANAGER';
+  const isMyTeam =
+    isCaptain &&
+    currentUser != null &&
+    (currentUser.teamId === selectedTeam?.id ||
+      (currentUser.teamName &&
+        selectedTeam?.name &&
+        currentUser.teamName.toLowerCase().trim() === selectedTeam.name.toLowerCase().trim()));
+
+  // Quyền quản lý thành viên (Cầu thủ): BTC toàn quyền, Đội trưởng chỉ đội mình
+  const canManageThisTeamPlayers = isOrganizerOrAdmin || isMyTeam;
+
+  // Tự động định vị về đội bóng của Đội trưởng khi đăng nhập
+  useEffect(() => {
+    if (isCaptain && currentUser?.teamId) {
+      const myTeam = teams.find((t) => t.id === currentUser.teamId);
+      if (myTeam) {
+        setSelectedTeamId(myTeam.id);
+      }
+    }
+  }, [isCaptain, currentUser?.teamId, teams]);
+
+  // Cập nhật gợi ý username khi nhập tên viết tắt đội
+  const handleShortNameChange = (val: string) => {
+    setNewTeamShortName(val);
+    setNewCaptainUsername(AuthService.generateCaptainUsername(val));
+  };
 
   const handleOpenEditTeam = () => {
     if (!selectedTeam) return;
@@ -145,8 +208,13 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     );
   };
 
-  // Add new team (Rule #14)
+  // Add new team (Rule #14) - CHỈ DÀNH CHO BTC
   const handleCreateTeam = () => {
+    if (!isOrganizerOrAdmin) {
+      alert('Chỉ Ban Tổ Chức (BTC) mới có quyền tạo và thêm đội bóng mới!');
+      return;
+    }
+
     if (!newTeamName || !newTeamShortName || !newTeamClass) {
       alert('Vui lòng nhập đầy đủ tên đội, tên viết tắt và chi đoàn lớp!');
       return;
@@ -160,15 +228,15 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     const newId = `T${String(teams.length + 1).padStart(2, '0')}`;
     const newTeam: Team = {
       id: newId,
-      name: newTeamName,
-      shortName: newTeamShortName.toUpperCase(),
-      logo: `⚽ ${newTeamShortName.toUpperCase()}`,
-      class: newTeamClass,
+      name: newTeamName.trim(),
+      shortName: newTeamShortName.trim().toUpperCase(),
+      logo: `⚽ ${newTeamShortName.trim().toUpperCase()}`,
+      class: newTeamClass.trim(),
       department: newTeamDept,
-      leaderName: newTeamLeader || 'Trưởng đoàn',
-      captainName: newTeamCaptain || 'Đội trưởng',
-      phoneNumber: newTeamPhone || '0900000000',
-      email: newTeamEmail || `${newTeamShortName.toLowerCase()}@uit.edu.vn`,
+      leaderName: newTeamLeader.trim() || 'Trưởng đoàn',
+      captainName: newTeamCaptain.trim() || 'Đội trưởng',
+      phoneNumber: newTeamPhone.trim() || '0900000000',
+      email: newTeamEmail.trim() || `${newTeamShortName.toLowerCase()}@uit.edu.vn`,
       primaryColor: newTeamPrimaryColor,
       secondaryColor: newTeamSecondaryColor,
       status: 'APPROVED',
@@ -178,6 +246,13 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
       group: newTeamGroup !== 'NONE' ? newTeamGroup : undefined,
       players: [],
     };
+
+    // Tự động tạo tài khoản Đội Trưởng cho đội bóng vừa tạo
+    const captainAcc = AuthService.createCaptainAccountForTeam(
+      newTeam,
+      newCaptainUsername,
+      newCaptainPassword || '123'
+    );
 
     const updated = [...teams, newTeam];
     onTeamsUpdate(updated);
@@ -190,19 +265,36 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     setNewTeamClass('');
     setNewTeamLeader('');
     setNewTeamCaptain('');
+    setNewCaptainUsername('');
+    setNewCaptainPassword('123');
+
+    // Hiển thị modal thông báo tài khoản cho BTC sao chép bàn giao
+    setCreatedCaptainModal({
+      open: true,
+      teamName: newTeam.name,
+      shortName: newTeam.shortName,
+      captainName: newTeam.captainName,
+      username: captainAcc.username,
+      password: captainAcc.password || '123',
+    });
 
     StorageService.logAction(
+      currentUser?.fullName || currentRole,
       currentRole,
-      currentRole,
-      'ĐĂNG KÝ ĐỘI BÓNG MỚI',
+      'BTC TẠO ĐỘI BÓNG & SINH TÀI KHOẢN ĐỘI TRƯỞNG',
       newTeam.name,
-      `Đăng ký thành công đội ${newTeam.name} (${newTeam.shortName}), Lớp ${newTeam.class}, Khoa ${newTeam.department}.`
+      `BTC tạo thành công đội ${newTeam.name} (${newTeam.shortName}). Hệ thống đã tự động cấp tài khoản @${captainAcc.username} cho Đội trưởng.`
     );
   };
 
   // Add new player to team (Rule #15: max 12 players, no duplicate jersey numbers)
   const handleAddPlayer = () => {
     if (!selectedTeam) return;
+
+    if (!canManageThisTeamPlayers) {
+      alert('Bạn không có quyền thêm thành viên cho đội bóng này!');
+      return;
+    }
 
     if (selectedTeam.players.length >= 12) {
       alert('Đội bóng đã đủ 12 cầu thủ tối đa theo quy định Điều 6.1 & 15!');
@@ -225,9 +317,9 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     const newPlayer: Player = {
       id: `PL-${selectedTeam.id}-${Date.now().toString().slice(-4)}`,
       teamId: selectedTeam.id,
-      name: newPlayerName,
-      studentId: newPlayerStudentId,
-      class: newPlayerClass || selectedTeam.class,
+      name: newPlayerName.trim(),
+      studentId: newPlayerStudentId.trim(),
+      class: newPlayerClass.trim() || selectedTeam.class,
       cohort: newPlayerCohort,
       dateOfBirth: newPlayerDob,
       jerseyNumber: newPlayerJersey,
@@ -249,11 +341,114 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     setNewPlayerStudentId('');
 
     StorageService.logAction(
-      currentRole,
+      currentUser?.fullName || currentRole,
       currentRole,
       'ĐĂNG KÝ CẦU THỦ MỚI',
       selectedTeam.name,
       `Thêm cầu thủ: ${newPlayer.name} (#${newPlayer.jerseyNumber} - ${newPlayer.position}), MSSV: ${newPlayer.studentId}`
+    );
+  };
+
+  // Xóa cầu thủ khỏi đội bóng (chỉ BTC hoặc Đội trưởng đội mình)
+  const handleDeletePlayer = (playerId: string) => {
+    if (!selectedTeam) return;
+    if (!canManageThisTeamPlayers) {
+      alert('Bạn không có quyền xóa thành viên của đội bóng này!');
+      return;
+    }
+
+    const player = selectedTeam.players.find((p) => p.id === playerId);
+    if (!player) return;
+
+    if (!confirm(`Bạn có chắc chắn muốn xóa cầu thủ ${player.name} (#${player.jerseyNumber}) khỏi đội ${selectedTeam.name}?`)) {
+      return;
+    }
+
+    const updatedPlayers = selectedTeam.players.filter((p) => p.id !== playerId);
+    const updated = teams.map((t) => (t.id === selectedTeam.id ? { ...t, players: updatedPlayers } : t));
+    onTeamsUpdate(updated);
+    StorageService.saveTeams(updated);
+
+    StorageService.logAction(
+      currentUser?.fullName || currentRole,
+      currentRole,
+      'XÓA THÀNH VIÊN ĐỘI BÓNG',
+      selectedTeam.name,
+      `Xóa cầu thủ: ${player.name} (#${player.jerseyNumber}), MSSV: ${player.studentId}`
+    );
+  };
+
+  // Mở modal sửa cầu thủ
+  const handleOpenEditPlayer = (player: Player) => {
+    if (!canManageThisTeamPlayers) {
+      alert('Bạn không có quyền chỉnh sửa thành viên của đội bóng này!');
+      return;
+    }
+    setEditingPlayer(player);
+    setEditPlayerName(player.name);
+    setEditPlayerStudentId(player.studentId);
+    setEditPlayerCohort(player.cohort || 'K23');
+    setEditPlayerClass(player.class || selectedTeam?.class || '');
+    setEditPlayerDob(player.dateOfBirth || '2004-05-15');
+    setEditPlayerJersey(player.jerseyNumber);
+    setEditPlayerPos(player.position);
+    setEditPlayerModalOpen(true);
+  };
+
+  // Lưu chỉnh sửa cầu thủ
+  const handleSaveEditPlayer = () => {
+    if (!selectedTeam || !editingPlayer) return;
+    if (!canManageThisTeamPlayers) {
+      alert('Bạn không có quyền chỉnh sửa thành viên của đội bóng này!');
+      return;
+    }
+
+    if (!editPlayerName || !editPlayerStudentId) {
+      alert('Vui lòng nhập họ tên và mã sinh viên!');
+      return;
+    }
+
+    if (selectedTeam.players.some((p) => p.id !== editingPlayer.id && p.jerseyNumber === editPlayerJersey)) {
+      alert(`Số áo ${editPlayerJersey} đã có cầu thủ khác trong đội sử dụng! Vui lòng chọn số khác.`);
+      return;
+    }
+
+    const duplicateInOtherTeam = teams.some(
+      (t) => t.id !== selectedTeam.id && t.players.some((p) => p.studentId === editPlayerStudentId)
+    );
+    if (duplicateInOtherTeam) {
+      alert(`Mã sinh viên ${editPlayerStudentId} đã được đăng ký ở một đội bóng khác!`);
+      return;
+    }
+
+    const updatedPlayers = selectedTeam.players.map((p) => {
+      if (p.id === editingPlayer.id) {
+        return {
+          ...p,
+          name: editPlayerName.trim(),
+          studentId: editPlayerStudentId.trim(),
+          cohort: editPlayerCohort,
+          class: editPlayerClass.trim(),
+          dateOfBirth: editPlayerDob,
+          jerseyNumber: editPlayerJersey,
+          position: editPlayerPos,
+        };
+      }
+      return p;
+    });
+
+    const updated = teams.map((t) => (t.id === selectedTeam.id ? { ...t, players: updatedPlayers } : t));
+    onTeamsUpdate(updated);
+    StorageService.saveTeams(updated);
+    setEditPlayerModalOpen(false);
+    setEditingPlayer(null);
+
+    StorageService.logAction(
+      currentUser?.fullName || currentRole,
+      currentRole,
+      'CẬP NHẬT THÀNH VIÊN ĐỘI BÓNG',
+      selectedTeam.name,
+      `Cập nhật: ${editPlayerName} (#${editPlayerJersey} - ${editPlayerPos}), MSSV: ${editPlayerStudentId}`
     );
   };
 
@@ -278,13 +473,17 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {canManage && (
+          {/* Nút thêm đội bóng: CHỈ DÀNH RIÊNG CHO BTC/ADMIN theo yêu cầu */}
+          {isOrganizerOrAdmin && (
             <button
-              onClick={() => setTeamModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all"
+              onClick={() => {
+                setNewCaptainUsername(AuthService.generateCaptainUsername(newTeamShortName || ''));
+                setTeamModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>+ Đăng Ký Đội Mới (Điều 14)</span>
+              <span>+ Đăng Ký Đội Mới (BTC)</span>
             </button>
           )}
 
@@ -325,17 +524,21 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
           </div>
           <h3 className="text-xl font-bold text-white">Chưa Có Đội Bóng Nào Trong Cơ Sở Dữ Liệu</h3>
           <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Dữ liệu mẫu đã được xóa sạch. Bạn có thể bắt đầu đăng ký các đội bóng sinh viên mới tham gia giải, hoặc nhấn nút nạp dữ liệu mẫu trên thanh Header để kiểm tra thử nghiệm.
+            {isOrganizerOrAdmin
+              ? 'Dữ liệu giải đấu đang chờ tạo. Là Ban Tổ Chức, bạn có thể tạo trước các đội bóng tham gia và hệ thống sẽ tự động cấp tài khoản cho từng Đội trưởng.'
+              : 'Ban Tổ Chức đang trong quá trình khởi tạo danh sách các đội bóng tham dự giải.'}
           </p>
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <button
-              onClick={() => setTeamModalOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>+ Đăng Ký Đội Bóng Đầu Tiên</span>
-            </button>
-          </div>
+          {isOrganizerOrAdmin && (
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setTeamModalOpen(true)}
+                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Đăng Ký Đội Bóng Đầu Tiên (BTC)</span>
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         /* Main Layout: Left Team Selector & Right Selected Team Profile */
@@ -348,6 +551,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               .map((t) => {
                 const isSelected = t.id === selectedTeam?.id;
                 const isWithdrawn = t.status === 'WITHDRAWN';
+                const isThisMyTeam = isCaptain && currentUser?.teamId === t.id;
 
                 return (
                   <div
@@ -355,7 +559,11 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                     onClick={() => setSelectedTeamId(t.id)}
                     className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-slate-800/90 border-emerald-500 shadow-lg shadow-emerald-500/10'
+                        ? isThisMyTeam
+                          ? 'bg-emerald-950/40 border-emerald-400 shadow-lg shadow-emerald-500/20'
+                          : 'bg-slate-800/90 border-emerald-500 shadow-lg shadow-emerald-500/10'
+                        : isThisMyTeam
+                        ? 'bg-emerald-950/20 border-emerald-600/40 hover:bg-emerald-900/30'
                         : 'bg-[#0B132B]/80 border-slate-800 hover:bg-slate-800/50'
                     }`}
                   >
@@ -368,9 +576,16 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                         <span className="text-xs font-black text-white">{t.name}</span>
                       </div>
 
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-700">
-                        Bảng {t.group || '?'}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {isThisMyTeam && (
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 shadow-sm animate-pulse">
+                            ⭐ ĐỘI CỦA BẠN
+                          </span>
+                        )}
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-700">
+                          Bảng {t.group || '?'}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-slate-400">
@@ -393,6 +608,27 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
           {selectedTeam && (
             <div className="lg:col-span-8 space-y-6">
               
+              {/* Alert thông báo phân quyền cho Đội trưởng khi đang xem đội khác */}
+              {isCaptain && !isMyTeam && (
+                <div className="p-3.5 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <strong>Chế độ xem chỉ đọc:</strong> Bạn là Đội trưởng của đội <strong>{currentUser?.teamName || 'đội khác'}</strong>. Theo phân quyền, bạn không được phép thêm hoặc sửa thành viên của đội bóng khác.
+                    </div>
+                  </div>
+                  {currentUser?.teamId && (
+                    <button
+                      onClick={() => setSelectedTeamId(currentUser.teamId!)}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold whitespace-nowrap text-xs flex items-center gap-1.5 self-start sm:self-auto transition-all"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                      <span>« Chuyển Về Đội Của Bạn</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Team Hero Header with athletic match photo */}
               <div className="relative rounded-3xl overflow-hidden border border-slate-700/60 bg-slate-900/90 p-6 shadow-2xl backdrop-blur-md">
                 <div 
@@ -414,13 +650,18 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-xl sm:text-2xl font-black text-white">
                           {selectedTeam.name}
                         </h3>
                         <span className="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded font-mono font-bold">
                           BẢNG {selectedTeam.group || 'CHƯA GÁN'}
                         </span>
+                        {isMyTeam && (
+                          <span className="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-bold">
+                            ⭐ ĐỘI CỦA BẠN (Được thêm &amp; sửa thành viên)
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-slate-400 mt-1">
                         Khoa {selectedTeam.department} • Lớp {selectedTeam.class}
@@ -433,29 +674,33 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Team Controls */}
+                  {/* Team Controls: Phân quyền rõ ràng */}
                   <div className="flex flex-wrap items-center gap-2">
-                    {canManage && (
-                      <>
-                        <button
-                          onClick={handleOpenEditTeam}
-                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition-all"
-                          title="Sửa tên đội, đổi bảng đấu, màu áo"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                          <span>Sửa Đội / Đổi Bảng</span>
-                        </button>
-                        <button
-                          onClick={() => setPlayerModalOpen(true)}
-                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>+ Thêm Cầu Thủ</span>
-                        </button>
-                      </>
+                    {/* Sửa đội / Đổi bảng: CHỈ DÀNH CHO BTC/ADMIN */}
+                    {isOrganizerOrAdmin && (
+                      <button
+                        onClick={handleOpenEditTeam}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition-all"
+                        title="BTC sửa tên đội, đổi bảng đấu, màu áo"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Sửa Đội / Đổi Bảng</span>
+                      </button>
                     )}
 
-                    {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
+                    {/* Thêm cầu thủ: BTC HOẶC Đội trưởng đội mình */}
+                    {canManageThisTeamPlayers && (
+                      <button
+                        onClick={() => setPlayerModalOpen(true)}
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>{isMyTeam ? '+ Thêm Cầu Thủ Đội Mình' : '+ Thêm Cầu Thủ'}</span>
+                      </button>
+                    )}
+
+                    {/* Báo bỏ cuộc: CHỈ DÀNH CHO BTC */}
+                    {isOrganizerOrAdmin && (
                       <button
                         onClick={() => handleToggleWithdrawn(selectedTeam.id)}
                         className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
@@ -473,8 +718,46 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
                 </div>
 
+                {/* Box hiển thị tài khoản Đội trưởng dành riêng cho BTC tra cứu và bàn giao */}
+                {isOrganizerOrAdmin && (
+                  <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-cyan-950/30 p-3 rounded-2xl border border-cyan-500/30">
+                    <div className="flex items-center gap-2.5 text-xs">
+                      <div className="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                        <KeyRound className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-white">Tài khoản Đội trưởng: </span>
+                        <span className="font-mono text-cyan-300 font-bold">
+                          @{AuthService.getCaptainAccountForTeam(selectedTeam.id)?.username || `captain_${selectedTeam.shortName.toLowerCase()}`}
+                        </span>
+                        <span className="text-slate-400 mx-2">•</span>
+                        <span className="text-slate-300">Mật khẩu: </span>
+                        <span className="font-mono text-emerald-400 font-bold">
+                          {AuthService.getCaptainAccountForTeam(selectedTeam.id)?.password || '123'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const cap = AuthService.getCaptainAccountForTeam(selectedTeam.id);
+                        const u = cap?.username || `captain_${selectedTeam.shortName.toLowerCase()}`;
+                        const p = cap?.password || '123';
+                        const text = `TÀI KHOẢN ĐỘI TRƯỞNG - ĐỘI ${selectedTeam.name.toUpperCase()}\nTài khoản: ${u}\nMật khẩu: ${p}\nĐội trưởng đăng nhập để cập nhật danh sách cầu thủ của đội mình.`;
+                        navigator.clipboard.writeText(text);
+                        setHeaderCopied(true);
+                        setTimeout(() => setHeaderCopied(false), 2000);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[11px] font-bold flex items-center gap-1.5 self-start sm:self-auto transition-all"
+                    >
+                      {headerCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép Cho Đội Trưởng'}</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Financial & Fee Status Strip: Chỉ hiển thị cho Super Admin & BTC */}
-                {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') ? (
+                {isOrganizerOrAdmin ? (
                   <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
                       <span className="text-[10px] text-slate-400 block">Lệ Phí Thi Đấu</span>
@@ -540,12 +823,17 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                       Danh Sách Đăng Ký Cầu Thủ ({selectedTeam.players.length}/12)
                     </h4>
                   </div>
-                  <span className="text-xs text-slate-400">Quy định Điều 15</span>
+                  <span className="text-xs text-slate-400">
+                    {canManageThisTeamPlayers ? 'Bạn có quyền quản lý thành viên đội này' : 'Chế độ chỉ đọc'}
+                  </span>
                 </div>
 
                 {selectedTeam.players.length === 0 ? (
                   <div className="p-8 text-center text-slate-500 text-xs">
-                    Chưa có cầu thủ nào trong danh sách. Bấm <strong>&quot;+ Thêm Cầu Thủ&quot;</strong> để đăng ký.
+                    Chưa có cầu thủ nào trong danh sách.
+                    {canManageThisTeamPlayers && (
+                      <span> Bấm <strong>&quot;+ Thêm Cầu Thủ&quot;</strong> để đăng ký thành viên.</span>
+                    )}
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -560,6 +848,9 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                           <th className="py-3 px-2 text-center">BÀN THẮNG</th>
                           <th className="py-3 px-2 text-center">THẺ PHẠT</th>
                           <th className="py-3 px-3 text-center">TRẠNG THÁI</th>
+                          {canManageThisTeamPlayers && (
+                            <th className="py-3 px-3 text-center w-24">THAO TÁC</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800/60">
@@ -600,6 +891,26 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                                 </span>
                               )}
                             </td>
+                            {canManageThisTeamPlayers && (
+                              <td className="py-3 px-3 text-center">
+                                <div className="flex items-center justify-center gap-1.5">
+                                  <button
+                                    onClick={() => handleOpenEditPlayer(p)}
+                                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-colors"
+                                    title="Sửa thông tin cầu thủ"
+                                  >
+                                    <Edit3 className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeletePlayer(p.id)}
+                                    className="p-1.5 rounded-lg bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-500/30 transition-colors"
+                                    title="Xóa cầu thủ khỏi đội"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -648,7 +959,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 <input
                   type="text"
                   value={newTeamShortName}
-                  onChange={(e) => setNewTeamShortName(e.target.value)}
+                  onChange={(e) => handleShortNameChange(e.target.value)}
                   placeholder="VD: CNTT-K22"
                   className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold uppercase"
                 />
@@ -745,6 +1056,39 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               </div>
             </div>
 
+            {/* Khung Tự Động Tạo Tài Khoản Cho Đội Trưởng */}
+            <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
+              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs">
+                <KeyRound className="w-4 h-4 text-cyan-400 shrink-0" />
+                <span>Tự Động Cấp Tài Khoản Cho Đội Trưởng Đội Bóng</span>
+              </div>
+              <p className="text-[11px] text-slate-300">
+                Hệ thống sẽ tự động tạo tài khoản này với vai trò Đội Trưởng để bàn giao cho đội bóng vào tự thêm thành viên của đội mình:
+              </p>
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Tài khoản (Username)</label>
+                  <input
+                    type="text"
+                    value={newCaptainUsername}
+                    onChange={(e) => setNewCaptainUsername(e.target.value)}
+                    placeholder="captain_..."
+                    className="w-full bg-slate-900 border border-slate-700 text-cyan-300 font-mono text-xs rounded-xl p-2 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Mật khẩu khởi tạo</label>
+                  <input
+                    type="text"
+                    value={newCaptainPassword}
+                    onChange={(e) => setNewCaptainPassword(e.target.value)}
+                    placeholder="123"
+                    className="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-mono text-xs rounded-xl p-2 font-bold"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
               <button
                 type="button"
@@ -757,9 +1101,73 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleCreateTeam}
                 disabled={!newTeamName || !newTeamShortName}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95"
               >
-                Hoàn Tất Đăng Ký Đội
+                Tạo Đội Bóng &amp; Cấp Tài Khoản Đội Trưởng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Thông Báo Tạo Đội & Tài Khoản Đội Trưởng Thành Công (Cho BTC copy gửi Đội trưởng) */}
+      {createdCaptainModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 text-center animate-in fade-in zoom-in-95">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto text-2xl">
+              🎉
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-white">Đã Tạo Đội Bóng &amp; Cấp Tài Khoản Đội Trưởng!</h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Đội bóng <strong>{createdCaptainModal.teamName}</strong> đã được lưu thành công vào cơ sở dữ liệu.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-2 text-xs">
+              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
+                <span className="text-slate-400">Tên đội bóng:</span>
+                <span className="font-bold text-white">{createdCaptainModal.teamName}</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
+                <span className="text-slate-400">Đội trưởng:</span>
+                <span className="font-bold text-white">{createdCaptainModal.captainName || 'Chưa đặt tên'}</span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
+                <span className="text-slate-400">Tên đăng nhập:</span>
+                <span className="font-mono font-black text-cyan-300">@{createdCaptainModal.username}</span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span className="text-slate-400">Mật khẩu đăng nhập:</span>
+                <span className="font-mono font-black text-emerald-400">{createdCaptainModal.password}</span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-400">
+              Hãy bấm nút bên dưới để sao chép thông tin tài khoản và gửi cho Đội trưởng. Đội trưởng có quyền thêm và chỉnh sửa thành viên của đội mình.
+            </p>
+
+            <div className="flex flex-col gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const text = `TÀI KHOẢN ĐỘI TRƯỞNG - GIẢI BÓNG ĐÁ ITFTMS 2026\nĐội bóng: ${createdCaptainModal.teamName}\nTài khoản: ${createdCaptainModal.username}\nMật khẩu: ${createdCaptainModal.password}\nĐội trưởng đăng nhập vào website để cập nhật danh sách cầu thủ của đội mình.`;
+                  navigator.clipboard.writeText(text);
+                  setCopiedCaptainCreds(true);
+                  setTimeout(() => setCopiedCaptainCreds(false), 2500);
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+              >
+                {copiedCaptainCreds ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
+                <span>{copiedCaptainCreds ? '✓ Đã Sao Chép Vào Bộ Nhớ Tạm!' : 'Sao Chép Thông Tin Bàn Giao Cho Đội Trưởng'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCreatedCaptainModal(null)}
+                className="w-full py-2 px-4 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+              >
+                Đóng
               </button>
             </div>
           </div>
@@ -861,7 +1269,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleAddPlayer}
                 disabled={!newPlayerName || !newPlayerStudentId}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20"
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95"
               >
                 Lưu Hồ Sơ Cầu Thủ
               </button>
@@ -870,14 +1278,14 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
       )}
 
-      {/* Modal 3: Edit Team & Group */}
-      {editTeamModalOpen && (
+      {/* Modal 3: Edit Team & Group - CHỈ DÀNH CHO BTC */}
+      {editTeamModalOpen && isOrganizerOrAdmin && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-cyan-400" />
-                Chỉnh Sửa Đội Bóng &amp; Bảng Đấu
+                Chỉnh Sửa Đội Bóng &amp; Bảng Đấu (BTC)
               </h3>
               <button
                 onClick={() => setEditTeamModalOpen(false)}
@@ -1001,6 +1409,114 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleSaveEditTeam}
                 className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg"
+              >
+                Lưu Thay Đổi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 4: Edit Player (Cầu thủ) - Cho BTC hoặc Đội trưởng đội mình */}
+      {editPlayerModalOpen && editingPlayer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-cyan-400" />
+                Chỉnh Sửa Thông Tin Cầu Thủ
+              </h3>
+              <button
+                onClick={() => {
+                  setEditPlayerModalOpen(false);
+                  setEditingPlayer(null);
+                }}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-slate-300 block mb-1">Họ và tên cầu thủ</label>
+              <input
+                type="text"
+                value={editPlayerName}
+                onChange={(e) => setEditPlayerName(e.target.value)}
+                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-slate-300 block mb-1">Mã sinh viên (MSSV)</label>
+                <input
+                  type="text"
+                  value={editPlayerStudentId}
+                  onChange={(e) => setEditPlayerStudentId(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-300 block mb-1">Khóa sinh viên</label>
+                <select
+                  value={editPlayerCohort}
+                  onChange={(e) => setEditPlayerCohort(e.target.value)}
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                >
+                  <option value="K23">Khóa K23 (2023)</option>
+                  <option value="K24">Khóa K24 (2024)</option>
+                  <option value="K25">Khóa K25 (2025)</option>
+                  <option value="K26">Khóa K26 (2026)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-semibold text-slate-300 block mb-1">Số áo (1 - 99)</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={99}
+                  value={editPlayerJersey}
+                  onChange={(e) => setEditPlayerJersey(Number(e.target.value))}
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-300 block mb-1">Vị trí thi đấu</label>
+                <select
+                  value={editPlayerPos}
+                  onChange={(e) => setEditPlayerPos(e.target.value as PlayerPosition)}
+                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                >
+                  <option value="GK">Thủ Môn (GK)</option>
+                  <option value="DF">Hậu Vệ (DF)</option>
+                  <option value="MF">Tiền Vệ (MF)</option>
+                  <option value="FW">Tiền Đạo (FW)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditPlayerModalOpen(false);
+                  setEditingPlayer(null);
+                }}
+                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEditPlayer}
+                disabled={!editPlayerName || !editPlayerStudentId}
+                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg active:scale-95"
               >
                 Lưu Thay Đổi
               </button>
