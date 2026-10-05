@@ -5,7 +5,19 @@ import confetti from 'canvas-confetti';
 import { TournamentAward, UserRole } from '@/types';
 import { StorageService } from '@/services/storage';
 import { SoundFX } from '@/utils/soundEffects';
-import { Trophy, Award, Sparkles, Edit3, CheckCircle2 } from 'lucide-react';
+import { 
+  Trophy, 
+  Award, 
+  Sparkles, 
+  Edit3, 
+  CheckCircle2, 
+  Plus, 
+  Trash2, 
+  X, 
+  Check, 
+  AlertTriangle,
+  Image as ImageIcon
+} from 'lucide-react';
 
 interface AwardsViewProps {
   awards: TournamentAward[];
@@ -13,16 +25,36 @@ interface AwardsViewProps {
   currentRole: UserRole;
 }
 
+const PRESET_ICONS = ['🧤', '⚽', '⭐', '🏆', '🥇', '🥈', '🥉', '🔥', '👟', '🎯', '👑', '🤝', '🌟', '⚡', '🛡️'];
+
+const PRESET_IMAGES = [
+  { label: 'Thủ Môn / Cứu Thua', url: '/images/goalkeeper-save.jpg' },
+  { label: 'Cúp Vinh Quang', url: '/images/trophy-cup.jpg' },
+  { label: 'Ngôi Sao Sân Cỏ', url: '/images/tournament-hero.jpg' },
+  { label: 'Pha Bóng Futsal', url: '/images/futsal-action.jpg' },
+  { label: 'Ăn Mừng Vô Địch', url: '/images/trophy-celebration.jpg' },
+  { label: 'Giày Vàng', url: '/images/golden-boot.jpg' },
+];
+
 export const AwardsView: React.FC<AwardsViewProps> = ({
   awards,
   onAwardsUpdate,
   currentRole,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [selectedAward, setSelectedAward] = useState<TournamentAward | null>(null);
+
+  // Form fields
+  const [awardTitle, setAwardTitle] = useState('');
+  const [awardIcon, setAwardIcon] = useState('🧤');
+  const [awardImage, setAwardImage] = useState('/images/goalkeeper-save.jpg');
   const [recipientName, setRecipientName] = useState('');
   const [recipientTeam, setRecipientTeam] = useState('');
-  const [prizeMoney, setPrizeMoney] = useState(0);
+  const [prizeMoney, setPrizeMoney] = useState(500000);
+
+  // Delete confirm state
+  const [deleteConfirmAward, setDeleteConfirmAward] = useState<TournamentAward | null>(null);
 
   const canEdit = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
 
@@ -30,47 +62,137 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
   const runnerUp = awards.find((a) => a.code === 'RUNNER_UP');
   const thirdPlace = awards.find((a) => a.code === 'THIRD_PLACE');
 
+  // Lọc danh hiệu cá nhân: Đã loại bỏ hoàn toàn Vua Phá Lưới, Cầu Thủ Xuất Sắc, Giải Phong Cách
   const individualAwards = awards.filter(
-    (a) => a.code !== 'CHAMPION' && a.code !== 'RUNNER_UP' && a.code !== 'THIRD_PLACE'
+    (a) =>
+      a.code !== 'CHAMPION' &&
+      a.code !== 'RUNNER_UP' &&
+      a.code !== 'THIRD_PLACE' &&
+      a.code !== 'TOP_SCORER' &&
+      a.code !== 'BEST_PLAYER' &&
+      a.code !== 'FAIR_PLAY'
   );
 
+  const getAwardImage = (award: TournamentAward) => {
+    if (award.customImage) return award.customImage;
+    if (award.code === 'BEST_GK') return '/images/goalkeeper-save.jpg';
+    if (award.code === 'CHAMPION') return '/images/trophy-celebration.jpg';
+    if (award.code === 'RUNNER_UP' || award.code === 'THIRD_PLACE') return '/images/trophy-cup.jpg';
+    return '/images/trophy-cup.jpg';
+  };
+
+  const handleOpenCreate = () => {
+    setIsCreatingNew(true);
+    setSelectedAward(null);
+    setAwardTitle('');
+    setAwardIcon('🧤');
+    setAwardImage('/images/goalkeeper-save.jpg');
+    setRecipientName('Chưa xác định');
+    setRecipientTeam('Chờ kết quả thi đấu');
+    setPrizeMoney(500000);
+    setModalOpen(true);
+  };
+
   const handleOpenEdit = (award: TournamentAward) => {
+    setIsCreatingNew(false);
     setSelectedAward(award);
+    setAwardTitle(award.title);
+    setAwardIcon(award.icon || '🏆');
+    setAwardImage(award.customImage || getAwardImage(award));
     setRecipientName(award.recipientName);
     setRecipientTeam(award.recipientTeam);
     setPrizeMoney(award.prizeMoney);
     setModalOpen(true);
   };
 
-  const handleSaveAward = () => {
-    if (!selectedAward) return;
-
-    selectedAward.recipientName = recipientName;
-    selectedAward.recipientTeam = recipientTeam;
-    selectedAward.prizeMoney = prizeMoney;
-
-    const updated = [...awards];
+  const handleDeleteAward = (award: TournamentAward) => {
+    const updated = awards.filter((a) => a.id !== award.id);
     onAwardsUpdate(updated);
     StorageService.saveAwards(updated);
-
-    setModalOpen(false);
-
-    SoundFX.playGoalFanfare();
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#F59E0B', '#FBBF24', '#FFFFFF'],
-    });
-
+    setDeleteConfirmAward(null);
+    if (selectedAward?.id === award.id) {
+      setModalOpen(false);
+    }
     StorageService.logAction(
       currentRole,
       currentRole,
-      'CÔNG BỐ GIẢI THƯỞNG GIẢI ĐẤU',
-      selectedAward.title,
-      `Vinh danh: ${recipientName} (${recipientTeam}). Giải thưởng: ${prizeMoney.toLocaleString()} VNĐ`
+      'XÓA DANH HIỆU CÁ NHÂN',
+      award.title,
+      `Đã xóa danh hiệu "${award.title}" khỏi cơ cấu giải thưởng`
     );
   };
+
+  const handleSaveAward = () => {
+    if (isCreatingNew) {
+      const finalTitle = awardTitle.trim() || 'Danh Hiệu Tùy Chọn';
+      const newAward: TournamentAward = {
+        id: `AW-CUSTOM-${Date.now()}`,
+        code: `CUSTOM_${Date.now()}`,
+        title: finalTitle,
+        icon: awardIcon || '⭐',
+        customImage: awardImage,
+        recipientName: recipientName.trim() || 'Chưa xác định',
+        recipientTeam: recipientTeam.trim() || 'Chờ kết quả thi đấu',
+        prizeMoney: Number(prizeMoney) >= 0 ? Number(prizeMoney) : 0,
+      };
+
+      const updated = [...awards, newAward];
+      onAwardsUpdate(updated);
+      StorageService.saveAwards(updated);
+      setModalOpen(false);
+
+      SoundFX.playGoalFanfare();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#10B981', '#06B6D4', '#FFFFFF'],
+      });
+
+      StorageService.logAction(
+        currentRole,
+        currentRole,
+        'THÊM DANH HIỆU CÁ NHÂN',
+        newAward.title,
+        `Tạo danh hiệu: ${newAward.title}. Tiền thưởng: ${newAward.prizeMoney.toLocaleString()} VNĐ`
+      );
+    } else if (selectedAward) {
+      const isPodium = selectedAward.code === 'CHAMPION' || selectedAward.code === 'RUNNER_UP' || selectedAward.code === 'THIRD_PLACE';
+
+      selectedAward.recipientName = recipientName.trim() || 'Chưa xác định';
+      selectedAward.recipientTeam = recipientTeam.trim() || 'Chờ kết quả thi đấu';
+      selectedAward.prizeMoney = Number(prizeMoney) >= 0 ? Number(prizeMoney) : 0;
+
+      if (!isPodium) {
+        selectedAward.title = awardTitle.trim() || selectedAward.title;
+        selectedAward.icon = awardIcon || selectedAward.icon || '⭐';
+        selectedAward.customImage = awardImage;
+      }
+
+      const updated = [...awards];
+      onAwardsUpdate(updated);
+      StorageService.saveAwards(updated);
+      setModalOpen(false);
+
+      SoundFX.playGoalFanfare();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#F59E0B', '#FBBF24', '#FFFFFF'],
+      });
+
+      StorageService.logAction(
+        currentRole,
+        currentRole,
+        'CẬP NHẬT DANH HIỆU',
+        selectedAward.title,
+        `Vinh danh: ${selectedAward.recipientName} (${selectedAward.recipientTeam}). Tiền thưởng: ${selectedAward.prizeMoney.toLocaleString()} VNĐ`
+      );
+    }
+  };
+
+  const isPodiumSelected = selectedAward && (selectedAward.code === 'CHAMPION' || selectedAward.code === 'RUNNER_UP' || selectedAward.code === 'THIRD_PLACE');
 
   return (
     <div className="space-y-8">
@@ -116,7 +238,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
         </div>
       </div>
 
-      {/* 3D Olympic-Style Podium Showcase */}
+      {/* 3D Olympic-Style Podium Showcase (Top 3) */}
       <div className="bg-gradient-to-b from-[#0F1E36] via-[#0B132B] to-[#070B14] border border-amber-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
         <h3 className="text-center text-sm font-black uppercase tracking-widest text-amber-400 mb-8">
           BỤC VINH QUANG TỔNG KẾT MÙA GIẢI
@@ -225,132 +347,342 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
         </div>
       </div>
 
-      {/* Individual Awards Grid */}
-      <div>
-        <h3 className="text-sm font-black text-white uppercase tracking-wider mb-4 flex items-center gap-2">
-          <Award className="w-4 h-4 text-emerald-400" />
-          <span>Danh Hiệu Cá Nhân &amp; Phong Cách (Điều 28)</span>
-        </h3>
+      {/* Individual Awards Section (Tùy Chọn Danh Hiệu Cá Nhân) */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <div>
+            <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+              <Award className="w-5 h-5 text-emerald-400" />
+              <span>Danh Hiệu Cá Nhân Tùy Chọn ({individualAwards.length})</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Quy định Điều 28: Tuyên dương các cá nhân xuất sắc. Ban Tổ Chức có thể tùy biến thêm, sửa hoặc xóa danh hiệu theo nhu cầu giải đấu.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {individualAwards.map((a) => {
-            const awardImgMap: Record<string, string> = {
-              TOP_SCORER: '/images/golden-boot.jpg',
-              BEST_GK: '/images/goalkeeper-save.jpg',
-              BEST_PLAYER: '/images/tournament-hero.jpg',
-              FAIR_PLAY: '/images/futsal-action.jpg',
-            };
-            const awardImg = awardImgMap[a.code] || '/images/trophy-cup.jpg';
-
-            return (
-              <div
-                key={a.id}
-                className="bg-slate-900/80 backdrop-blur-md border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Photo Thumbnail Banner */}
-                  <div className="relative h-28 overflow-hidden">
-                    <img 
-                      src={awardImg} 
-                      alt={a.title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent" />
-                    <div className="absolute top-2 left-2.5">
-                      <span className="text-lg p-1 bg-black/60 rounded-lg backdrop-blur-sm border border-slate-700/60 inline-block shadow-sm">
-                        {a.icon}
-                      </span>
-                    </div>
-                    <div className="absolute top-2 right-2.5 font-mono text-xs font-bold text-amber-300 bg-black/60 px-2 py-0.5 rounded-lg border border-amber-500/40 backdrop-blur-sm shadow-sm">
-                      {a.prizeMoney.toLocaleString()} đ
-                    </div>
-                  </div>
-
-                  <div className="p-4 space-y-1">
-                    <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{a.title}</h4>
-                    <div className="text-base font-black text-white mt-1 truncate">{a.recipientName}</div>
-                    <div className="text-xs text-emerald-400 font-semibold mt-0.5 truncate">{a.recipientTeam}</div>
-                  </div>
-                </div>
-
-                {canEdit && (
-                  <div className="p-4 pt-0">
-                    <button
-                      onClick={() => handleOpenEdit(a)}
-                      className="w-full pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400 hover:text-emerald-400 flex items-center justify-center gap-1 transition-colors"
-                    >
-                      <Edit3 className="w-3 h-3" />
-                      <span>Cập Nhật Người Nhận</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {canEdit && (
+            <button
+              onClick={handleOpenCreate}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2 self-start sm:self-auto active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ Thêm Danh Hiệu Cá Nhân</span>
+            </button>
+          )}
         </div>
+
+        {individualAwards.length === 0 ? (
+          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-10 text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
+              🏅
+            </div>
+            <h4 className="text-base font-bold text-white">Chưa Có Danh Hiệu Cá Nhân Nào</h4>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              Hiện tại danh sách danh hiệu cá nhân đang trống. Ban Tổ Chức có thể bấm nút bên dưới để tạo các danh hiệu tùy chỉnh (Thủ môn xuất sắc, Bàn thắng đẹp, Cầu thủ triển vọng, v.v.).
+            </p>
+            {canEdit && (
+              <div className="pt-2">
+                <button
+                  onClick={handleOpenCreate}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Tạo Danh Hiệu Cá Nhân Đầu Tiên</span>
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {individualAwards.map((a) => {
+              const awardImg = getAwardImage(a);
+
+              return (
+                <div
+                  key={a.id}
+                  className="bg-slate-900/90 backdrop-blur-md border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl hover:border-emerald-500/50 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Photo Thumbnail Banner */}
+                    <div className="relative h-32 overflow-hidden bg-slate-950">
+                      <img 
+                        src={awardImg} 
+                        alt={a.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+                      
+                      <div className="absolute top-2.5 left-2.5">
+                        <span className="text-xl p-1.5 bg-black/70 rounded-xl backdrop-blur-sm border border-slate-700/60 inline-flex items-center justify-center shadow-md">
+                          {a.icon || '🏅'}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-2.5 right-2.5 font-mono text-xs font-bold text-amber-300 bg-black/70 px-2.5 py-1 rounded-xl border border-amber-500/40 backdrop-blur-sm shadow-md">
+                        {a.prizeMoney.toLocaleString()} đ
+                      </div>
+                    </div>
+
+                    <div className="p-4 space-y-1">
+                      <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider truncate" title={a.title}>
+                        {a.title}
+                      </h4>
+                      <div className="text-base font-black text-white mt-1 truncate" title={a.recipientName}>
+                        {a.recipientName}
+                      </div>
+                      <div className="text-xs text-emerald-400 font-semibold mt-0.5 truncate" title={a.recipientTeam}>
+                        {a.recipientTeam}
+                      </div>
+                    </div>
+                  </div>
+
+                  {canEdit && (
+                    <div className="p-3 pt-0 border-t border-slate-800/80 grid grid-cols-2 gap-2 mt-2">
+                      <button
+                        onClick={() => handleOpenEdit(a)}
+                        className="py-1.5 px-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Sửa</span>
+                      </button>
+
+                      <button
+                        onClick={() => setDeleteConfirmAward(a)}
+                        className="py-1.5 px-2 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                        <span>Xóa</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Edit Modal */}
-      {modalOpen && selectedAward && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-amber-400" />
-              Cập Nhật Danh Hiệu: {selectedAward.title}
-            </h3>
-
-            <div>
-              <label className="text-xs font-semibold text-white block mb-1">
-                Tên Cá Nhân / Đội Bóng Nhận Giải
-              </label>
-              <input
-                type="text"
-                value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
-              />
+      {/* Modal Thêm Mới / Chỉnh Sửa Danh Hiệu */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-lg bg-slate-900 border-2 border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 my-8 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-400" />
+                <span>
+                  {isCreatingNew
+                    ? 'Thêm Danh Hiệu Cá Nhân Mới'
+                    : isPodiumSelected
+                    ? `Cập Nhật Bục Vinh Quang: ${selectedAward?.title}`
+                    : `Tùy Chỉnh Danh Hiệu: ${selectedAward?.title}`}
+                </span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
-            <div>
-              <label className="text-xs font-semibold text-white block mb-1">
-                Đơn Vị / Chi Đoàn Trực Thuộc
-              </label>
-              <input
-                type="text"
-                value={recipientTeam}
-                onChange={(e) => setRecipientTeam(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
-              />
+            {/* Title & Icon (Chỉ cho Individual Awards hoặc Tạo mới) */}
+            {(!isPodiumSelected || isCreatingNew) && (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">
+                    Tên Danh Hiệu <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={awardTitle}
+                    onChange={(e) => setAwardTitle(e.target.value)}
+                    placeholder="Ví dụ: 🧤 Thủ Môn Xuất Sắc Nhất, Bàn Thắng Đẹp..."
+                    className="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded-xl p-3 font-bold focus:border-emerald-500 focus:outline-none"
+                  />
+                </div>
+
+                {/* Chọn Icon / Emoji */}
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1.5">
+                    Biểu Tượng (Icon / Emoji)
+                  </label>
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {PRESET_ICONS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setAwardIcon(emoji)}
+                        className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center transition-all ${
+                          awardIcon === emoji
+                            ? 'bg-emerald-500/30 border-2 border-emerald-400 shadow-md scale-105'
+                            : 'bg-slate-800 border border-slate-700 hover:bg-slate-700'
+                        }`}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    value={awardIcon}
+                    onChange={(e) => setAwardIcon(e.target.value)}
+                    placeholder="Hoặc nhập emoji tùy ý (VD: 🧤, ⚽)..."
+                    className="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                    maxLength={10}
+                  />
+                </div>
+
+                {/* Chọn Ảnh Đại Diện */}
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
+                    <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Hình Ảnh Banner Danh Hiệu</span>
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {PRESET_IMAGES.map((img) => (
+                      <div
+                        key={img.url}
+                        onClick={() => setAwardImage(img.url)}
+                        className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all relative group ${
+                          awardImage === img.url
+                            ? 'border-emerald-400 shadow-lg shadow-emerald-500/30 scale-[1.02]'
+                            : 'border-slate-800 opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={img.url} alt={img.label} className="w-full h-16 object-cover" />
+                        <span className="block text-[10px] font-bold text-center py-1 bg-slate-950 text-slate-300 truncate px-1">
+                          {img.label}
+                        </span>
+                        {awardImage === img.url && (
+                          <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow">
+                            <Check className="w-3 h-3" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Recipient & Team */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Tên Cá Nhân / Đội Nhận Giải
+                </label>
+                <input
+                  type="text"
+                  value={recipientName}
+                  onChange={(e) => setRecipientName(e.target.value)}
+                  placeholder="Ví dụ: Nguyễn Văn A hoặc Chưa xác định"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Đơn Vị / Đội Bóng Trực Thuộc
+                </label>
+                <input
+                  type="text"
+                  value={recipientTeam}
+                  onChange={(e) => setRecipientTeam(e.target.value)}
+                  placeholder="Ví dụ: 22CNTT1 hoặc Chờ kết quả"
+                  className="w-full bg-slate-950 border border-slate-700 text-white text-xs rounded-xl p-2.5 focus:border-emerald-500 focus:outline-none"
+                />
+              </div>
             </div>
 
+            {/* Tiền Thưởng */}
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">
+              <label className="text-xs font-bold text-slate-300 block mb-1">
                 Tiền Thưởng Kèm Theo (VNĐ)
               </label>
               <input
                 type="number"
                 min={0}
-                step={100000}
+                step={50000}
                 value={prizeMoney}
                 onChange={(e) => setPrizeMoney(Number(e.target.value))}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                className="w-full bg-slate-950 border border-slate-700 text-emerald-400 text-xs rounded-xl p-2.5 font-mono font-bold focus:border-emerald-500 focus:outline-none"
               />
+              <span className="text-[11px] text-slate-400 block mt-1">
+                Định dạng hiển thị: <strong className="text-amber-300">{Number(prizeMoney || 0).toLocaleString()} VNĐ</strong>
+              </span>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            {/* Action buttons */}
+            <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800">
+              <div>
+                {!isCreatingNew && !isPodiumSelected && selectedAward && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setModalOpen(false);
+                      setDeleteConfirmAward(selectedAward);
+                    }}
+                    className="px-3 py-2 rounded-xl bg-red-950/60 hover:bg-red-900/80 text-red-300 border border-red-500/40 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Xóa Danh Hiệu</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold transition-colors"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAward}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/30 transition-all flex items-center gap-1.5 active:scale-95"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{isCreatingNew ? 'Tạo Danh Hiệu' : 'Lưu Danh Hiệu & Pháo Hoa'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal Xóa Danh Hiệu */}
+      {deleteConfirmAward && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm bg-slate-900 border-2 border-red-500/40 rounded-3xl p-6 shadow-2xl space-y-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-xl">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <div>
+              <h4 className="text-base font-bold text-white">Xác Nhận Xóa Danh Hiệu?</h4>
+              <p className="text-xs text-slate-300 mt-1">
+                Bạn có chắc chắn muốn xóa danh hiệu <strong className="text-red-400">&quot;{deleteConfirmAward.title}&quot;</strong> khỏi cơ cấu giải thưởng không?
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 pt-2">
               <button
                 type="button"
-                onClick={() => setModalOpen(false)}
+                onClick={() => setDeleteConfirmAward(null)}
                 className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
               >
-                Hủy
+                Hủy Bỏ
               </button>
               <button
                 type="button"
-                onClick={handleSaveAward}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold shadow-lg"
+                onClick={() => handleDeleteAward(deleteConfirmAward)}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-600/30"
               >
-                Lưu Danh Hiệu & Bắn Pháo Hoa
+                Xóa Danh Hiệu
               </button>
             </div>
           </div>

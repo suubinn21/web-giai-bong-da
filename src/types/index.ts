@@ -287,12 +287,13 @@ export interface FinancialTransaction {
 
 export interface TournamentAward {
   id: string;
-  code: 'CHAMPION' | 'RUNNER_UP' | 'THIRD_PLACE' | 'TOP_SCORER' | 'BEST_GK' | 'BEST_PLAYER' | 'FAIR_PLAY';
+  code: 'CHAMPION' | 'RUNNER_UP' | 'THIRD_PLACE' | 'BEST_GK' | 'CUSTOM' | string;
   title: string;
   recipientName: string;
   recipientTeam: string;
   prizeMoney: number;
   icon: string;
+  customImage?: string;
 }
 
 export interface AuditLog {

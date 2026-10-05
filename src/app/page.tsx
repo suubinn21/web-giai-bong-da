@@ -289,8 +289,11 @@ export default function Home() {
           StorageService.saveFinances(cloudData.finances);
         }
         if (Array.isArray(cloudData.awards)) {
-          setAwards(cloudData.awards);
-          StorageService.saveAwards(cloudData.awards);
+          const cleanedAwards = cloudData.awards.filter(
+            (a: TournamentAward) => a.code !== 'TOP_SCORER' && a.code !== 'BEST_PLAYER' && a.code !== 'FAIR_PLAY'
+          );
+          setAwards(cleanedAwards);
+          StorageService.saveAwards(cleanedAwards);
         }
         if (Array.isArray(cloudData.auditLogs)) {
           setAuditLogs(cloudData.auditLogs);

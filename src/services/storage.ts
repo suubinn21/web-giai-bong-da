@@ -76,13 +76,10 @@ export const defaultReferees: Referee[] = [
 
 // Clean empty awards list per Specification Section 28
 export const defaultCleanAwards: TournamentAward[] = [
-  { id: 'AW-01', code: 'CHAMPION', title: '🥇 Cúp Vô Địch (Giải Nhất)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Chung kết', prizeMoney: 4000000, icon: '🏆' },
+  { id: 'AW-01', code: 'CHAMPION', title: '🥇 Cúp Vô Địch (Giải Nhất)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Chung kết', prizeMoney: 4000000, icon: '🏆', customImage: '/images/trophy-celebration.jpg' },
   { id: 'AW-02', code: 'RUNNER_UP', title: '🥈 Giải Nhì (Á Quân)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Chung kết', prizeMoney: 2500000, icon: '🥈' },
   { id: 'AW-03', code: 'THIRD_PLACE', title: '🥉 Giải Ba (Hạng Ba)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Tranh 3-4', prizeMoney: 1500000, icon: '🥉' },
-  { id: 'AW-04', code: 'TOP_SCORER', title: '⚽ Vua Phá Lưới (Golden Boot)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '⚽' },
-  { id: 'AW-05', code: 'BEST_GK', title: '🧤 Thủ Môn Xuất Sắc Nhất', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '🧤' },
-  { id: 'AW-06', code: 'BEST_PLAYER', title: '⭐ Cầu Thủ Xuất Sắc Nhất (MVP)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '⭐' },
-  { id: 'AW-07', code: 'FAIR_PLAY', title: '🤝 Giải Phong Cách (Fair Play)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '🤝' },
+  { id: 'AW-05', code: 'BEST_GK', title: '🧤 Thủ Môn Xuất Sắc Nhất', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '🧤', customImage: '/images/goalkeeper-save.jpg' },
 ];
 
 // Generator for Demo Data (16 teams, 192 players, 32 matches, sample finances)
@@ -362,7 +359,15 @@ export class StorageService {
       return defaultCleanAwards;
     }
     try {
-      return JSON.parse(data);
+      const parsed: TournamentAward[] = JSON.parse(data);
+      // Lọc bỏ các danh hiệu đã yêu cầu xóa (Vua Phá Lưới, Cầu Thủ Xuất Sắc, Phong Cách)
+      const filtered = parsed.filter(
+        (a) => a.code !== 'TOP_SCORER' && a.code !== 'BEST_PLAYER' && a.code !== 'FAIR_PLAY'
+      );
+      if (filtered.length !== parsed.length) {
+        this.saveAwards(filtered);
+      }
+      return filtered;
     } catch {
       return defaultCleanAwards;
     }
