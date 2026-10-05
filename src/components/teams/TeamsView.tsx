@@ -751,16 +751,16 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                         <span>Thêm Cầu Thủ</span>
                       </button>
                     </div>
-                  ) : (
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border-2 border-emerald-500/40 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                  ) : isOrganizerOrAdmin ? (
+                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border-2 border-cyan-500/40 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                       <div className="flex items-start sm:items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40 mt-0.5 sm:mt-0">
-                          <KeyRound className="w-5 h-5 text-emerald-400" />
+                        <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/40 mt-0.5 sm:mt-0">
+                          <KeyRound className="w-5 h-5 text-cyan-400" />
                         </div>
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs sm:text-sm font-bold text-white">Tài khoản Đội trưởng:</span>
-                            <code className="px-2.5 py-1 rounded-lg bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-mono font-bold text-xs sm:text-sm tracking-wide">
+                            <span className="text-xs sm:text-sm font-bold text-white">Tài khoản Đội trưởng (BTC bàn giao):</span>
+                            <code className="px-2.5 py-1 rounded-lg bg-cyan-950/90 text-cyan-300 border border-cyan-500/50 font-mono font-bold text-xs sm:text-sm tracking-wide">
                               {captainUsername}
                             </code>
                             <span className="text-slate-500">•</span>
@@ -770,7 +770,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                             </code>
                           </div>
                           <p className="text-[11px] text-slate-300 mt-1">
-                            💡 Đội trưởng có thể đăng nhập bằng tài khoản <strong className="text-emerald-400 font-mono">{captainUsername}</strong> hoặc nhập trực tiếp tên đội <strong className="text-emerald-400 font-mono">"{selectedTeam.name}"</strong> (mật khẩu: 123) để vào thêm/sửa cầu thủ.
+                            💡 BTC có thể sao chép tài khoản để gửi cho Đội trưởng. Đội trưởng có thể đăng nhập bằng tài khoản <strong className="text-cyan-400 font-mono">{captainUsername}</strong> hoặc trực tiếp tên đội <strong className="text-cyan-400 font-mono">"{selectedTeam.name}"</strong> (mật khẩu: 123).
                           </p>
                         </div>
                       </div>
@@ -787,7 +787,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                           title="Sao chép tài khoản và mật khẩu cho Đội trưởng"
                         >
                           {headerCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                          <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép'}</span>
+                          <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép Cho Đội Trưởng'}</span>
                         </button>
 
                         {onOpenAuthModal && (
@@ -797,12 +797,12 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                             title="Đăng nhập ngay vào tài khoản Đội trưởng đội này"
                           >
                             <LogIn className="w-3.5 h-3.5" />
-                            <span>Đăng Nhập Đội Trưởng</span>
+                            <span>Đăng Nhập Thử</span>
                           </button>
                         )}
                       </div>
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Section: 4 Stat Cards hiển thị rõ ràng, tương phản cao, sắc nét */}
                   <div className="pt-2 border-t border-slate-700/60 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
