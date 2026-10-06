@@ -41,6 +41,7 @@ interface TournamentPortalProps {
   cloudStatus?: 'connected' | 'connecting' | 'offline';
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
+  onOpenUserManagement?: () => void;
   onLogout?: () => void;
   onGoBack?: () => void;
   canGoBack?: boolean;
@@ -57,6 +58,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
   cloudStatus = 'connected',
   currentUser,
   onOpenAuthModal,
+  onOpenUserManagement,
   onLogout,
   onGoBack,
   canGoBack,
@@ -253,6 +255,19 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                   <span>Đăng Nhập</span>
                 </button>
               )
+            )}
+
+            {/* Create Staff Account Button in Portal */}
+            {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onOpenUserManagement && (
+              <button
+                onClick={onOpenUserManagement}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-emerald-400 font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 active:scale-95"
+                title="Tạo và quản lý tài khoản Ban Tổ Chức & Trọng tài"
+              >
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Quản Lý Tài Khoản</span>
+                <span className="sm:hidden">Tài Khoản</span>
+              </button>
             )}
 
             {/* Create Tournament Button */}

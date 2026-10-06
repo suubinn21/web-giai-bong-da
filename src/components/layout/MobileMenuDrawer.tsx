@@ -57,6 +57,7 @@ interface MobileMenuDrawerProps {
   onLoadDemo?: () => void;
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
+  onOpenUserManagement?: () => void;
   onLogout?: () => void;
   onGoBack?: () => void;
   canGoBack?: boolean;
@@ -82,6 +83,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
   onLoadDemo,
   currentUser,
   onOpenAuthModal,
+  onOpenUserManagement,
   onLogout,
   onGoBack,
   canGoBack,
@@ -268,6 +270,22 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                     </button>
                   )}
                 </div>
+
+                {/* User Management Button for Admin/BTC */}
+                {canManage && onOpenUserManagement && (
+                  <div className="pt-2 border-t border-slate-800">
+                    <button
+                      onClick={() => {
+                        onClose();
+                        onOpenUserManagement();
+                      }}
+                      className="w-full py-2.5 px-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 shadow-md"
+                    >
+                      <Users className="w-4 h-4 text-emerald-400" />
+                      <span>Tạo & Quản Lý Tài Khoản (BTC & Trọng Tài)</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center justify-between gap-3">

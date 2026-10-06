@@ -2,14 +2,15 @@
 
 import React, { useState } from 'react';
 import { AuditLog, UserRole } from '@/types';
-import { FileText, Shield, Search, Filter, Clock } from 'lucide-react';
+import { FileText, Shield, Search, Filter, Clock, Users } from 'lucide-react';
 
 interface AuditLogsViewProps {
   logs: AuditLog[];
   currentRole: UserRole;
+  onOpenUserManagement?: () => void;
 }
 
-export const AuditLogsView: React.FC<AuditLogsViewProps> = ({ logs, currentRole }) => {
+export const AuditLogsView: React.FC<AuditLogsViewProps> = ({ logs, currentRole, onOpenUserManagement }) => {
   const [search, setSearch] = useState('');
   const [filterRole, setFilterRole] = useState<string>('ALL');
 
@@ -47,8 +48,20 @@ export const AuditLogsView: React.FC<AuditLogsViewProps> = ({ logs, currentRole 
           </p>
         </div>
 
-        <div className="text-xs text-slate-400 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
-          Tổng số ghi nhận: <strong className="text-white font-mono">{logs.length} thao tác</strong>
+        <div className="flex items-center gap-3">
+          {onOpenUserManagement && (currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
+            <button
+              onClick={onOpenUserManagement}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 transition-all active:scale-95 whitespace-nowrap"
+            >
+              <Users className="w-4 h-4" />
+              <span>Quản Lý Tài Khoản</span>
+            </button>
+          )}
+
+          <div className="text-xs text-slate-400 bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800 whitespace-nowrap">
+            Tổng số: <strong className="text-white font-mono">{logs.length} thao tác</strong>
+          </div>
         </div>
       </div>
 

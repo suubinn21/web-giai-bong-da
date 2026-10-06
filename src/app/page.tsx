@@ -19,6 +19,7 @@ import { StorageService, defaultCleanAwards } from '@/services/storage';
 import { ScheduleEngine, migrateMatchTimesTo7AM } from '@/services/scheduleEngine';
 import { AuthService } from '@/services/auth';
 import { AuthModal } from '@/components/auth/AuthModal';
+import { UserManagementModal } from '@/components/auth/UserManagementModal';
 import {
   subscribeTournamentCloud,
   pushTournamentCloud,
@@ -67,6 +68,7 @@ export default function Home() {
   const [createTournamentOpen, setCreateTournamentOpen] = useState(false);
   const [editTournamentOpen, setEditTournamentOpen] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | undefined>(undefined);
+  const [userManagementOpen, setUserManagementOpen] = useState(false);
   const [teams, setTeams] = useState<Team[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [venues, setVenues] = useState<Venue[]>([]);
@@ -149,6 +151,10 @@ export default function Home() {
     }
     if (authModalOpen) {
       setAuthModalOpen(false);
+      return;
+    }
+    if (userManagementOpen) {
+      setUserManagementOpen(false);
       return;
     }
 
@@ -665,6 +671,7 @@ export default function Home() {
           cloudStatus={cloudStatus}
           currentUser={currentUser}
           onOpenAuthModal={() => handleOpenAuthModal()}
+          onOpenUserManagement={() => setUserManagementOpen(true)}
           onLogout={handleLogout}
           onGoBack={handleGoBack}
           canGoBack={canGoBack}
@@ -691,6 +698,21 @@ export default function Home() {
           onClose={() => setAuthModalOpen(false)}
           onLoginSuccess={handleLoginSuccess}
           messageNotice={authNotice}
+        />
+        <UserManagementModal
+          isOpen={userManagementOpen}
+          onClose={() => setUserManagementOpen(false)}
+          currentUser={currentUser}
+          currentRole={currentRole}
+          onRefereesUpdated={(newReferees) => {
+            setReferees(newReferees);
+            pushTournamentCloud(tournament.id, {
+              referees: newReferees,
+            });
+          }}
+          onAccountsUpdated={() => {
+            setAuditLogs(StorageService.getAuditLogs());
+          }}
         />
       </div>
     );
@@ -721,6 +743,7 @@ export default function Home() {
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
         currentUser={currentUser}
         onOpenAuthModal={() => handleOpenAuthModal()}
+        onOpenUserManagement={() => setUserManagementOpen(true)}
         onLogout={handleLogout}
         onGoBack={handleGoBack}
         canGoBack={canGoBack}
@@ -887,6 +910,7 @@ export default function Home() {
             <AuditLogsView
               logs={auditLogs}
               currentRole={currentRole}
+              onOpenUserManagement={() => setUserManagementOpen(true)}
             />
           ) : (
             <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
@@ -983,6 +1007,7 @@ export default function Home() {
         onLoadDemo={handleLoadDemo}
         currentUser={currentUser}
         onOpenAuthModal={() => handleOpenAuthModal()}
+        onOpenUserManagement={() => setUserManagementOpen(true)}
         onLogout={handleLogout}
         onGoBack={handleGoBack}
         canGoBack={canGoBack}
@@ -996,6 +1021,23 @@ export default function Home() {
         messageNotice={authNotice}
         initialIdentifier={authInitialUsername}
         initialPassword={authInitialPassword}
+      />
+
+      {/* User & Staff Account Management Modal (Admin / BTC / Referee) */}
+      <UserManagementModal
+        isOpen={userManagementOpen}
+        onClose={() => setUserManagementOpen(false)}
+        currentUser={currentUser}
+        currentRole={currentRole}
+        onRefereesUpdated={(newReferees) => {
+          setReferees(newReferees);
+          pushTournamentCloud(tournament.id, {
+            referees: newReferees,
+          });
+        }}
+        onAccountsUpdated={() => {
+          setAuditLogs(StorageService.getAuditLogs());
+        }}
       />
 
     </div>

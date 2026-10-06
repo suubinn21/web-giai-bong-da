@@ -21,6 +21,7 @@ import {
   LogIn,
   LogOut,
   User,
+  Users,
   Shield,
   KeyRound,
   ArrowLeft
@@ -43,6 +44,7 @@ interface HeaderProps {
   onOpenMobileMenu?: () => void;
   currentUser?: UserAccount | null;
   onOpenAuthModal?: () => void;
+  onOpenUserManagement?: () => void;
   onLogout?: () => void;
   onGoBack?: () => void;
   canGoBack?: boolean;
@@ -66,6 +68,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMobileMenu,
   currentUser,
   onOpenAuthModal,
+  onOpenUserManagement,
   onLogout,
   onGoBack,
   canGoBack,
@@ -333,6 +336,18 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
 
+            {/* Quick Admin User Management Button */}
+            {canManage && onOpenUserManagement && (
+              <button
+                onClick={onOpenUserManagement}
+                className="hidden xl:flex items-center gap-1.5 h-9 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-xs font-bold text-emerald-400 transition-all shadow-sm shrink-0 active:scale-95"
+                title="Tạo và quản lý tài khoản Ban Tổ Chức & Trọng tài"
+              >
+                <Users className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Cấp Tài Khoản</span>
+              </button>
+            )}
+
             {/* Sound FX Toggle Button (Desktop only, mobile in Menu Hamburger) */}
             <button
               onClick={toggleSound}
@@ -415,6 +430,20 @@ export const Header: React.FC<HeaderProps> = ({
                         >
                           <LogOut className="w-3.5 h-3.5 text-red-400" />
                           <span>Đăng Xuất</span>
+                        </button>
+                      )}
+
+                      {/* User Management for Admin/BTC */}
+                      {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onOpenUserManagement && (
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            onOpenUserManagement();
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 rounded-lg flex items-center gap-2 transition-colors font-bold"
+                        >
+                          <Users className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Quản Lý Tài Khoản (BTC/Trọng Tài)</span>
                         </button>
                       )}
 

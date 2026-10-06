@@ -1,4 +1,4 @@
-import { UserAccount, UserRole, Team } from '@/types';
+import { UserAccount, UserRole, Team, Referee } from '@/types';
 import { StorageService } from './storage';
 
 const AUTH_STORAGE_KEYS = {
@@ -569,5 +569,210 @@ export class AuthService {
       );
     }
     this.setCurrentUser(null);
+  }
+
+  /**
+   * Tạo tài khoản mới cho Ban Tổ Chức (BTC) hoặc Trọng tài (Admin Role Only)
+   */
+  static createStaffAccount(data: {
+    fullName: string;
+    username: string;
+    password?: string;
+    role: 'ORGANIZER' | 'REFEREE';
+    phone?: string;
+    email?: string;
+    refereeCode?: string;
+    creatorName?: string;
+  }): { success: boolean; user?: UserAccount; error?: string } {
+    const rawName = (data.fullName || '').trim();
+    if (!rawName) {
+      return { success: false, error: 'Vui lòng nhập họ và tên!' };
+    }
+
+    const rawUsername = (data.username || '').trim();
+    if (!rawUsername) {
+      return { success: false, error: 'Vui lòng nhập tên đăng nhập!' };
+    }
+
+    const cleanUsername = rawUsername
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9_]/g, '');
+
+    if (!cleanUsername) {
+      return { success: false, error: 'Tên đăng nhập không hợp lệ (chỉ chấp nhận chữ cái, số và dấu gạch dưới)!' };
+    }
+
+    const users = this.getAllUsers();
+    if (users.some((u) => u.username.toLowerCase() === cleanUsername)) {
+      return { success: false, error: `Tên đăng nhập "${cleanUsername}" đã tồn tại. Vui lòng chọn tên khác!` };
+    }
+
+    const password = (data.password || '123').trim() || '123';
+    const email = (data.email || '').trim() || `${cleanUsername}@itftms.vn`;
+    const phone = (data.phone || '').trim();
+
+    const newUser: UserAccount = {
+      id: data.role === 'REFEREE' ? `USR-REF-${Date.now()}` : `USR-BTC-${Date.now()}`,
+      username: cleanUsername,
+      password,
+      fullName: rawName,
+      role: data.role,
+      email,
+      phone,
+      avatarUrl: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Nếu là Trọng tài, tự động đồng bộ vào danh sách Trọng tài thi đấu của giải
+    if (data.role === 'REFEREE') {
+      try {
+        const referees = StorageService.getReferees();
+        const existingRef = referees.find(
+          (r) =>
+            r.name.toLowerCase().trim() === rawName.toLowerCase() ||
+            (phone && r.phoneNumber === phone)
+        );
+
+        if (!existingRef) {
+          const autoCode = data.refereeCode?.trim() || `TT-${String(referees.length + 1).padStart(2, '0')}`;
+          const newRef: Referee = {
+            id: `REF-${Date.now()}`,
+            code: autoCode,
+            name: rawName,
+            phoneNumber: phone || '0900000000',
+            status: 'ACTIVE',
+          };
+          referees.push(newRef);
+          StorageService.saveReferees(referees);
+        }
+      } catch (e) {
+        console.error('Error syncing referee to storage:', e);
+      }
+    }
+
+    users.push(newUser);
+    this.saveUsers(users);
+
+    StorageService.logAction(
+      data.creatorName || 'Ban Quản Trị Hệ Thống',
+      'ORGANIZER',
+      data.role === 'REFEREE' ? 'TẠO TÀI KHOẢN TRỌNG TÀI' : 'TẠO TÀI KHOẢN BAN TỔ CHỨC',
+      newUser.fullName,
+      `Tạo tài khoản @${newUser.username} cho ${data.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'} ${newUser.fullName} (Mật khẩu: ${password}).`
+    );
+
+    return { success: true, user: newUser };
+  }
+
+  /**
+   * Xóa tài khoản người dùng
+   */
+  static deleteUserAccount(
+    userId: string,
+    currentUserId?: string,
+    actorName?: string
+  ): { success: boolean; error?: string } {
+    if (currentUserId && userId === currentUserId) {
+      return { success: false, error: 'Không thể xóa chính tài khoản bạn đang đăng nhập!' };
+    }
+
+    const users = this.getAllUsers();
+    const target = users.find((u) => u.id === userId);
+    if (!target) {
+      return { success: false, error: 'Không tìm thấy tài khoản cần xóa trong hệ thống!' };
+    }
+
+    if (target.id === 'USR-BTC-SUBIN') {
+      return { success: false, error: 'Không thể xóa tài khoản Quản trị viên cấp cao mặc định (SU BIN)!' };
+    }
+
+    const updated = users.filter((u) => u.id !== userId);
+    this.saveUsers(updated);
+
+    // Nếu là Trọng tài, kiểm tra đồng bộ danh sách trọng tài
+    if (target.role === 'REFEREE') {
+      try {
+        const referees = StorageService.getReferees();
+        const filteredRefs = referees.filter(
+          (r) => r.name.toLowerCase().trim() !== target.fullName.toLowerCase().trim()
+        );
+        if (filteredRefs.length !== referees.length) {
+          StorageService.saveReferees(filteredRefs);
+        }
+      } catch {}
+    }
+
+    StorageService.logAction(
+      actorName || 'Ban Quản Trị Hệ Thống',
+      'ORGANIZER',
+      'XÓA TÀI KHOẢN',
+      target.fullName,
+      `Đã xóa tài khoản @${target.username} (${target.fullName}, vai trò: ${target.role}).`
+    );
+
+    return { success: true };
+  }
+
+  /**
+   * Đặt lại mật khẩu tài khoản (Reset password)
+   */
+  static resetUserPassword(
+    userId: string,
+    newPassword?: string,
+    actorName?: string
+  ): { success: boolean; newPassword?: string; error?: string } {
+    const users = this.getAllUsers();
+    const target = users.find((u) => u.id === userId);
+    if (!target) {
+      return { success: false, error: 'Không tìm thấy tài khoản cần đặt lại mật khẩu!' };
+    }
+
+    const targetPassword = (newPassword || '123').trim() || '123';
+    target.password = targetPassword;
+    this.saveUsers(users);
+
+    StorageService.logAction(
+      actorName || 'Ban Quản Trị Hệ Thống',
+      'ORGANIZER',
+      'ĐẶT LẠI MẬT KHẨU',
+      target.fullName,
+      `Đặt lại mật khẩu cho tài khoản @${target.username} (${target.fullName}) thành "${targetPassword}".`
+    );
+
+    return { success: true, newPassword: targetPassword };
+  }
+
+  /**
+   * Cập nhật thông tin tài khoản nhân sự
+   */
+  static updateStaffAccount(
+    userId: string,
+    data: { fullName?: string; phone?: string; email?: string; password?: string },
+    actorName?: string
+  ): { success: boolean; error?: string } {
+    const users = this.getAllUsers();
+    const target = users.find((u) => u.id === userId);
+    if (!target) {
+      return { success: false, error: 'Không tìm thấy tài khoản cần cập nhật!' };
+    }
+
+    if (data.fullName?.trim()) target.fullName = data.fullName.trim();
+    if (data.phone !== undefined) target.phone = data.phone.trim();
+    if (data.email?.trim()) target.email = data.email.trim();
+    if (data.password?.trim()) target.password = data.password.trim();
+
+    this.saveUsers(users);
+
+    StorageService.logAction(
+      actorName || 'Ban Quản Trị Hệ Thống',
+      'ORGANIZER',
+      'CẬP NHẬT TÀI KHOẢN',
+      target.fullName,
+      `Cập nhật thông tin cho tài khoản @${target.username} (${target.fullName}).`
+    );
+
+    return { success: true };
   }
 }
