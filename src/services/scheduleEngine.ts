@@ -1,10 +1,40 @@
 // ITFTMS 2026 - Schedule Generator Engine
 // Specification: Section 18
 // Pitch constraint: 3 venues (Sân 1, Sân 2, Sân 3)
-// Operating hours: 06:30 - 17:00
+// Operating hours: 07:00 - 18:15
 // Conflict checks: No pitch collision, no time overlap, no team playing 2 matches simultaneously, minimum rest interval.
 
 import { Team, Venue, Referee, Match, MatchRound } from '@/types';
+
+/**
+ * Migration map shifting old 06:30 schedule slots to 07:00 start (+30 mins)
+ */
+export const TIME_MIGRATION_MAP: Record<string, string> = {
+  '06:30': '07:00',
+  '07:20': '07:50',
+  '08:10': '08:40',
+  '09:00': '09:30',
+  '09:50': '10:20',
+  '10:40': '11:10',
+  '11:30': '12:00',
+  '12:20': '12:50',
+  '13:50': '14:20',
+  '14:40': '15:10',
+  '15:35': '16:05',
+  '16:30': '17:00',
+};
+
+export const migrateMatchTimesTo7AM = (matches: Match[]): { matches: Match[]; migrated: boolean } => {
+  let migrated = false;
+  const updated = matches.map((m) => {
+    if (m.time && TIME_MIGRATION_MAP[m.time]) {
+      migrated = true;
+      return { ...m, time: TIME_MIGRATION_MAP[m.time] };
+    }
+    return m;
+  });
+  return { matches: updated, migrated };
+};
 
 /**
  * Adds days to a YYYY-MM-DD date string safely without timezone offset shifts.
@@ -24,12 +54,8 @@ export const addDaysToDate = (startDateStr: string, days: number): string => {
 
 export class ScheduleEngine {
   /**
-   * Generates a collision-free 24-match group stage schedule.
-   * Distributes 8 matches per matchday across 3 pitches (07:30, 09:00, 15:00).
-   */
-  /**
    * Generates collision-free 24-match group stage schedule for 16 teams / 4 groups / 3 pitches in 1 single day.
-   * Specification timetable: 06:30 - 13:10 across 8 synchronized time slots.
+   * Specification timetable: 07:00 - 13:40 across 8 synchronized time slots (bắt đầu lúc 7:00 sáng).
    */
   static generateGroupSchedule(
     teams: Team[],
@@ -62,15 +88,15 @@ export class ScheduleEngine {
       return groupTeamsD[idx];
     };
 
-    // Quy ước theo yêu cầu BTC:
-    // Slot 1 (06:30): Sân 1 (A1-A4), Sân 2 (A2-A3), Sân 3 (B1-B4)
-    // Slot 2 (07:20): Sân 1 (B2-B3), Sân 2 (C1-C4), Sân 3 (C2-C3)
-    // Slot 3 (08:10): Sân 1 (D1-D4), Sân 2 (D2-D3), Sân 3 (A1-A3)
-    // Slot 4 (09:00): Sân 1 (A4-A2), Sân 2 (B1-B3), Sân 3 (B4-B2)
-    // Slot 5 (09:50): Sân 1 (C1-C3), Sân 2 (C4-C2), Sân 3 (D1-D3)
-    // Slot 6 (10:40): Sân 1 (D4-D2), Sân 2 (A1-A2), Sân 3 (A3-A4)
-    // Slot 7 (11:30): Sân 1 (B1-B2), Sân 2 (B3-B4), Sân 3 (C1-C2)
-    // Slot 8 (12:20): Sân 1 (C3-C4), Sân 2 (D1-D2), Sân 3 (D3-D4)
+    // Quy ước theo yêu cầu BTC (Bắt đầu lúc 07:00):
+    // Slot 1 (07:00): Sân 1 (A1-A4), Sân 2 (A2-A3), Sân 3 (B1-B4)
+    // Slot 2 (07:50): Sân 1 (B2-B3), Sân 2 (C1-C4), Sân 3 (C2-C3)
+    // Slot 3 (08:40): Sân 1 (D1-D4), Sân 2 (D2-D3), Sân 3 (A1-A3)
+    // Slot 4 (09:30): Sân 1 (A4-A2), Sân 2 (B1-B3), Sân 3 (B4-B2)
+    // Slot 5 (10:20): Sân 1 (C1-C3), Sân 2 (C4-C2), Sân 3 (D1-D3)
+    // Slot 6 (11:10): Sân 1 (D4-D2), Sân 2 (A1-A2), Sân 3 (A3-A4)
+    // Slot 7 (12:00): Sân 1 (B1-B2), Sân 2 (B3-B4), Sân 3 (C1-C2)
+    // Slot 8 (12:50): Sân 1 (C3-C4), Sân 2 (D1-D2), Sân 3 (D3-D4)
     const scheduleSlots: {
       time: string;
       venueIdx: number;
@@ -79,45 +105,45 @@ export class ScheduleEngine {
       awayIdx: number;
       label: string;
     }[] = [
-      // 06:30 – 07:20 (Ca 1)
-      { time: '06:30', venueIdx: 0, group: 'A', homeIdx: 0, awayIdx: 3, label: 'Bảng A - Lượt 1 (A1 - A4)' },
-      { time: '06:30', venueIdx: 1, group: 'A', homeIdx: 1, awayIdx: 2, label: 'Bảng A - Lượt 1 (A2 - A3)' },
-      { time: '06:30', venueIdx: 2, group: 'B', homeIdx: 0, awayIdx: 3, label: 'Bảng B - Lượt 1 (B1 - B4)' },
+      // 07:00 – 07:50 (Ca 1)
+      { time: '07:00', venueIdx: 0, group: 'A', homeIdx: 0, awayIdx: 3, label: 'Bảng A - Lượt 1 (A1 - A4)' },
+      { time: '07:00', venueIdx: 1, group: 'A', homeIdx: 1, awayIdx: 2, label: 'Bảng A - Lượt 1 (A2 - A3)' },
+      { time: '07:00', venueIdx: 2, group: 'B', homeIdx: 0, awayIdx: 3, label: 'Bảng B - Lượt 1 (B1 - B4)' },
 
-      // 07:20 – 08:10 (Ca 2)
-      { time: '07:20', venueIdx: 0, group: 'B', homeIdx: 1, awayIdx: 2, label: 'Bảng B - Lượt 1 (B2 - B3)' },
-      { time: '07:20', venueIdx: 1, group: 'C', homeIdx: 0, awayIdx: 3, label: 'Bảng C - Lượt 1 (C1 - C4)' },
-      { time: '07:20', venueIdx: 2, group: 'C', homeIdx: 1, awayIdx: 2, label: 'Bảng C - Lượt 1 (C2 - C3)' },
+      // 07:50 – 08:40 (Ca 2)
+      { time: '07:50', venueIdx: 0, group: 'B', homeIdx: 1, awayIdx: 2, label: 'Bảng B - Lượt 1 (B2 - B3)' },
+      { time: '07:50', venueIdx: 1, group: 'C', homeIdx: 0, awayIdx: 3, label: 'Bảng C - Lượt 1 (C1 - C4)' },
+      { time: '07:50', venueIdx: 2, group: 'C', homeIdx: 1, awayIdx: 2, label: 'Bảng C - Lượt 1 (C2 - C3)' },
 
-      // 08:10 – 09:00 (Ca 3)
-      { time: '08:10', venueIdx: 0, group: 'D', homeIdx: 0, awayIdx: 3, label: 'Bảng D - Lượt 1 (D1 - D4)' },
-      { time: '08:10', venueIdx: 1, group: 'D', homeIdx: 1, awayIdx: 2, label: 'Bảng D - Lượt 1 (D2 - D3)' },
-      { time: '08:10', venueIdx: 2, group: 'A', homeIdx: 0, awayIdx: 2, label: 'Bảng A - Lượt 2 (A1 - A3)' },
+      // 08:40 – 09:30 (Ca 3)
+      { time: '08:40', venueIdx: 0, group: 'D', homeIdx: 0, awayIdx: 3, label: 'Bảng D - Lượt 1 (D1 - D4)' },
+      { time: '08:40', venueIdx: 1, group: 'D', homeIdx: 1, awayIdx: 2, label: 'Bảng D - Lượt 1 (D2 - D3)' },
+      { time: '08:40', venueIdx: 2, group: 'A', homeIdx: 0, awayIdx: 2, label: 'Bảng A - Lượt 2 (A1 - A3)' },
 
-      // 09:00 – 09:50 (Ca 4)
-      { time: '09:00', venueIdx: 0, group: 'A', homeIdx: 3, awayIdx: 1, label: 'Bảng A - Lượt 2 (A4 - A2)' },
-      { time: '09:00', venueIdx: 1, group: 'B', homeIdx: 0, awayIdx: 2, label: 'Bảng B - Lượt 2 (B1 - B3)' },
-      { time: '09:00', venueIdx: 2, group: 'B', homeIdx: 3, awayIdx: 1, label: 'Bảng B - Lượt 2 (B4 - B2)' },
+      // 09:30 – 10:20 (Ca 4)
+      { time: '09:30', venueIdx: 0, group: 'A', homeIdx: 3, awayIdx: 1, label: 'Bảng A - Lượt 2 (A4 - A2)' },
+      { time: '09:30', venueIdx: 1, group: 'B', homeIdx: 0, awayIdx: 2, label: 'Bảng B - Lượt 2 (B1 - B3)' },
+      { time: '09:30', venueIdx: 2, group: 'B', homeIdx: 3, awayIdx: 1, label: 'Bảng B - Lượt 2 (B4 - B2)' },
 
-      // 09:50 – 10:40 (Ca 5)
-      { time: '09:50', venueIdx: 0, group: 'C', homeIdx: 0, awayIdx: 2, label: 'Bảng C - Lượt 2 (C1 - C3)' },
-      { time: '09:50', venueIdx: 1, group: 'C', homeIdx: 3, awayIdx: 1, label: 'Bảng C - Lượt 2 (C4 - C2)' },
-      { time: '09:50', venueIdx: 2, group: 'D', homeIdx: 0, awayIdx: 2, label: 'Bảng D - Lượt 2 (D1 - D3)' },
+      // 10:20 – 11:10 (Ca 5)
+      { time: '10:20', venueIdx: 0, group: 'C', homeIdx: 0, awayIdx: 2, label: 'Bảng C - Lượt 2 (C1 - C3)' },
+      { time: '10:20', venueIdx: 1, group: 'C', homeIdx: 3, awayIdx: 1, label: 'Bảng C - Lượt 2 (C4 - C2)' },
+      { time: '10:20', venueIdx: 2, group: 'D', homeIdx: 0, awayIdx: 2, label: 'Bảng D - Lượt 2 (D1 - D3)' },
 
-      // 10:40 – 11:30 (Ca 6)
-      { time: '10:40', venueIdx: 0, group: 'D', homeIdx: 3, awayIdx: 1, label: 'Bảng D - Lượt 2 (D4 - D2)' },
-      { time: '10:40', venueIdx: 1, group: 'A', homeIdx: 0, awayIdx: 1, label: 'Bảng A - Lượt 3 (A1 - A2)' },
-      { time: '10:40', venueIdx: 2, group: 'A', homeIdx: 2, awayIdx: 3, label: 'Bảng A - Lượt 3 (A3 - A4)' },
+      // 11:10 – 12:00 (Ca 6)
+      { time: '11:10', venueIdx: 0, group: 'D', homeIdx: 3, awayIdx: 1, label: 'Bảng D - Lượt 2 (D4 - D2)' },
+      { time: '11:10', venueIdx: 1, group: 'A', homeIdx: 0, awayIdx: 1, label: 'Bảng A - Lượt 3 (A1 - A2)' },
+      { time: '11:10', venueIdx: 2, group: 'A', homeIdx: 2, awayIdx: 3, label: 'Bảng A - Lượt 3 (A3 - A4)' },
 
-      // 11:30 – 12:20 (Ca 7)
-      { time: '11:30', venueIdx: 0, group: 'B', homeIdx: 0, awayIdx: 1, label: 'Bảng B - Lượt 3 (B1 - B2)' },
-      { time: '11:30', venueIdx: 1, group: 'B', homeIdx: 2, awayIdx: 3, label: 'Bảng B - Lượt 3 (B3 - B4)' },
-      { time: '11:30', venueIdx: 2, group: 'C', homeIdx: 0, awayIdx: 1, label: 'Bảng C - Lượt 3 (C1 - C2)' },
+      // 12:00 – 12:50 (Ca 7)
+      { time: '12:00', venueIdx: 0, group: 'B', homeIdx: 0, awayIdx: 1, label: 'Bảng B - Lượt 3 (B1 - B2)' },
+      { time: '12:00', venueIdx: 1, group: 'B', homeIdx: 2, awayIdx: 3, label: 'Bảng B - Lượt 3 (B3 - B4)' },
+      { time: '12:00', venueIdx: 2, group: 'C', homeIdx: 0, awayIdx: 1, label: 'Bảng C - Lượt 3 (C1 - C2)' },
 
-      // 12:20 – 13:10 (Ca 8)
-      { time: '12:20', venueIdx: 0, group: 'C', homeIdx: 2, awayIdx: 3, label: 'Bảng C - Lượt 3 (C3 - C4)' },
-      { time: '12:20', venueIdx: 1, group: 'D', homeIdx: 0, awayIdx: 1, label: 'Bảng D - Lượt 3 (D1 - D2)' },
-      { time: '12:20', venueIdx: 2, group: 'D', homeIdx: 2, awayIdx: 3, label: 'Bảng D - Lượt 3 (D3 - D4)' },
+      // 12:50 – 13:40 (Ca 8)
+      { time: '12:50', venueIdx: 0, group: 'C', homeIdx: 2, awayIdx: 3, label: 'Bảng C - Lượt 3 (C3 - C4)' },
+      { time: '12:50', venueIdx: 1, group: 'D', homeIdx: 0, awayIdx: 1, label: 'Bảng D - Lượt 3 (D1 - D2)' },
+      { time: '12:50', venueIdx: 2, group: 'D', homeIdx: 2, awayIdx: 3, label: 'Bảng D - Lượt 3 (D3 - D4)' },
     ];
 
     const generatedMatches: Match[] = [];
@@ -161,12 +187,12 @@ export class ScheduleEngine {
 
   /**
    * Generates synchronized single-day knockout stage schedule:
-   * - 13:10 - 13:50: Nghỉ trưa & tổng hợp kết quả (BXH 4 bảng, chỉ số phụ)
-   * - 13:50 - 14:35: Tứ kết 1 & Tứ kết 2 (Nhánh A-B, nghỉ từ 11:30)
-   * - 14:40 - 15:25: Tứ kết 3 & Tứ kết 4 (Nhánh C-D, nghỉ từ 13:10)
-   * - 15:35 - 16:20: Bán kết 1 & Bán kết 2 song song (Sân 1, Sân 2)
-   * - 16:30 - 17:15: Tranh Hạng 3 (Sân 2) & CHUNG KẾT VÔ ĐỊCH (Sân 1)
-   * - 17:15 - 17:45: Lễ Trao Giải & Bế Mạc
+   * - 13:40 - 14:20: Nghỉ trưa & tổng hợp kết quả (BXH 4 bảng, chỉ số phụ)
+   * - 14:20 - 15:05: Tứ kết 1 & Tứ kết 2 (Nhánh A-B, nghỉ từ 12:00)
+   * - 15:10 - 15:55: Tứ kết 3 & Tứ kết 4 (Nhánh C-D, nghỉ từ 13:40)
+   * - 16:05 - 16:50: Bán kết 1 & Bán kết 2 song song (Sân 1, Sân 2)
+   * - 17:00 - 17:45: Tranh Hạng 3 (Sân 2) & CHUNG KẾT VÔ ĐỊCH (Sân 1)
+   * - 17:45 - 18:15: Lễ Trao Giải & Bế Mạc
    */
   static generateKnockoutSchedule(
     venues: Venue[],
@@ -189,21 +215,21 @@ export class ScheduleEngine {
       venueName: string;
       referee: { id: string; name: string };
     }[] = [
-      // 13:50 – 14:35: 2 Tứ kết nhánh A-B (đã nghỉ từ 11:30 sáng)
-      { id: 'M25', matchNumber: 25, round: 'QUARTER_FINAL', label: 'Tứ kết 1 (Nhất A vs Nhì B)', time: '13:50', venueId: v1.id, venueName: v1.name, referee: ref1 },
-      { id: 'M26', matchNumber: 26, round: 'QUARTER_FINAL', label: 'Tứ kết 2 (Nhất B vs Nhì A)', time: '13:50', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      // 14:20 – 15:05: 2 Tứ kết nhánh A-B (đã nghỉ từ 12:00 trưa)
+      { id: 'M25', matchNumber: 25, round: 'QUARTER_FINAL', label: 'Tứ kết 1 (Nhất A vs Nhì B)', time: '14:20', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M26', matchNumber: 26, round: 'QUARTER_FINAL', label: 'Tứ kết 2 (Nhất B vs Nhì A)', time: '14:20', venueId: v2.id, venueName: v2.name, referee: ref2 },
 
-      // 14:40 – 15:25: 2 Tứ kết nhánh C-D (kết thúc vòng bảng lúc 13:10, nghỉ đến 14:40)
-      { id: 'M27', matchNumber: 27, round: 'QUARTER_FINAL', label: 'Tứ kết 3 (Nhất C vs Nhì D)', time: '14:40', venueId: v1.id, venueName: v1.name, referee: ref1 },
-      { id: 'M28', matchNumber: 28, round: 'QUARTER_FINAL', label: 'Tứ kết 4 (Nhất D vs Nhì C)', time: '14:40', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      // 15:10 – 15:55: 2 Tứ kết nhánh C-D (kết thúc vòng bảng lúc 13:40, nghỉ đến 15:10)
+      { id: 'M27', matchNumber: 27, round: 'QUARTER_FINAL', label: 'Tứ kết 3 (Nhất C vs Nhì D)', time: '15:10', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M28', matchNumber: 28, round: 'QUARTER_FINAL', label: 'Tứ kết 4 (Nhất D vs Nhì C)', time: '15:10', venueId: v2.id, venueName: v2.name, referee: ref2 },
 
-      // 15:35 – 16:20: 2 trận Bán kết song song
-      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', time: '15:35', venueId: v1.id, venueName: v1.name, referee: ref1 },
-      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', time: '15:35', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      // 16:05 – 16:50: 2 trận Bán kết song song
+      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', time: '16:05', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', time: '16:05', venueId: v2.id, venueName: v2.name, referee: ref2 },
 
-      // 16:30 – 17:15: Tranh Hạng 3 & Chung Kết Vô Địch song song
-      { id: 'M31', matchNumber: 31, round: 'THIRD_PLACE', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', time: '16:30', venueId: v2.id, venueName: v2.name, referee: ref2 },
-      { id: 'M32', matchNumber: 32, round: 'FINAL', label: 'CHUNG KẾT VÔ ĐỊCH (Thắng BK1 vs Thắng BK2)', time: '16:30', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      // 17:00 – 17:45: Tranh Hạng 3 & Chung Kết Vô Địch song song
+      { id: 'M31', matchNumber: 31, round: 'THIRD_PLACE', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', time: '17:00', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      { id: 'M32', matchNumber: 32, round: 'FINAL', label: 'CHUNG KẾT VÔ ĐỊCH (Thắng BK1 vs Thắng BK2)', time: '17:00', venueId: v1.id, venueName: v1.name, referee: ref1 },
     ];
 
     return knockoutSlots.map((k) => ({

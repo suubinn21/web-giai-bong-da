@@ -89,10 +89,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         currentRole,
         'TỰ ĐỘNG LẬP LỊCH THI ĐẤU TRỌN GÓI 1 NGÀY',
         '32 Trận Đấu (16 Đội • 4 Bảng • 3 Sân)',
-        `Tự động xếp 32 trận đấu trong 1 ngày duy nhất ${startDate}: 06:30 - 13:10 (24 trận vòng bảng), 13:10 - 13:50 (nghỉ trưa), 13:50 - 17:15 (Tứ kết, Bán kết, Tranh hạng 3 & Chung kết).`
+        `Tự động xếp 32 trận đấu trong 1 ngày duy nhất ${startDate}: 07:00 - 13:40 (24 trận vòng bảng), 13:40 - 14:20 (nghỉ trưa), 14:20 - 17:45 (Tứ kết, Bán kết, Tranh hạng 3 & Chung kết), 17:45 - 18:15 (Lễ bế mạc & Trao cúp).`
       );
 
-      alert(`Đã tạo thành công lịch thi đấu 32 trận trọn gói 1 ngày (${startDate})!\n\n• 06:30 – 13:10: 24 trận vòng bảng (8 ca thi đấu x 3 sân)\n• 13:10 – 13:50: Nghỉ trưa & tổng hợp BXH 4 bảng\n• 13:50 – 15:25: Tứ kết 1-2-3-4\n• 15:35 – 16:20: Bán kết 1 & 2\n• 16:30 – 17:15: Tranh Hạng 3 & Chung Kết\n• 17:15 – 17:45: Lễ Bế Mạc & Trao Cúp Vô Địch\n\nTuyệt đối 0 xung đột sân bãi và giờ thi đấu!`);
+      alert(`Đã tạo thành công lịch thi đấu 32 trận trọn gói 1 ngày (${startDate})!\n\n• 07:00 – 13:40: 24 trận vòng bảng (8 ca thi đấu x 3 sân)\n• 13:40 – 14:20: Nghỉ trưa & tổng hợp BXH 4 bảng\n• 14:20 – 15:55: Tứ kết 1-2-3-4\n• 16:05 – 16:50: Bán kết 1 & 2\n• 17:00 – 17:45: Tranh Hạng 3 & Chung Kết\n• 17:45 – 18:15: Lễ Bế Mạc & Trao Cúp Vô Địch\n\nTuyệt đối 0 xung đột sân bãi và giờ thi đấu!`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Có lỗi khi tạo lịch thi đấu.';
       alert(`Lỗi: ${msg}`);
@@ -104,7 +104,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     if (!canGenerate) return;
     const startDate = tournament?.startDate || '2026-10-15';
     const confirmed = window.confirm(
-      `Đồng bộ toàn bộ lịch 32 trận đấu theo mô hình TRỌN GÓI 1 NGÀY DUY NHẤT (${startDate})?\n\n• 06:30 – 13:10: 24 trận vòng bảng (8 ca thi đấu x 3 sân không trùng đội)\n• 13:10 – 13:50: Nghỉ trưa + Tổng hợp xếp hạng 4 bảng A-B-C-D\n• 13:50 – 15:25: 4 trận Tứ kết (TK1 & TK2 lúc 13:50, TK3 & TK4 lúc 14:40)\n• 15:35 – 16:20: 2 trận Bán kết song song (Sân 1 & Sân 2)\n• 16:30 – 17:15: Tranh Hạng 3 & CHUNG KẾT VÔ ĐỊCH\n• 17:15 – 17:45: Lễ Bế Mạc & Trao Giải Cúp\n\nToàn bộ tỉ số và sự kiện đã diễn ra được bảo toàn nguyên vẹn.`
+      `Đồng bộ toàn bộ lịch 32 trận đấu theo mô hình TRỌN GÓI 1 NGÀY DUY NHẤT (${startDate})?\n\n• 07:00 – 13:40: 24 trận vòng bảng (8 ca thi đấu x 3 sân không trùng đội)\n• 13:40 – 14:20: Nghỉ trưa + Tổng hợp xếp hạng 4 bảng A-B-C-D\n• 14:20 – 15:55: 4 trận Tứ kết (TK1 & TK2 lúc 14:20, TK3 & TK4 lúc 15:10)\n• 16:05 – 16:50: 2 trận Bán kết song song (Sân 1 & Sân 2)\n• 17:00 – 17:45: Tranh Hạng 3 & CHUNG KẾT VÔ ĐỊCH\n• 17:45 – 18:15: Lễ Bế Mạc & Trao Giải Cúp\n\nToàn bộ tỉ số và sự kiện đã diễn ra được bảo toàn nguyên vẹn.`
     );
     if (!confirmed) return;
 
@@ -122,7 +122,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       currentRole,
       'ĐỒNG BỘ LỊCH THI ĐẤU 1 NGÀY TOÀN GIẢI',
       '32 Trận Đấu',
-      `Đồng bộ 32 trận đấu trọn gói ngày ${startDate} từ 06:30 đến 17:30 trên 3 cụm sân không trùng lịch và tối ưu thời gian nghỉ.`
+      `Đồng bộ 32 trận đấu trọn gói ngày ${startDate} từ 07:00 đến 18:15 trên 3 cụm sân không trùng lịch và tối ưu thời gian nghỉ.`
     );
     alert(`Đã đồng bộ lịch thi đấu 1 ngày thành công (${startDate})! 0 xung đột sân bãi.`);
   };
@@ -420,10 +420,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <span className="text-xs text-slate-400">16 Đội • 4 Bảng • 3 Sân</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-white">
-            {canGenerate ? 'Điều Hành Lịch Đấu 1 Ngày (06:30 – 17:30)' : 'Lịch Thi Đấu & Kết Quả (06:30 – 17:30)'}
+            {canGenerate ? 'Điều Hành Lịch Đấu 1 Ngày (07:00 – 18:15)' : 'Lịch Thi Đấu & Kết Quả (07:00 – 18:15)'}
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            06:30 – 13:10: 24 trận vòng bảng (8 ca x 3 sân) • 13:10 – 13:50: Nghỉ trưa &amp; tổng hợp BXH • 13:50 – 17:15: Tứ kết, Bán kết, Tranh hạng 3 &amp; Chung kết.
+            07:00 – 13:40: 24 trận vòng bảng (8 ca x 3 sân) • 13:40 – 14:20: Nghỉ trưa &amp; tổng hợp BXH • 14:20 – 17:45: Tứ kết, Bán kết, Tranh hạng 3 &amp; Chung kết.
           </p>
         </div>
 
@@ -448,7 +448,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               <button
                 onClick={handleSyncAllSchedule}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-bold text-xs shadow-sm transition-all active:scale-95"
-                title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo lịch 1 ngày (06:30 - 17:30)"
+                title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo lịch 1 ngày (07:00 - 18:15)"
               >
                 <Zap className="w-3.5 h-3.5 text-cyan-400" />
                 <span>Đồng Bộ Giờ 1 Ngày</span>
@@ -519,7 +519,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
             }`}
           >
-            <span>🌅 Vòng Bảng (06:30 – 13:10)</span>
+            <span>🌅 Vòng Bảng (07:00 – 13:40)</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-emerald-400 ml-0.5">
               24 trận
             </span>
@@ -536,7 +536,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
             }`}
           >
-            <span>⚡ Tứ Kết (13:50 – 15:25)</span>
+            <span>⚡ Tứ Kết (14:20 – 15:55)</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-cyan-400 ml-0.5">
               4 trận
             </span>
@@ -553,7 +553,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
             }`}
           >
-            <span>🔥 Bán Kết (15:35 – 16:20)</span>
+            <span>🔥 Bán Kết (16:05 – 16:50)</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-amber-400 ml-0.5">
               2 trận
             </span>
@@ -570,7 +570,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
             }`}
           >
-            <span>🏆 Chung Kết &amp; Tranh 3 (16:30 – 17:15)</span>
+            <span>🏆 Chung Kết &amp; Tranh 3 (17:00 – 17:45)</span>
             <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-rose-400 ml-0.5">
               2 trận
             </span>
@@ -811,8 +811,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                     return (
                       <React.Fragment key={slotTime}>
-                        {/* Mốc Nghỉ Trưa & Tổng Hợp BXH Vòng Bảng (Trước Ca Tứ Kết 13:50) */}
-                        {slotTime === '13:50' && (
+                        {/* Mốc Nghỉ Trưa & Tổng Hợp BXH Vòng Bảng (Trước Ca Tứ Kết 14:20) */}
+                        {slotTime === '14:20' && (
                           <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-amber-950/20 my-2">
                             <div className="flex items-center gap-3">
                               <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
@@ -821,7 +821,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
-                                    13:10 – 13:50 • NGHỈ TRƯA &amp; TỔNG HỢP KẾT QUẢ VÒNG BẢNG
+                                    13:40 – 14:20 • NGHỈ TRƯA &amp; TỔNG HỢP KẾT QUẢ VÒNG BẢNG
                                   </span>
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
                                     Khoảng nghỉ 40 phút
@@ -880,8 +880,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                           </div>
                         </div>
 
-                        {/* Mốc Lễ Bế Mạc & Trao Cúp Vô Địch (Sau Ca Chung Kết 16:30) */}
-                        {slotTime === '16:30' && (
+                        {/* Mốc Lễ Bế Mạc & Trao Cúp Vô Địch (Sau Ca Chung Kết 17:00) */}
+                        {slotTime === '17:00' && (
                           <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl border border-emerald-500/40 bg-slate-900/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl mt-4">
                             <div 
                               className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none"
@@ -896,7 +896,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
-                                    17:15 – 17:45 • LỄ BẾ MẠC &amp; TRAO CÚP VÔ ĐỊCH
+                                    17:45 – 18:15 • LỄ BẾ MẠC &amp; TRAO CÚP VÔ ĐỊCH
                                   </span>
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
                                     Tổng kết giải
@@ -990,7 +990,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                   <span>Giờ Thi Đấu</span>
                 </label>
                 <div className="flex flex-wrap gap-1.5 mb-2">
-                  {['06:30', '07:20', '08:10', '09:00', '09:50', '10:40', '11:30', '12:20', '13:50', '14:40', '15:35', '16:30'].map((preset) => (
+                  {['07:00', '07:50', '08:40', '09:30', '10:20', '11:10', '12:00', '12:50', '14:20', '15:10', '16:05', '17:00'].map((preset) => (
                     <button
                       key={preset}
                       type="button"

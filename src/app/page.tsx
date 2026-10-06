@@ -16,7 +16,7 @@ import {
   UserAccount,
 } from '@/types';
 import { StorageService, defaultCleanAwards } from '@/services/storage';
-import { ScheduleEngine } from '@/services/scheduleEngine';
+import { ScheduleEngine, migrateMatchTimesTo7AM } from '@/services/scheduleEngine';
 import { AuthService } from '@/services/auth';
 import { AuthModal } from '@/components/auth/AuthModal';
 import {
@@ -269,8 +269,12 @@ export default function Home() {
           AuthService.syncCaptainAccountsForTeams(cloudData.teams);
         }
         if (Array.isArray(cloudData.matches)) {
-          setMatches(cloudData.matches);
-          StorageService.saveMatches(cloudData.matches);
+          const { matches: migratedMatches, migrated } = migrateMatchTimesTo7AM(cloudData.matches);
+          setMatches(migratedMatches);
+          StorageService.saveMatches(migratedMatches);
+          if (migrated && tournament.id) {
+            pushTournamentCloud(tournament.id, { matches: migratedMatches });
+          }
         }
         if (Array.isArray(cloudData.venues)) {
           setVenues(cloudData.venues);

@@ -13,7 +13,7 @@ import {
   Tournament,
   getGroupLetters,
 } from '@/types';
-import { ScheduleEngine } from './scheduleEngine';
+import { ScheduleEngine, migrateMatchTimesTo7AM } from './scheduleEngine';
 
 const STORAGE_KEYS = {
   ALL_TOURNAMENTS: 'itftms_all_tournaments_list',
@@ -258,13 +258,19 @@ export class StorageService {
 
   /**
    * Returns matches. Defaults to clean empty array []
+   * Automatically migrates older match times to 07:00 schedule if needed.
    */
   static getMatches(): Match[] {
     if (!this.isClient) return [];
     const data = localStorage.getItem(this.getScopedKey(STORAGE_KEYS.MATCHES));
     if (!data) return [];
     try {
-      return JSON.parse(data);
+      const parsed: Match[] = JSON.parse(data);
+      const { matches: migratedMatches, migrated } = migrateMatchTimesTo7AM(parsed);
+      if (migrated) {
+        this.saveMatches(migratedMatches);
+      }
+      return migratedMatches;
     } catch {
       return [];
     }
