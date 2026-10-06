@@ -188,6 +188,7 @@ export interface Match {
   completedAt?: string; // ISO string for 15-min complaint window
   needsBtcReview?: boolean;
   reviewReason?: string;
+  isCustomMatchup?: boolean; // Đánh dấu trận do BTC tự chỉ định đội đấu thủ công
 }
 
 export interface GroupStanding {

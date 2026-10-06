@@ -71,6 +71,11 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
               <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
               <span>{(match.venueName ? match.venueName.match(/Sân\s*\d+/i)?.[0] || match.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
             </span>
+            {match.isCustomMatchup && (
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                Tự chỉnh
+              </span>
+            )}
           </div>
           {match.status === 'LIVE' && (
             <span className="flex items-center gap-1 text-red-400 font-bold animate-pulse text-[10px]">

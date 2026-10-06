@@ -58,28 +58,28 @@ export class KnockoutEngine {
     // 1. Quarter Finals
     // TK1: Nhất A vs Nhì B (Match 25)
     const m25 = getMatch('M25');
-    if (m25) {
+    if (m25 && !m25.isCustomMatchup) {
       if (team1A) m25.homeTeamId = team1A;
       if (team2B) m25.awayTeamId = team2B;
     }
 
     // TK2: Nhất B vs Nhì A (Match 26)
     const m26 = getMatch('M26');
-    if (m26) {
+    if (m26 && !m26.isCustomMatchup) {
       if (team1B) m26.homeTeamId = team1B;
       if (team2A) m26.awayTeamId = team2A;
     }
 
     // TK3: Nhất C vs Nhì D (Match 27)
     const m27 = getMatch('M27');
-    if (m27) {
+    if (m27 && !m27.isCustomMatchup) {
       if (team1C) m27.homeTeamId = team1C;
       if (team2D) m27.awayTeamId = team2D;
     }
 
     // TK4: Nhất D vs Nhì C (Match 28)
     const m28 = getMatch('M28');
-    if (m28) {
+    if (m28 && !m28.isCustomMatchup) {
       if (team1D) m28.homeTeamId = team1D;
       if (team2C) m28.awayTeamId = team2C;
     }
@@ -108,7 +108,7 @@ export class KnockoutEngine {
     const m29 = getMatch('M29');
     const winTK1 = getWinnerId(m25);
     const winTK3 = getWinnerId(m27);
-    if (m29) {
+    if (m29 && !m29.isCustomMatchup) {
       if (winTK1) m29.homeTeamId = winTK1;
       if (winTK3) m29.awayTeamId = winTK3;
     }
@@ -117,7 +117,7 @@ export class KnockoutEngine {
     const m30 = getMatch('M30');
     const winTK2 = getWinnerId(m26);
     const winTK4 = getWinnerId(m28);
-    if (m30) {
+    if (m30 && !m30.isCustomMatchup) {
       if (winTK2) m30.homeTeamId = winTK2;
       if (winTK4) m30.awayTeamId = winTK4;
     }
@@ -126,7 +126,7 @@ export class KnockoutEngine {
     const m31 = getMatch('M31');
     const loseBK1 = getLoserId(m29);
     const loseBK2 = getLoserId(m30);
-    if (m31) {
+    if (m31 && !m31.isCustomMatchup) {
       if (loseBK1) m31.homeTeamId = loseBK1;
       if (loseBK2) m31.awayTeamId = loseBK2;
     }
@@ -135,7 +135,7 @@ export class KnockoutEngine {
     const m32 = getMatch('M32');
     const winBK1 = getWinnerId(m29);
     const winBK2 = getWinnerId(m30);
-    if (m32) {
+    if (m32 && !m32.isCustomMatchup) {
       if (winBK1) m32.homeTeamId = winBK1;
       if (winBK2) m32.awayTeamId = winBK2;
     }
