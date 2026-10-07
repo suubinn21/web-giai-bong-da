@@ -19,30 +19,7 @@ const AUTH_STORAGE_KEYS = {
   CURRENT_USER: 'itftms_current_authenticated_user_2026',
 };
 
-export const DEFAULT_ACCOUNTS: UserAccount[] = [
-  {
-    id: 'USR-BTC-SUBIN',
-    username: 'subin',
-    password: hashPassword(BTC_DEFAULT_PASSWORD, 'subin2026'),
-    fullName: 'SU BIN',
-    role: 'ORGANIZER',
-    email: 'subin@itftms.vn',
-    phone: '0908 123 456',
-    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-    createdAt: '2026-09-01T08:00:00.000Z',
-  },
-  {
-    id: 'USR-BTC-THANHCONG',
-    username: 'thanhcong',
-    password: hashPassword(BTC_DEFAULT_PASSWORD, 'thanhcong'),
-    fullName: 'Thành Công',
-    role: 'ORGANIZER',
-    email: 'thanhcong@itftms.vn',
-    phone: '0909 654 321',
-    avatarUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=150',
-    createdAt: '2026-09-01T08:30:00.000Z',
-  },
-];
+export const DEFAULT_ACCOUNTS: UserAccount[] = [];
 
 export class AuthService {
   private static get isClient(): boolean {
@@ -54,19 +31,19 @@ export class AuthService {
    * Dữ liệu được mã hóa bảo mật hoàn toàn trong LocalStorage (không lộ thông tin khi F12)
    */
   static getAllUsers(): UserAccount[] {
-    if (!this.isClient) return DEFAULT_ACCOUNTS;
+    if (!this.isClient) return [];
     try {
       let parsed = SecureStorage.getItem<UserAccount[]>(AUTH_STORAGE_KEYS.USERS);
-      if (!parsed || !Array.isArray(parsed) || parsed.length === 0) {
-        SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, DEFAULT_ACCOUNTS);
-        return DEFAULT_ACCOUNTS;
+      if (!parsed || !Array.isArray(parsed)) {
+        SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, []);
+        return [];
       }
 
-      // Loại bỏ các tài khoản mẫu cũ (admin, btc ThS An, referee, captain, sinhvien) theo yêu cầu người dùng
-      const DEMO_USERNAMES = ['btc', 'referee', 'captain', 'admin', 'sinhvien'];
-      const DEMO_IDS = ['USR-BTC-01', 'USR-REF-01', 'USR-CAP-01', 'USR-ADM-01', 'USR-STU-01'];
+      // Loại bỏ hoàn toàn 2 tài khoản subin, thanhcong và các tài khoản demo cũ theo yêu cầu người dùng
+      const PURGED_USERNAMES = ['subin', 'thanhcong', 'btc', 'referee', 'captain', 'admin', 'sinhvien'];
+      const PURGED_IDS = ['USR-BTC-SUBIN', 'USR-BTC-THANHCONG', 'USR-BTC-01', 'USR-REF-01', 'USR-CAP-01', 'USR-ADM-01', 'USR-STU-01'];
       const filtered = parsed.filter(
-        (u) => !DEMO_USERNAMES.includes(u.username.toLowerCase()) && !DEMO_IDS.includes(u.id)
+        (u) => !PURGED_USERNAMES.includes(u.username.toLowerCase()) && !PURGED_IDS.includes(u.id)
       );
 
       let hasChanges = filtered.length !== parsed.length;
@@ -93,31 +70,11 @@ export class AuthService {
         }
       }
 
-      // Đảm bảo 2 tài khoản BTC chính thức luôn có mặt và cập nhật mật khẩu nếu cần
-      for (const def of DEFAULT_ACCOUNTS) {
-        const existingIdx = parsed.findIndex(
-          (u) =>
-            u.username.toLowerCase() === def.username.toLowerCase() ||
-            u.id === def.id ||
-            u.fullName.toLowerCase() === def.fullName.toLowerCase()
-        );
-        if (existingIdx === -1) {
-          parsed.unshift(def);
-          hasChanges = true;
-        } else {
-          // Nếu tài khoản mặc định đang dùng mật khẩu '123', đồng bộ lên mật khẩu phức tạp mới
-          if (verifyPassword('123', parsed[existingIdx].password)) {
-            parsed[existingIdx].password = def.password;
-            hasChanges = true;
-          }
-        }
-      }
-
       // Luôn ghi đè bản đã mã hóa an toàn vào storage
       SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, parsed);
       return parsed;
     } catch {
-      return DEFAULT_ACCOUNTS;
+      return [];
     }
   }
 
@@ -305,6 +262,17 @@ export class AuthService {
       if (!stored) {
         return null;
       }
+      // Tự động dọn dẹp phiên nếu là tài khoản demo đã bị xóa (subin, thanhcong)
+      const purgedUsernames = ['subin', 'thanhcong'];
+      const purgedIds = ['USR-BTC-SUBIN', 'USR-BTC-THANHCONG'];
+      if (
+        (stored.username && purgedUsernames.includes(stored.username.toLowerCase())) ||
+        (stored.id && purgedIds.includes(stored.id))
+      ) {
+        SecureStorage.removeItem(AUTH_STORAGE_KEYS.CURRENT_USER);
+        StorageService.setCurrentRole('STUDENT');
+        return null;
+      }
       // Bảo mật: Xóa bỏ trường password nếu còn tồn dư từ các phiên bản cũ
       delete (stored as any).password;
       return stored;
@@ -444,10 +412,6 @@ export class AuthService {
       // Hỗ trợ mật khẩu phức tạp chuẩn của BTC
       if (!isPassCorrect && isBtcAccount) {
         if (cleanPass === BTC_DEFAULT_PASSWORD) {
-          isPassCorrect = true;
-        } else if (u.username === 'subin' && cleanPass === 'Subin@Btc2026!') {
-          isPassCorrect = true;
-        } else if (u.username === 'thanhcong' && cleanPass === 'Thanhcong@Btc2026!') {
           isPassCorrect = true;
         }
       }
@@ -627,19 +591,20 @@ export class AuthService {
   /**
    * Đăng nhập nhanh 1-Click theo vai trò để kiểm thử tức thì
    */
-  static quickLogin(role: UserRole): UserAccount {
-    const defaultForRole = DEFAULT_ACCOUNTS.find((a) => a.role === role) || DEFAULT_ACCOUNTS[0];
-    this.setCurrentUser(defaultForRole);
-
-    StorageService.logAction(
-      defaultForRole.fullName,
-      defaultForRole.role,
-      'ĐĂNG NHẬP NHANH (QUICK LOGIN)',
-      'Chuyển phiên làm việc',
-      `Đăng nhập nhanh với quyền ${defaultForRole.role} (@${defaultForRole.username})`
-    );
-
-    return defaultForRole;
+  static quickLogin(role: UserRole): UserAccount | null {
+    const users = this.getAllUsers();
+    const userForRole = users.find((a) => a.role === role) || users[0] || null;
+    if (userForRole) {
+      this.setCurrentUser(userForRole);
+      StorageService.logAction(
+        userForRole.fullName,
+        userForRole.role,
+        'ĐĂNG NHẬP NHANH (QUICK LOGIN)',
+        'Chuyển phiên làm việc',
+        `Đăng nhập nhanh với quyền ${userForRole.role} (@${userForRole.username})`
+      );
+    }
+    return userForRole;
   }
 
   /**
@@ -785,10 +750,6 @@ export class AuthService {
     const target = users.find((u) => u.id === userId);
     if (!target) {
       return { success: false, error: 'Không tìm thấy tài khoản cần xóa trong hệ thống!' };
-    }
-
-    if (target.id === 'USR-BTC-SUBIN') {
-      return { success: false, error: 'Không thể xóa tài khoản Quản trị viên cấp cao mặc định (SU BIN)!' };
     }
 
     const updated = users.filter((u) => u.id !== userId);

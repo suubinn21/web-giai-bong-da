@@ -478,7 +478,6 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     const isBTC = u.role === 'ORGANIZER' || u.role === 'SUPER_ADMIN';
                     const isCaptain = u.role === 'TEAM_MANAGER';
                     const isSelf = currentUser?.id === u.id;
-                    const isPermanent = u.id === 'USR-BTC-SUBIN';
 
                     return (
                       <div
@@ -613,7 +612,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             </button>
 
                             {/* Delete User Button */}
-                            {!isSelf && !isPermanent && (
+                            {!isSelf && (
                               <button
                                 onClick={() => handleDeleteUser(u)}
                                 className="p-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-500/30 transition-all active:scale-95"
@@ -809,7 +808,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       required
                       value={username}
                       onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
-                      placeholder={targetRole === 'REFEREE' ? 'vd: referee_hung' : 'vd: btc_thanhcong'}
+                      placeholder={targetRole === 'REFEREE' ? 'vd: referee_hung' : 'vd: btc_admin'}
                       className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
