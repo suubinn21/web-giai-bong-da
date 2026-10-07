@@ -1,5 +1,6 @@
 import { UserAccount, UserRole, Team, Referee } from '@/types';
 import { StorageService } from './storage';
+import { hashPassword, verifyPassword, isDefaultPassword, formatPasswordDisplay } from '@/utils/crypto';
 
 const AUTH_STORAGE_KEYS = {
   USERS: 'itftms_accounts_list_2026',
@@ -10,7 +11,7 @@ export const DEFAULT_ACCOUNTS: UserAccount[] = [
   {
     id: 'USR-BTC-SUBIN',
     username: 'subin',
-    password: '123',
+    password: hashPassword('123', 'subin2026'),
     fullName: 'SU BIN',
     role: 'ORGANIZER',
     email: 'subin@itftms.vn',
@@ -21,7 +22,7 @@ export const DEFAULT_ACCOUNTS: UserAccount[] = [
   {
     id: 'USR-BTC-THANHCONG',
     username: 'thanhcong',
-    password: '123',
+    password: hashPassword('123', 'thanhcong'),
     fullName: 'Thành Công',
     role: 'ORGANIZER',
     email: 'thanhcong@itftms.vn',
@@ -58,6 +59,16 @@ export class AuthService {
 
       let hasChanges = filtered.length !== parsed.length;
       parsed = filtered;
+
+      // Tự động nâng cấp các tài khoản lưu dạng thô (plaintext) sang mã băm Salted SHA-256 an toàn
+      for (let i = 0; i < parsed.length; i++) {
+        const u = parsed[i];
+        if (!u.password || (!u.password.startsWith('sha256$') && !u.password.startsWith('sha256:'))) {
+          const raw = (u.password || '123').trim() || '123';
+          parsed[i].password = hashPassword(raw);
+          hasChanges = true;
+        }
+      }
 
       // Đảm bảo 2 tài khoản BTC chính thức luôn có mặt
       for (const def of DEFAULT_ACCOUNTS) {
@@ -117,7 +128,8 @@ export class AuthService {
     const users = this.getAllUsers();
     const rawUsername = (customUsername || this.generateCaptainUsername(team.shortName || team.name || team.id)).toLowerCase().trim();
     const username = rawUsername || this.generateCaptainUsername(team.id);
-    const password = (customPassword || '123').trim() || '123';
+    const plainPass = (customPassword || '123').trim() || '123';
+    const hashedPassword = hashPassword(plainPass);
 
     // Tìm xem đã có tài khoản gắn với teamId hoặc username này chưa
     const existingIndex = users.findIndex(
@@ -127,7 +139,7 @@ export class AuthService {
     const captainAccount: UserAccount = {
       id: existingIndex >= 0 ? users[existingIndex].id : `USR-CAP-${team.id}`,
       username,
-      password,
+      password: hashedPassword,
       fullName: team.captainName?.trim() || `Đội trưởng ${team.name}`,
       role: 'TEAM_MANAGER',
       email: team.email || `${username}@itftms.vn`,
@@ -151,7 +163,7 @@ export class AuthService {
       'ORGANIZER',
       'TỰ ĐỘNG TẠO TÀI KHOẢN ĐỘI TRƯỞNG',
       team.name,
-      `Tự động tạo tài khoản @${captainAccount.username} cho Đội trưởng đội ${team.name} (Mật khẩu: ${password}).`
+      `Tự động tạo tài khoản @${captainAccount.username} cho Đội trưởng đội ${team.name} (Mật khẩu khởi tạo: ${plainPass}, Đã băm SHA-256).`
     );
 
     return captainAccount;
@@ -183,8 +195,8 @@ export class AuthService {
           existing.teamName = team.name;
           modified = true;
         }
-        if (!existing.password) {
-          existing.password = '123';
+        if (!existing.password || (!existing.password.startsWith('sha256$') && !existing.password.startsWith('sha256:'))) {
+          existing.password = hashPassword('123');
           modified = true;
         }
         if (team.captainName && (!existing.fullName || existing.fullName.startsWith('Đội trưởng'))) {
@@ -196,7 +208,7 @@ export class AuthService {
         const newCap: UserAccount = {
           id: `USR-CAP-${team.id}`,
           username: targetUsername,
-          password: '123',
+          password: hashPassword('123'),
           fullName: team.captainName?.trim() || `Đội trưởng ${team.name}`,
           role: 'TEAM_MANAGER',
           email: team.email || `${targetUsername}@itftms.vn`,
@@ -388,8 +400,16 @@ export class AuthService {
       }
 
       const isMatch = matchUsername || matchEmail || matchFullName || matchCaptainInfo;
-      const userPassword = (u.password || '123').trim();
-      return isMatch && userPassword === cleanPass;
+      const isPassCorrect = verifyPassword(cleanPass, u.password);
+      if (isMatch && isPassCorrect) {
+        // Tự động nâng cấp sang mã băm Salted SHA-256 nếu mật khẩu chưa được băm
+        if (u.password && !u.password.startsWith('sha256$') && !u.password.startsWith('sha256:')) {
+          u.password = hashPassword(cleanPass);
+          this.saveUsers(users);
+        }
+        return true;
+      }
+      return false;
     });
 
     // 2. Nếu chưa tìm thấy và mật khẩu là 123 (mật khẩu mặc định của Đội trưởng):
@@ -509,7 +529,7 @@ export class AuthService {
     const newUser: UserAccount = {
       id: `USR-${Date.now()}`,
       username: cleanUsername,
-      password: data.password,
+      password: hashPassword(data.password),
       fullName: data.fullName.trim(),
       role: data.role || 'STUDENT',
       email: cleanEmail,
@@ -609,14 +629,15 @@ export class AuthService {
       return { success: false, error: `Tên đăng nhập "${cleanUsername}" đã tồn tại. Vui lòng chọn tên khác!` };
     }
 
-    const password = (data.password || '123').trim() || '123';
+    const plainPassword = (data.password || '123').trim() || '123';
+    const hashedPassword = hashPassword(plainPassword);
     const email = (data.email || '').trim() || `${cleanUsername}@itftms.vn`;
     const phone = (data.phone || '').trim();
 
     const newUser: UserAccount = {
       id: data.role === 'REFEREE' ? `USR-REF-${Date.now()}` : `USR-BTC-${Date.now()}`,
       username: cleanUsername,
-      password,
+      password: hashedPassword,
       fullName: rawName,
       role: data.role,
       email,
@@ -660,7 +681,7 @@ export class AuthService {
       'ORGANIZER',
       data.role === 'REFEREE' ? 'TẠO TÀI KHOẢN TRỌNG TÀI' : 'TẠO TÀI KHOẢN BAN TỔ CHỨC',
       newUser.fullName,
-      `Tạo tài khoản @${newUser.username} cho ${data.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'} ${newUser.fullName} (Mật khẩu: ${password}).`
+      `Tạo tài khoản @${newUser.username} cho ${data.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'} ${newUser.fullName} (Mật khẩu khởi tạo: ${plainPassword}, Đã băm SHA-256).`
     );
 
     return { success: true, user: newUser };
@@ -716,7 +737,7 @@ export class AuthService {
   }
 
   /**
-   * Đặt lại mật khẩu tài khoản (Reset password)
+   * Đặt lại mật khẩu tài khoản (Reset password) - Lưu dưới dạng mã băm SHA-256
    */
   static resetUserPassword(
     userId: string,
@@ -729,8 +750,8 @@ export class AuthService {
       return { success: false, error: 'Không tìm thấy tài khoản cần đặt lại mật khẩu!' };
     }
 
-    const targetPassword = (newPassword || '123').trim() || '123';
-    target.password = targetPassword;
+    const plainPassword = (newPassword || '123').trim() || '123';
+    target.password = hashPassword(plainPassword);
     this.saveUsers(users);
 
     StorageService.logAction(
@@ -738,10 +759,10 @@ export class AuthService {
       'ORGANIZER',
       'ĐẶT LẠI MẬT KHẨU',
       target.fullName,
-      `Đặt lại mật khẩu cho tài khoản @${target.username} (${target.fullName}) thành "${targetPassword}".`
+      `Đặt lại mật khẩu cho tài khoản @${target.username} (${target.fullName}) thành "${plainPassword}" (Đã băm SHA-256).`
     );
 
-    return { success: true, newPassword: targetPassword };
+    return { success: true, newPassword: plainPassword };
   }
 
   /**
@@ -761,7 +782,7 @@ export class AuthService {
     if (data.fullName?.trim()) target.fullName = data.fullName.trim();
     if (data.phone !== undefined) target.phone = data.phone.trim();
     if (data.email?.trim()) target.email = data.email.trim();
-    if (data.password?.trim()) target.password = data.password.trim();
+    if (data.password?.trim()) target.password = hashPassword(data.password.trim());
 
     this.saveUsers(users);
 
@@ -774,5 +795,33 @@ export class AuthService {
     );
 
     return { success: true };
+  }
+
+  /**
+   * Tiện ích băm mật khẩu (SHA-256 kèm Salt)
+   */
+  static hashPassword(password: string, salt?: string): string {
+    return hashPassword(password, salt);
+  }
+
+  /**
+   * Xác thực mật khẩu nhập vào đối chiếu mã băm
+   */
+  static verifyPassword(plainPassword: string, storedHashOrPlain?: string): boolean {
+    return verifyPassword(plainPassword, storedHashOrPlain);
+  }
+
+  /**
+   * Kiểm tra mật khẩu có phải là mật khẩu mặc định "123" hay không
+   */
+  static isDefaultPassword(storedHashOrPlain?: string): boolean {
+    return isDefaultPassword(storedHashOrPlain);
+  }
+
+  /**
+   * Định dạng chuỗi hiển thị bảo mật cho giao diện
+   */
+  static formatPasswordDisplay(storedHashOrPlain?: string) {
+    return formatPasswordDisplay(storedHashOrPlain);
   }
 }

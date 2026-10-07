@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Scale,
   KeyRound,
+  Lock,
   Trash2,
   Search,
   Copy,
@@ -179,7 +180,10 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   // Handle Copy Credentials
   const handleCopyCredentials = (u: UserAccount) => {
-    const text = `Tài khoản: @${u.username}\nMật khẩu: ${u.password || '123'}\nVai trò: ${
+    const isDefault = AuthService.isDefaultPassword(u.password);
+    const text = `Tài khoản: @${u.username}\nMật khẩu: ${
+      isDefault ? '123' : '[Mật khẩu riêng - Đã mã hóa băm]'
+    }\nTrạng thái: Đã mã hóa băm SHA-256 an toàn\nVai trò: ${
       u.role === 'REFEREE' ? 'Trọng Tài' : u.role === 'ORGANIZER' ? 'Ban Tổ Chức' : 'Đội Trưởng'
     }\nĐăng nhập tại: ${window.location.origin}`;
     navigator.clipboard.writeText(text);
@@ -189,11 +193,11 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   // Handle Reset Password
   const handleResetPassword = (u: UserAccount) => {
-    if (confirm(`Xác nhận đặt lại mật khẩu của tài khoản @${u.username} (${u.fullName}) về mặc định "123"?`)) {
+    if (confirm(`Xác nhận đặt lại mật khẩu của tài khoản @${u.username} (${u.fullName}) về mặc định "123"? Mật khẩu sẽ được băm SHA-256 an toàn.`)) {
       const res = AuthService.resetUserPassword(u.id, '123', currentUser?.fullName);
       if (res.success) {
         loadUsers();
-        setActionSuccessMsg(`Đã đặt lại mật khẩu của @${u.username} về "123"!`);
+        setActionSuccessMsg(`Đã đặt lại mật khẩu của @${u.username} về "123" (Mã băm SHA-256)!`);
         setTimeout(() => setActionSuccessMsg(null), 3000);
       }
     }
@@ -492,11 +496,24 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
                         {/* Bottom Actions */}
                         <div className="pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                          <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                          <div className="text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
                             <span className="text-slate-500">Mật khẩu:</span>
-                            <span className="font-mono font-bold text-white bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                              {u.password || '123'}
-                            </span>
+                            {(() => {
+                              const info = AuthService.formatPasswordDisplay(u.password);
+                              return (
+                                <span
+                                  className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${
+                                    info.isDefault
+                                      ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-300'
+                                      : 'bg-amber-950/60 border-amber-800/80 text-amber-300'
+                                  }`}
+                                  title={`Mã băm SHA-256: ${u.password}`}
+                                >
+                                  <Lock className="w-3 h-3" />
+                                  <span>{info.isDefault ? '123 (Mã băm SHA-256)' : '●●●●●●●● (Mã băm SHA-256)'}</span>
+                                </span>
+                              );
+                            })()}
                           </div>
 
                           <div className="flex items-center gap-1.5">
@@ -570,20 +587,30 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-950/80 border border-emerald-800/60 text-xs font-mono space-y-1">
+                  <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-800/60 text-xs font-mono space-y-2">
                     <div className="flex justify-between">
                       <span className="text-slate-400">Tên đăng nhập:</span>
                       <strong className="text-emerald-400">@{successCreatedUser.username}</strong>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Mật khẩu:</span>
-                      <strong className="text-white">{successCreatedUser.password}</strong>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">Mật khẩu khởi tạo:</span>
+                      <strong className="text-white bg-slate-800 px-2 py-0.5 rounded font-bold">123 (Mặc định)</strong>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">Trạng thái mã băm:</span>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        Đã băm Salted SHA-256
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-400">Vai trò:</span>
                       <strong className="text-amber-400">
                         {successCreatedUser.role === 'REFEREE' ? 'Trọng Tài' : 'Ban Tổ Chức (BTC)'}
                       </strong>
+                    </div>
+                    <div className="pt-1 text-[10px] text-slate-500 font-mono truncate border-t border-slate-900" title={successCreatedUser.password}>
+                      Hash: {successCreatedUser.password}
                     </div>
                   </div>
 
@@ -743,7 +770,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       </button>
                     </div>
                     <span className="text-[10px] text-slate-400 mt-1 block">
-                      Khuyến nghị giữ mật khẩu mặc định là <strong className="text-emerald-400">123</strong> để người dùng dễ đăng nhập lần đầu.
+                      Khuyến nghị giữ mật khẩu mặc định là <strong className="text-emerald-400">123</strong>. Mật khẩu sẽ tự động được băm bảo mật bằng thuật toán Salted SHA-256 trước khi lưu vào hệ thống.
                     </span>
                   </div>
 

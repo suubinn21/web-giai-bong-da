@@ -254,10 +254,11 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     };
 
     // Tự động tạo tài khoản Đội Trưởng cho đội bóng vừa tạo
+    const initialPlainPass = (newCaptainPassword || '123').trim() || '123';
     const captainAcc = AuthService.createCaptainAccountForTeam(
       newTeam,
       newCaptainUsername,
-      newCaptainPassword || '123'
+      initialPlainPass
     );
 
     const updated = [...teams, newTeam];
@@ -281,7 +282,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
       shortName: newTeam.shortName,
       captainName: newTeam.captainName,
       username: captainAcc.username,
-      password: captainAcc.password || '123',
+      password: initialPlainPass,
     });
 
     StorageService.logAction(
