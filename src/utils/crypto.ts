@@ -189,22 +189,144 @@ export function verifyPassword(plainPassword: string, storedHashOrPlain?: string
 }
 
 /**
- * Kiểm tra xem mật khẩu có phải là mật khẩu mặc định "123" hay không
+ * Mật khẩu mặc định độ phức tạp cao dành riêng cho Ban Tổ Chức (BTC) / Quản trị viên
+ * Tiêu chuẩn: Tối thiểu 10 ký tự, có chữ HOA, chữ thường, chữ số và ký tự đặc biệt (@, !, #)
+ */
+export const BTC_DEFAULT_PASSWORD = 'Btc@2026!#';
+
+/**
+ * Kiểm tra xem mật khẩu có phải là mật khẩu mặc định "123" hay không (dành cho Trọng tài, Đội trưởng)
  */
 export function isDefaultPassword(storedHashOrPlain?: string): boolean {
   return verifyPassword('123', storedHashOrPlain);
 }
 
 /**
+ * Kiểm tra xem mật khẩu có phải là mật khẩu mặc định của BTC "Btc@2026!#" hay không
+ */
+export function isBtcDefaultPassword(storedHashOrPlain?: string): boolean {
+  if (!storedHashOrPlain) return false;
+  return verifyPassword(BTC_DEFAULT_PASSWORD, storedHashOrPlain);
+}
+
+/**
+ * Kết quả phân tích độ mạnh và tính hợp lệ của mật khẩu
+ */
+export interface PasswordStrengthResult {
+  score: number; // 0 đến 4
+  label: 'Rất yếu' | 'Yếu' | 'Trung bình' | 'Mạnh' | 'Rất mạnh';
+  color: string;
+  hasMinLength: boolean;
+  hasUppercase: boolean;
+  hasLowercase: boolean;
+  hasNumber: boolean;
+  hasSpecialChar: boolean;
+  isValidForBtc: boolean;
+  errors: string[];
+}
+
+/**
+ * Kiểm tra độ phức tạp của mật khẩu người dùng
+ */
+export function checkPasswordStrength(password: string): PasswordStrengthResult {
+  const p = (password || '').trim();
+  const hasMinLength = p.length >= 8;
+  const hasUppercase = /[A-Z]/.test(p);
+  const hasLowercase = /[a-z]/.test(p);
+  const hasNumber = /[0-9]/.test(p);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(p);
+
+  const errors: string[] = [];
+  if (!hasMinLength) errors.push('Tối thiểu 8 ký tự');
+  if (!hasUppercase) errors.push('Có ít nhất 1 chữ HOA (A-Z)');
+  if (!hasLowercase) errors.push('Có ít nhất 1 chữ thường (a-z)');
+  if (!hasNumber) errors.push('Có ít nhất 1 chữ số (0-9)');
+  if (!hasSpecialChar) errors.push('Có ít nhất 1 ký tự đặc biệt (!@#$%...)');
+
+  let score = 0;
+  if (p.length >= 6) score += 1;
+  if (p.length >= 8) score += 1;
+  if (hasUppercase && hasLowercase) score += 1;
+  if (hasNumber) score += 1;
+  if (hasSpecialChar) score += 1;
+
+  // Chuẩn hóa điểm 0..4
+  const normalizedScore = Math.min(4, Math.max(0, score - 1));
+
+  const labels: Array<PasswordStrengthResult['label']> = ['Rất yếu', 'Yếu', 'Trung bình', 'Mạnh', 'Rất mạnh'];
+  const colors = [
+    '#EF4444', // Red
+    '#F97316', // Orange
+    '#EAB308', // Yellow
+    '#10B981', // Emerald
+    '#06B6D4', // Cyan
+  ];
+
+  // BTC yêu cầu nghiêm ngặt: độ dài >= 8, có chữ, có số, và có ký tự đặc biệt hoặc chữ hoa
+  const isValidForBtc = hasMinLength && (hasUppercase || hasLowercase) && hasNumber && hasSpecialChar;
+
+  return {
+    score: normalizedScore,
+    label: labels[normalizedScore] || 'Yếu',
+    color: colors[normalizedScore] || '#EF4444',
+    hasMinLength,
+    hasUppercase,
+    hasLowercase,
+    hasNumber,
+    hasSpecialChar,
+    isValidForBtc,
+    errors,
+  };
+}
+
+/**
+ * Tự động tạo mật khẩu phức tạp an toàn ngẫu nhiên
+ */
+export function generateStrongPassword(length = 12): string {
+  const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const lower = 'abcdefghijkmnopqrstuvwxyz';
+  const digits = '23456789';
+  const special = '@#$%!&*';
+  const all = upper + lower + digits + special;
+
+  // Đảm bảo có đủ mỗi loại ký tự
+  let result = [
+    upper[Math.floor(Math.random() * upper.length)],
+    lower[Math.floor(Math.random() * lower.length)],
+    digits[Math.floor(Math.random() * digits.length)],
+    special[Math.floor(Math.random() * special.length)],
+  ];
+
+  for (let i = 4; i < length; i++) {
+    result.push(all[Math.floor(Math.random() * all.length)]);
+  }
+
+  // Shuffle kết quả
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result.join('');
+}
+
+/**
  * Hiển thị rút gọn mã băm trên giao diện bảo mật
  */
-export function formatPasswordDisplay(storedHashOrPlain?: string): {
+export function formatPasswordDisplay(
+  storedHashOrPlain?: string,
+  role?: string
+): {
   isDefault: boolean;
+  isBtcDefault: boolean;
   displayLabel: string;
+  badgeText: string;
   shortHash: string;
 } {
-  const isDefault = isDefaultPassword(storedHashOrPlain);
   const stored = (storedHashOrPlain || '').trim();
+  const isBtcRole = role === 'ORGANIZER' || role === 'SUPER_ADMIN';
+  const isBtcDef = isBtcDefaultPassword(stored);
+  const isSimpleDef = isDefaultPassword(stored);
 
   let shortHash = '';
   if (stored.startsWith('sha256$')) {
@@ -216,9 +338,50 @@ export function formatPasswordDisplay(storedHashOrPlain?: string): {
     shortHash = 'Đã băm SHA-256';
   }
 
+  if (isBtcRole) {
+    if (isBtcDef) {
+      return {
+        isDefault: true,
+        isBtcDefault: true,
+        displayLabel: 'Mặc định BTC (Btc@2026!#) • Đã băm',
+        badgeText: 'Btc@2026!# (Mã băm SHA-256)',
+        shortHash,
+      };
+    }
+    if (isSimpleDef) {
+      return {
+        isDefault: true,
+        isBtcDefault: false,
+        displayLabel: 'Mặc định cũ (123) • Đã băm',
+        badgeText: '123 (Mã băm SHA-256)',
+        shortHash,
+      };
+    }
+    return {
+      isDefault: false,
+      isBtcDefault: false,
+      displayLabel: 'Mật khẩu riêng phức tạp • Đã băm',
+      badgeText: '●●●●●●●● (Mã băm SHA-256)',
+      shortHash,
+    };
+  }
+
+  // Vai trò Trọng tài hoặc Đội trưởng
+  if (isSimpleDef) {
+    return {
+      isDefault: true,
+      isBtcDefault: false,
+      displayLabel: 'Mặc định (123) • Đã băm',
+      badgeText: '123 (Mã băm SHA-256)',
+      shortHash,
+    };
+  }
+
   return {
-    isDefault,
-    displayLabel: isDefault ? 'Mặc định (123) • Đã băm' : 'Tùy chỉnh • Đã băm',
+    isDefault: false,
+    isBtcDefault: false,
+    displayLabel: 'Tùy chỉnh • Đã băm',
+    badgeText: '●●●●●●●● (Mã băm SHA-256)',
     shortHash,
   };
 }

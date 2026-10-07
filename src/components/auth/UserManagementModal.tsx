@@ -67,6 +67,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
 
+  // Dedicated Reset Password Modal State
+  const [resetTargetUser, setResetTargetUser] = useState<UserAccount | null>(null);
+  const [newResetPassword, setNewResetPassword] = useState('');
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetModalError, setResetModalError] = useState<string | null>(null);
+
   // Reload user list when modal opens
   const loadUsers = () => {
     const list = AuthService.getAllUsers();
@@ -79,6 +85,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       setErrorMsg(null);
       setSuccessCreatedUser(null);
       setActionSuccessMsg(null);
+      setResetTargetUser(null);
     }
   }, [isOpen]);
 
@@ -103,7 +110,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
     }
   };
 
-  // Suggest referee code when role is REFEREE
+  // Suggest referee code and default password when role changes
   useEffect(() => {
     if (targetRole === 'REFEREE') {
       const refs = StorageService.getReferees();
@@ -111,9 +118,15 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       if (username.startsWith('btc_')) {
         setUsername(username.replace('btc_', 'referee_'));
       }
+      if (password === AuthService.BTC_DEFAULT_PASSWORD) {
+        setPassword('123');
+      }
     } else {
       if (username.startsWith('referee_')) {
         setUsername(username.replace('referee_', 'btc_'));
+      }
+      if (password === '123') {
+        setPassword(AuthService.BTC_DEFAULT_PASSWORD);
       }
     }
   }, [targetRole]);
@@ -147,6 +160,14 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
     setErrorMsg(null);
     setSuccessCreatedUser(null);
 
+    if (targetRole === 'ORGANIZER') {
+      const strength = AuthService.checkPasswordStrength(password);
+      if (!strength.isValidForBtc) {
+        setErrorMsg(`Mật khẩu tài khoản BTC chưa đủ độ phức tạp: ${strength.errors.join(', ')}. Gợi ý: ${AuthService.BTC_DEFAULT_PASSWORD}`);
+        return;
+      }
+    }
+
     const res = AuthService.createStaffAccount({
       fullName,
       username,
@@ -169,7 +190,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
       // Reset form
       setFullName('');
       setUsername('');
-      setPassword('123');
+      setPassword(targetRole === 'ORGANIZER' ? AuthService.BTC_DEFAULT_PASSWORD : '123');
       setPhone('');
       setEmail('');
     } else {
@@ -180,26 +201,64 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
   // Handle Copy Credentials
   const handleCopyCredentials = (u: UserAccount) => {
-    const isDefault = AuthService.isDefaultPassword(u.password);
-    const text = `Tài khoản: @${u.username}\nMật khẩu: ${
-      isDefault ? '123' : '[Mật khẩu riêng - Đã mã hóa băm]'
-    }\nTrạng thái: Đã mã hóa băm SHA-256 an toàn\nVai trò: ${
-      u.role === 'REFEREE' ? 'Trọng Tài' : u.role === 'ORGANIZER' ? 'Ban Tổ Chức' : 'Đội Trưởng'
+    const isBtc = u.role === 'ORGANIZER' || u.role === 'SUPER_ADMIN';
+    const isBtcDef = AuthService.isBtcDefaultPassword(u.password);
+    const isSimpleDef = AuthService.isDefaultPassword(u.password);
+
+    let passText = '[Mật khẩu riêng - Đã mã hóa băm SHA-256]';
+    if (isBtc && isBtcDef) {
+      passText = AuthService.BTC_DEFAULT_PASSWORD;
+    } else if (!isBtc && isSimpleDef) {
+      passText = '123';
+    }
+
+    const text = `Tài khoản: @${u.username}\nMật khẩu: ${passText}\nTrạng thái: Đã mã hóa băm SHA-256 an toàn\nVai trò: ${
+      u.role === 'REFEREE' ? 'Trọng Tài' : isBtc ? 'Ban Tổ Chức (BTC)' : 'Đội Trưởng'
     }\nĐăng nhập tại: ${window.location.origin}`;
     navigator.clipboard.writeText(text);
     setCopiedId(u.id);
     setTimeout(() => setCopiedId(null), 2500);
   };
 
-  // Handle Reset Password
-  const handleResetPassword = (u: UserAccount) => {
-    if (confirm(`Xác nhận đặt lại mật khẩu của tài khoản @${u.username} (${u.fullName}) về mặc định "123"? Mật khẩu sẽ được băm SHA-256 an toàn.`)) {
-      const res = AuthService.resetUserPassword(u.id, '123', currentUser?.fullName);
-      if (res.success) {
-        loadUsers();
-        setActionSuccessMsg(`Đã đặt lại mật khẩu của @${u.username} về "123" (Mã băm SHA-256)!`);
-        setTimeout(() => setActionSuccessMsg(null), 3000);
+  // Handle Quick Reset to Default
+  const handleQuickResetToDefault = (u: UserAccount) => {
+    const isBtc = u.role === 'ORGANIZER' || u.role === 'SUPER_ADMIN';
+    const targetPass = isBtc ? AuthService.BTC_DEFAULT_PASSWORD : '123';
+    const res = AuthService.resetUserPassword(u.id, targetPass, currentUser?.fullName);
+    if (res.success) {
+      loadUsers();
+      setResetTargetUser(null);
+      setActionSuccessMsg(`Đã đặt lại mật khẩu của @${u.username} về mặc định "${targetPass}" (Mã băm SHA-256)!`);
+      setTimeout(() => setActionSuccessMsg(null), 3500);
+    } else {
+      setResetModalError(res.error || 'Không thể đặt lại mật khẩu!');
+    }
+  };
+
+  // Handle Custom Reset Password
+  const handleCustomResetPassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetTargetUser) return;
+    setResetModalError(null);
+
+    const isBtc = resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN';
+    if (isBtc) {
+      const strength = AuthService.checkPasswordStrength(newResetPassword);
+      if (!strength.isValidForBtc) {
+        setResetModalError(`Mật khẩu tài khoản BTC chưa đạt chuẩn: ${strength.errors.join(', ')}.`);
+        return;
       }
+    }
+
+    const res = AuthService.resetUserPassword(resetTargetUser.id, newResetPassword, currentUser?.fullName);
+    if (res.success) {
+      loadUsers();
+      setResetTargetUser(null);
+      setNewResetPassword('');
+      setActionSuccessMsg(`Đã cập nhật mật khẩu mới cho @${resetTargetUser.username} (Mã băm SHA-256)!`);
+      setTimeout(() => setActionSuccessMsg(null), 3500);
+    } else {
+      setResetModalError(res.error || 'Lỗi đặt lại mật khẩu');
     }
   };
 
@@ -315,7 +374,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-[11px] text-slate-400">
-            <span>Mật khẩu mặc định: <strong className="text-white font-mono bg-slate-800 px-1.5 py-0.5 rounded">123</strong></span>
+            <span>BTC: <strong className="text-emerald-400 font-mono bg-emerald-950/80 border border-emerald-800/80 px-1.5 py-0.5 rounded">{AuthService.BTC_DEFAULT_PASSWORD}</strong></span>
+            <span>•</span>
+            <span>Trọng tài / Đội trưởng: <strong className="text-white font-mono bg-slate-800 px-1.5 py-0.5 rounded">123</strong></span>
           </div>
         </div>
 
@@ -499,18 +560,20 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                           <div className="text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
                             <span className="text-slate-500">Mật khẩu:</span>
                             {(() => {
-                              const info = AuthService.formatPasswordDisplay(u.password);
+                              const info = AuthService.formatPasswordDisplay(u.password, u.role);
                               return (
                                 <span
                                   className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${
-                                    info.isDefault
+                                    info.isBtcDefault
+                                      ? 'bg-emerald-950/80 border-emerald-700/80 text-emerald-300'
+                                      : info.isDefault
                                       ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-300'
                                       : 'bg-amber-950/60 border-amber-800/80 text-amber-300'
                                   }`}
                                   title={`Mã băm SHA-256: ${u.password}`}
                                 >
                                   <Lock className="w-3 h-3" />
-                                  <span>{info.isDefault ? '123 (Mã băm SHA-256)' : '●●●●●●●● (Mã băm SHA-256)'}</span>
+                                  <span>{info.badgeText}</span>
                                 </span>
                               );
                             })()}
@@ -538,9 +601,13 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
                             {/* Reset Password Button */}
                             <button
-                              onClick={() => handleResetPassword(u)}
+                              onClick={() => {
+                                setResetTargetUser(u);
+                                setNewResetPassword('');
+                                setResetModalError(null);
+                              }}
                               className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-amber-400 border border-amber-500/30 transition-all active:scale-95"
-                              title="Đặt lại mật khẩu về 123"
+                              title="Đặt lại hoặc đổi mật khẩu"
                             >
                               <KeyRound className="w-3.5 h-3.5" />
                             </button>
@@ -594,7 +661,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400">Mật khẩu khởi tạo:</span>
-                      <strong className="text-white bg-slate-800 px-2 py-0.5 rounded font-bold">123 (Mặc định)</strong>
+                      <strong className="text-white bg-slate-800 px-2 py-0.5 rounded font-bold font-mono">
+                        {successCreatedUser.role === 'ORGANIZER' ? AuthService.BTC_DEFAULT_PASSWORD : '123'} (Mặc định)
+                      </strong>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400">Trạng thái mã băm:</span>
@@ -748,9 +817,24 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 {/* Password & Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      Mật khẩu khởi tạo <span className="text-red-400">*</span>
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold text-slate-300">
+                        Mật khẩu khởi tạo <span className="text-red-400">*</span>
+                      </label>
+                      {targetRole === 'ORGANIZER' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const rand = AuthService.generateStrongPassword(12);
+                            setPassword(rand);
+                          }}
+                          className="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono flex items-center gap-1"
+                        >
+                          <Sparkles className="w-3 h-3" />
+                          <span>Tạo mật khẩu ngẫu nhiên</span>
+                        </button>
+                      )}
+                    </div>
                     <div className="relative">
                       <KeyRound className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                       <input
@@ -758,8 +842,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Mặc định: 123"
-                        className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                        placeholder={
+                          targetRole === 'ORGANIZER'
+                            ? `Mặc định BTC: ${AuthService.BTC_DEFAULT_PASSWORD}`
+                            : 'Mặc định: 123'
+                        }
+                        className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
                       />
                       <button
                         type="button"
@@ -769,9 +857,53 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                    <span className="text-[10px] text-slate-400 mt-1 block">
-                      Khuyến nghị giữ mật khẩu mặc định là <strong className="text-emerald-400">123</strong>. Mật khẩu sẽ tự động được băm bảo mật bằng thuật toán Salted SHA-256 trước khi lưu vào hệ thống.
-                    </span>
+
+                    {/* Real-time strength meter when role is BTC */}
+                    {targetRole === 'ORGANIZER' && (
+                      <div className="mt-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                        {(() => {
+                          const str = AuthService.checkPasswordStrength(password);
+                          return (
+                            <div>
+                              <div className="flex items-center justify-between text-[11px] mb-1">
+                                <span className="text-slate-400">Độ phức tạp mật khẩu BTC:</span>
+                                <strong style={{ color: str.color }}>{str.label}</strong>
+                              </div>
+                              <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
+                                {[0, 1, 2, 3].map((step) => (
+                                  <div
+                                    key={step}
+                                    className="h-full flex-1 transition-all"
+                                    style={{
+                                      backgroundColor: step <= str.score ? str.color : '#334155',
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                              {!str.isValidForBtc ? (
+                                <span className="text-[10px] text-amber-300 mt-1.5 block">
+                                  ⚠️ Yêu cầu BTC: {str.errors.join(', ')}. Gợi ý mặc định:{' '}
+                                  <strong className="font-mono text-emerald-400">
+                                    {AuthService.BTC_DEFAULT_PASSWORD}
+                                  </strong>
+                                </span>
+                              ) : (
+                                <span className="text-[10px] text-emerald-400 mt-1 block flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  Mật khẩu đạt chuẩn bảo mật cho Ban Tổ Chức (Mã băm Salted SHA-256).
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    )}
+
+                    {targetRole === 'REFEREE' && (
+                      <span className="text-[10px] text-slate-400 mt-1 block">
+                        Khuyến nghị giữ mật khẩu mặc định là <strong className="text-emerald-400">123</strong>. Mật khẩu sẽ tự động được băm bảo mật bằng thuật toán Salted SHA-256 trước khi lưu vào hệ thống.
+                      </span>
+                    )}
                   </div>
 
                   <div>
@@ -857,6 +989,180 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
           )}
 
         </div>
+
+        {/* MODAL CON: ĐẶT LẠI MẬT KHẨU CHO NGƯỜI DÙNG */}
+        {resetTargetUser && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
+            <div className="relative w-full max-w-lg bg-[#0B132B] border border-slate-700/80 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+              
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <KeyRound className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-white">Đặt Lại / Đổi Mật Khẩu</h3>
+                    <p className="text-xs text-slate-400">
+                      Tài khoản: <strong className="text-emerald-400 font-mono">@{resetTargetUser.username}</strong> ({resetTargetUser.fullName})
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setResetTargetUser(null);
+                    setResetModalError(null);
+                  }}
+                  className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {resetModalError && (
+                <div className="p-3 rounded-xl bg-red-950/70 border border-red-500/60 text-xs text-red-300 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>{resetModalError}</span>
+                </div>
+              )}
+
+              {/* Option 1: Quick Reset to Default */}
+              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-200">
+                    Cách 1: Đặt lại về mật khẩu chuẩn của hệ thống
+                  </span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                    Khuyến nghị
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  {resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN' ? (
+                    <>
+                      Tài khoản Ban Tổ Chức (BTC) sẽ được đặt lại về mật khẩu phức tạp mặc định:{' '}
+                      <strong className="text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
+                        {AuthService.BTC_DEFAULT_PASSWORD}
+                      </strong>
+                    </>
+                  ) : (
+                    <>
+                      Tài khoản sẽ được đặt lại về mật khẩu mặc định:{' '}
+                      <strong className="text-white font-mono bg-slate-800 px-2 py-0.5 rounded">
+                        123
+                      </strong>
+                    </>
+                  )}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => handleQuickResetToDefault(resetTargetUser)}
+                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 active:scale-98 transition-all"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Xác Nhận Đặt Lại Về Mặc Định (Mã Băm SHA-256)</span>
+                </button>
+              </div>
+
+              {/* Option 2: Custom Password */}
+              <form onSubmit={handleCustomResetPassword} className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-200">
+                    Cách 2: Tự đặt mật khẩu mới riêng
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const rand = AuthService.generateStrongPassword(12);
+                      setNewResetPassword(rand);
+                    }}
+                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono flex items-center gap-1"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Tạo mật khẩu mạnh</span>
+                  </button>
+                </div>
+
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                  <input
+                    type={showResetPassword ? 'text' : 'password'}
+                    required
+                    value={newResetPassword}
+                    onChange={(e) => setNewResetPassword(e.target.value)}
+                    placeholder={
+                      resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN'
+                        ? 'Nhập mật khẩu phức tạp mới (>= 8 ký tự)...'
+                        : 'Nhập mật khẩu mới...'
+                    }
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowResetPassword(!showResetPassword)}
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                  >
+                    {showResetPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+
+                {/* Real-time strength meter */}
+                {newResetPassword && (
+                  <div className="space-y-1.5 pt-1">
+                    {(() => {
+                      const str = AuthService.checkPasswordStrength(newResetPassword);
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between text-[11px] mb-1">
+                            <span className="text-slate-400">Độ phức tạp:</span>
+                            <strong style={{ color: str.color }}>{str.label}</strong>
+                          </div>
+                          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
+                            {[0, 1, 2, 3].map((step) => (
+                              <div
+                                key={step}
+                                className="h-full flex-1 transition-all"
+                                style={{
+                                  backgroundColor: step <= str.score ? str.color : '#334155',
+                                }}
+                              />
+                            ))}
+                          </div>
+                          {(resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN') && !str.isValidForBtc && (
+                            <div className="text-[10px] text-amber-300 mt-1.5 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-amber-400 shrink-0" />
+                              <span>Yêu cầu BTC: {str.errors.join(', ')}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Lưu Mật Khẩu Mới (Mã Băm Salted SHA-256)</span>
+                </button>
+              </form>
+
+              <div className="pt-1 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetTargetUser(null);
+                    setResetModalError(null);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+                >
+                  Hủy Bỏ
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
