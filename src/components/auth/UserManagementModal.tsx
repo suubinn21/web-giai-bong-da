@@ -570,7 +570,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                                       ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-300'
                                       : 'bg-amber-950/60 border-amber-800/80 text-amber-300'
                                   }`}
-                                  title={`Mã băm SHA-256: ${u.password}`}
+                                  title="Mật khẩu đã được mã hóa băm SHA-256 an toàn"
                                 >
                                   <Lock className="w-3 h-3" />
                                   <span>{info.badgeText}</span>
@@ -678,8 +678,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         {successCreatedUser.role === 'REFEREE' ? 'Trọng Tài' : 'Ban Tổ Chức (BTC)'}
                       </strong>
                     </div>
-                    <div className="pt-1 text-[10px] text-slate-500 font-mono truncate border-t border-slate-900" title={successCreatedUser.password}>
-                      Hash: {successCreatedUser.password}
+                    <div className="pt-1 text-[10px] text-slate-400 font-mono flex items-center justify-between border-t border-slate-900">
+                      <span>Lưu trữ: Mã hóa an toàn (Client Encrypted)</span>
+                      <span className="text-emerald-400 font-bold">●●●●●●●● (Salted SHA-256)</span>
                     </div>
                   </div>
 

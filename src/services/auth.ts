@@ -1,5 +1,6 @@
 import { UserAccount, UserRole, Team, Referee } from '@/types';
 import { StorageService } from './storage';
+import { SecureStorage } from '@/utils/secureStorage';
 import {
   hashPassword,
   verifyPassword,
@@ -50,16 +51,16 @@ export class AuthService {
 
   /**
    * Lấy danh sách toàn bộ tài khoản người dùng và tự động đồng bộ tài khoản BTC
+   * Dữ liệu được mã hóa bảo mật hoàn toàn trong LocalStorage (không lộ thông tin khi F12)
    */
   static getAllUsers(): UserAccount[] {
     if (!this.isClient) return DEFAULT_ACCOUNTS;
     try {
-      const stored = localStorage.getItem(AUTH_STORAGE_KEYS.USERS);
-      if (!stored) {
-        localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(DEFAULT_ACCOUNTS));
+      let parsed = SecureStorage.getItem<UserAccount[]>(AUTH_STORAGE_KEYS.USERS);
+      if (!parsed || !Array.isArray(parsed) || parsed.length === 0) {
+        SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, DEFAULT_ACCOUNTS);
         return DEFAULT_ACCOUNTS;
       }
-      let parsed: UserAccount[] = JSON.parse(stored);
 
       // Loại bỏ các tài khoản mẫu cũ (admin, btc ThS An, referee, captain, sinhvien) theo yêu cầu người dùng
       const DEMO_USERNAMES = ['btc', 'referee', 'captain', 'admin', 'sinhvien'];
@@ -111,9 +112,9 @@ export class AuthService {
           }
         }
       }
-      if (hasChanges) {
-        localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(parsed));
-      }
+
+      // Luôn ghi đè bản đã mã hóa an toàn vào storage
+      SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, parsed);
       return parsed;
     } catch {
       return DEFAULT_ACCOUNTS;
@@ -121,14 +122,14 @@ export class AuthService {
   }
 
   /**
-   * Lưu danh sách tài khoản
+   * Lưu danh sách tài khoản (được mã hóa bảo mật tuyệt đối)
    */
   static saveUsers(users: UserAccount[]): void {
     if (!this.isClient) return;
     try {
-      localStorage.setItem(AUTH_STORAGE_KEYS.USERS, JSON.stringify(users));
+      SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, users);
     } catch (e) {
-      console.error('Error saving users to localStorage:', e);
+      console.error('Error saving users to secure storage:', e);
     }
   }
 
@@ -191,7 +192,7 @@ export class AuthService {
       'ORGANIZER',
       'TỰ ĐỘNG TẠO TÀI KHOẢN ĐỘI TRƯỞNG',
       team.name,
-      `Tự động tạo tài khoản @${captainAccount.username} cho Đội trưởng đội ${team.name} (Mật khẩu khởi tạo: ${plainPass}, Đã băm SHA-256).`
+      `Tự động tạo tài khoản @${captainAccount.username} cho Đội trưởng đội ${team.name} (Đã mã hóa bảo mật).`
     );
 
     return captainAccount;
@@ -294,32 +295,41 @@ export class AuthService {
   /**
    * Lấy tài khoản đang đăng nhập hiện tại.
    * KHÔNG tự động đăng nhập - người dùng vào trang với trạng thái chưa đăng nhập.
+   * Đảm bảo KHÔNG BAO GIỜ để lộ trường password.
    */
   static getCurrentUser(): UserAccount | null {
     if (!this.isClient) return null;
     this.clearLegacyAutoLogin();
     try {
-      const stored = localStorage.getItem(AUTH_STORAGE_KEYS.CURRENT_USER);
+      const stored = SecureStorage.getItem<UserAccount>(AUTH_STORAGE_KEYS.CURRENT_USER);
       if (!stored) {
         return null;
       }
-      return JSON.parse(stored);
+      // Bảo mật: Xóa bỏ trường password nếu còn tồn dư từ các phiên bản cũ
+      delete (stored as any).password;
+      return stored;
     } catch {
       return null;
     }
   }
 
   /**
-   * Đặt tài khoản đang đăng nhập hiện tại
+   * Đặt tài khoản đang đăng nhập hiện tại.
+   * TUYỆT ĐỐI KHÔNG LƯU PASSWORD vào LocalStorage phiên người dùng.
    */
   static setCurrentUser(user: UserAccount | null): void {
     if (!this.isClient) return;
     try {
       if (user) {
-        localStorage.setItem(AUTH_STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        // Tạo bản sao an toàn và loại bỏ triệt để trường password
+        const sanitized: UserAccount = { ...user };
+        delete (sanitized as any).password;
+
+        // Lưu trữ bảo mật có mã hóa vào LocalStorage
+        SecureStorage.setItem(AUTH_STORAGE_KEYS.CURRENT_USER, sanitized);
         StorageService.setCurrentRole(user.role);
       } else {
-        localStorage.removeItem(AUTH_STORAGE_KEYS.CURRENT_USER);
+        SecureStorage.removeItem(AUTH_STORAGE_KEYS.CURRENT_USER);
         StorageService.setCurrentRole('STUDENT');
       }
     } catch (e) {
@@ -753,7 +763,7 @@ export class AuthService {
       'ORGANIZER',
       data.role === 'REFEREE' ? 'TẠO TÀI KHOẢN TRỌNG TÀI' : 'TẠO TÀI KHOẢN BAN TỔ CHỨC',
       newUser.fullName,
-      `Tạo tài khoản @${newUser.username} cho ${data.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'} ${newUser.fullName} (Mật khẩu khởi tạo: ${plainPassword}, Đã băm SHA-256).`
+      `Tạo tài khoản @${newUser.username} cho ${data.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'} ${newUser.fullName} (Đã mã hóa bảo mật).`
     );
 
     return { success: true, user: newUser };
@@ -844,7 +854,7 @@ export class AuthService {
       'ORGANIZER',
       'ĐẶT LẠI MẬT KHẨU',
       target.fullName,
-      `Đặt lại mật khẩu cho tài khoản @${target.username} (${target.fullName}) thành "${plainPassword}" (Đã băm SHA-256).`
+      `Đặt lại mật khẩu cho tài khoản @${target.username} (${target.fullName}) thành công (Đã mã hóa bảo mật).`
     );
 
     return { success: true, newPassword: plainPassword };

@@ -14,6 +14,7 @@ import {
   getGroupLetters,
 } from '@/types';
 import { ScheduleEngine, migrateMatchTimesTo7AM } from './scheduleEngine';
+import { SecureStorage } from '@/utils/secureStorage';
 
 const STORAGE_KEYS = {
   ALL_TOURNAMENTS: 'itftms_all_tournaments_list',
@@ -398,21 +399,37 @@ export class StorageService {
     ];
 
     if (!this.isClient) return cleanInitLog;
-    const data = localStorage.getItem(STORAGE_KEYS.AUDIT_LOGS);
-    if (!data) {
+    let logs = SecureStorage.getItem<AuditLog[]>(STORAGE_KEYS.AUDIT_LOGS);
+    if (!logs || !Array.isArray(logs) || logs.length === 0) {
       this.saveAuditLogs(cleanInitLog);
       return cleanInitLog;
     }
-    try {
-      return JSON.parse(data);
-    } catch {
-      return cleanInitLog;
+
+    // Bảo mật: Tự động loại bỏ bất kỳ thông tin mật khẩu nào còn vướng trong các log cũ
+    let hasChanges = false;
+    logs = logs.map((log) => {
+      if (log.details && (log.details.includes('Mật khẩu') || log.details.includes('password'))) {
+        const sanitized = log.details
+          .replace(/\(Mật khẩu:[^\)]+\)/gi, '(Mật khẩu đã được mã hóa bảo mật)')
+          .replace(/\(Mật khẩu khởi tạo:[^\)]+\)/gi, '(Mật khẩu đã được mã hóa bảo mật)')
+          .replace(/thành "[^"]+"/gi, 'thành công (Đã mã hóa bảo mật)');
+        if (sanitized !== log.details) {
+          hasChanges = true;
+          return { ...log, details: sanitized };
+        }
+      }
+      return log;
+    });
+
+    if (hasChanges) {
+      this.saveAuditLogs(logs);
     }
+    return logs;
   }
 
   static saveAuditLogs(logs: AuditLog[]): void {
     if (!this.isClient) return;
-    localStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, JSON.stringify(logs));
+    SecureStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, logs);
   }
 
   static logAction(actorName: string, actorRole: UserRole, action: string, target: string, details: string, reason?: string): void {
