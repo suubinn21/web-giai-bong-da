@@ -13,7 +13,7 @@ import {
   Tournament,
   getGroupLetters,
 } from '@/types';
-import { ScheduleEngine, migrateMatchTimesTo7AM } from './scheduleEngine';
+import { ScheduleEngine } from './scheduleEngine';
 import { SecureStorage } from '@/utils/secureStorage';
 
 const STORAGE_KEYS = {
@@ -58,11 +58,12 @@ export const initialTournamentsList: Tournament[] = [
   defaultTournament,
 ];
 
-// 3 Pitches per Specification Section 18 & 23
+// 4 Sân thi đấu đồng thời (Vòng bảng 4 sân, Tứ kết 4 sân)
 export const defaultVenues: Venue[] = [
   { id: 'V01', name: 'Sân 1 - Cỏ Nhân Tạo Ký Túc Xá', location: 'Khuôn viên KTX Khu A, ĐHQG', status: 'AVAILABLE' },
   { id: 'V02', name: 'Sân 2 - Trung Tâm Thể Thao', location: 'Sân số 2, Trung tâm GDTC', status: 'AVAILABLE' },
   { id: 'V03', name: 'Sân 3 - Nhà Thi Đấu CNTT', location: 'Sân phụ A, Nhà thi đấu đa năng', status: 'AVAILABLE' },
+  { id: 'V04', name: 'Sân 4 - Cụm Sân Cỏ Mini ĐHQG', location: 'Sân số 4, Cụm sân cỏ mini KTX Khu A', status: 'AVAILABLE' },
 ];
 
 // Referees per Specification Section 24
@@ -195,11 +196,11 @@ export const generateDemoMatches = (
       m1.half = 2;
       m1.completedAt = new Date(Date.now() - 8 * 60 * 1000).toISOString();
       m1.events = [
-        { id: 'E1', matchId: 'M01', type: 'GOAL', minute: 8, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '07:38' },
-        { id: 'E2', matchId: 'M01', type: 'CARD', minute: 15, teamId: awayTeam.id, playerId: awayTeam.players[3]?.id || 'P2', playerName: awayTeam.players[3]?.name || 'Hậu vệ', cardType: 'YELLOW', reason: 'Kéo người thô bạo', timestamp: '07:45' },
-        { id: 'E3', matchId: 'M01', type: 'GOAL', minute: 23, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P3', playerName: awayTeam.players[6]?.name || 'Tiền đạo', timestamp: '07:53' },
-        { id: 'E4', matchId: 'M01', type: 'GOAL', minute: 35, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P4', playerName: homeTeam.players[1]?.name || 'Tiền vệ', timestamp: '08:05' },
-        { id: 'E5', matchId: 'M01', type: 'GOAL', minute: 39, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '08:09' }
+        { id: 'E1', matchId: 'M01', type: 'GOAL', minute: 8, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '06:38' },
+        { id: 'E2', matchId: 'M01', type: 'CARD', minute: 15, teamId: awayTeam.id, playerId: awayTeam.players[3]?.id || 'P2', playerName: awayTeam.players[3]?.name || 'Hậu vệ', cardType: 'YELLOW', reason: 'Kéo người thô bạo', timestamp: '06:45' },
+        { id: 'E3', matchId: 'M01', type: 'GOAL', minute: 23, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P3', playerName: awayTeam.players[6]?.name || 'Tiền đạo', timestamp: '06:53' },
+        { id: 'E4', matchId: 'M01', type: 'GOAL', minute: 35, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P4', playerName: homeTeam.players[1]?.name || 'Tiền vệ', timestamp: '07:05' },
+        { id: 'E5', matchId: 'M01', type: 'GOAL', minute: 39, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P1', playerName: homeTeam.players[6]?.name || 'Tiền đạo', timestamp: '07:09' }
       ];
     }
   }
@@ -215,10 +216,10 @@ export const generateDemoMatches = (
       m2.currentMinute = 28;
       m2.half = 2;
       m2.events = [
-        { id: 'E21', matchId: 'M02', type: 'GOAL', minute: 12, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P5', playerName: homeTeam.players[6]?.name || 'Cầu thủ', timestamp: '07:42' },
-        { id: 'E22', matchId: 'M02', type: 'CARD', minute: 19, teamId: homeTeam.id, playerId: homeTeam.players[2]?.id || 'P6', playerName: homeTeam.players[2]?.name || 'Cầu thủ', cardType: 'YELLOW', reason: 'Vào bóng chậm', timestamp: '07:49' },
-        { id: 'E23', matchId: 'M02', type: 'GOAL', minute: 22, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P7', playerName: awayTeam.players[6]?.name || 'Cầu thủ', timestamp: '07:52' },
-        { id: 'E24', matchId: 'M02', type: 'GOAL', minute: 26, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P8', playerName: homeTeam.players[1]?.name || 'Cầu thủ', timestamp: '07:56' }
+        { id: 'E21', matchId: 'M02', type: 'GOAL', minute: 12, teamId: homeTeam.id, playerId: homeTeam.players[6]?.id || 'P5', playerName: homeTeam.players[6]?.name || 'Cầu thủ', timestamp: '06:42' },
+        { id: 'E22', matchId: 'M02', type: 'CARD', minute: 19, teamId: homeTeam.id, playerId: homeTeam.players[2]?.id || 'P6', playerName: homeTeam.players[2]?.name || 'Cầu thủ', cardType: 'YELLOW', reason: 'Vào bóng chậm', timestamp: '06:49' },
+        { id: 'E23', matchId: 'M02', type: 'GOAL', minute: 22, teamId: awayTeam.id, playerId: awayTeam.players[6]?.id || 'P7', playerName: awayTeam.players[6]?.name || 'Cầu thủ', timestamp: '06:52' },
+        { id: 'E24', matchId: 'M02', type: 'GOAL', minute: 26, teamId: homeTeam.id, playerId: homeTeam.players[1]?.id || 'P8', playerName: homeTeam.players[1]?.name || 'Cầu thủ', timestamp: '06:56' }
       ];
     }
   }
@@ -259,7 +260,7 @@ export class StorageService {
 
   /**
    * Returns matches. Defaults to clean empty array []
-   * Automatically migrates older match times to 07:00 schedule if needed.
+   * Automatically migrates matches to single-day 4-pitch schedule if needed.
    */
   static getMatches(): Match[] {
     if (!this.isClient) return [];
@@ -267,7 +268,15 @@ export class StorageService {
     if (!data) return [];
     try {
       const parsed: Match[] = JSON.parse(data);
-      const { matches: migratedMatches, migrated } = migrateMatchTimesTo7AM(parsed);
+      const teams = this.getTeams();
+      const venues = this.getVenues();
+      const referees = this.getReferees();
+      const { matches: migratedMatches, migrated } = ScheduleEngine.migrateMatchesToSingleDay4Pitches(
+        parsed,
+        teams,
+        venues,
+        referees
+      );
       if (migrated) {
         this.saveMatches(migratedMatches);
       }
@@ -290,7 +299,18 @@ export class StorageService {
       return defaultVenues;
     }
     try {
-      return JSON.parse(data);
+      const parsed: Venue[] = JSON.parse(data);
+      let changed = false;
+      for (const def of defaultVenues) {
+        if (!parsed.some((v) => v.id === def.id || v.name === def.name)) {
+          parsed.push(def);
+          changed = true;
+        }
+      }
+      if (changed) {
+        this.saveVenues(parsed);
+      }
+      return parsed;
     } catch {
       return defaultVenues;
     }

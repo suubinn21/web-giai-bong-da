@@ -275,7 +275,16 @@ export default function Home() {
           AuthService.syncCaptainAccountsForTeams(cloudData.teams);
         }
         if (Array.isArray(cloudData.matches)) {
-          const { matches: migratedMatches, migrated } = migrateMatchTimesTo7AM(cloudData.matches);
+          const currentTeams = Array.isArray(cloudData.teams) ? cloudData.teams : StorageService.getTeams();
+          const currentVenues = Array.isArray(cloudData.venues) ? cloudData.venues : StorageService.getVenues();
+          const currentRefs = Array.isArray(cloudData.referees) ? cloudData.referees : StorageService.getReferees();
+          const { matches: migratedMatches, migrated } = ScheduleEngine.migrateMatchesToSingleDay4Pitches(
+            cloudData.matches,
+            currentTeams,
+            currentVenues,
+            currentRefs,
+            tournament.startDate || '2026-10-15'
+          );
           setMatches(migratedMatches);
           StorageService.saveMatches(migratedMatches);
           if (migrated && tournament.id) {
