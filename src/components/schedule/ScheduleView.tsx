@@ -296,6 +296,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         border: 'hover:border-amber-500/60',
         text: 'text-amber-400',
       },
+      '4': {
+        badge: 'bg-purple-950/90 border-purple-500/50 text-purple-300',
+        border: 'hover:border-purple-500/60',
+        text: 'text-purple-400',
+      },
     };
     const pitchStyle = pitchColorMap[pitchNum] || {
       badge: 'bg-slate-800 border-slate-700 text-slate-300',

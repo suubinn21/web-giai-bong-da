@@ -40,6 +40,7 @@ export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({
   const [format, setFormat] = useState(currentTournament.format || 'Bóng đá 5 người (Futsal)');
   const [numberOfGroups, setNumberOfGroups] = useState<number>(currentTournament.numberOfGroups || 4);
   const [teamsPerGroup, setTeamsPerGroup] = useState<number>(currentTournament.teamsPerGroup || 4);
+  const [numberOfVenues, setNumberOfVenues] = useState<number>(currentTournament.numberOfVenues || 4);
   const [maxTeams, setMaxTeams] = useState<number>(currentTournament.maxTeams || 16);
   const [maxPlayersPerTeam, setMaxPlayersPerTeam] = useState<number>(currentTournament.maxPlayersPerTeam || 12);
   const [matchDurationMinutes, setMatchDurationMinutes] = useState<number>(currentTournament.matchDurationMinutes || 40);
@@ -84,6 +85,7 @@ export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({
       maxTeams,
       numberOfGroups,
       teamsPerGroup,
+      numberOfVenues,
       maxPlayersPerTeam,
       matchDurationMinutes,
       breakDurationMinutes,
@@ -221,11 +223,11 @@ export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({
                 Cấu Hình Số Bảng Đấu & Số Đội 1 Bảng
               </span>
               <span className="text-xs font-mono font-black text-emerald-300 bg-emerald-900/60 px-2.5 py-1 rounded-lg border border-emerald-700/60">
-                {numberOfGroups} Bảng × {teamsPerGroup} Đội = {maxTeams} Đội
+                {numberOfGroups} Bảng × {teamsPerGroup} Đội = {maxTeams} Đội • {numberOfVenues} Sân
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
               <div>
                 <label className="text-[11px] text-slate-300 font-semibold block mb-1">
                   Số lượng bảng đấu
@@ -258,6 +260,23 @@ export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({
                   <option value={5}>5 Đội / bảng</option>
                   <option value={6}>6 Đội / bảng</option>
                   <option value={8}>8 Đội / bảng</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] text-slate-300 font-semibold block mb-1">
+                  Số sân thi đấu
+                </label>
+                <select
+                  value={numberOfVenues}
+                  onChange={(e) => setNumberOfVenues(Number(e.target.value))}
+                  className="w-full bg-slate-800 border border-slate-700 text-cyan-400 font-bold text-xs rounded-xl p-2.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+                >
+                  <option value={2}>2 Sân</option>
+                  <option value={3}>3 Sân</option>
+                  <option value={4}>4 Sân (Chuẩn 4 sân 1 ngày)</option>
+                  <option value={5}>5 Sân</option>
+                  <option value={6}>6 Sân</option>
                 </select>
               </div>
 

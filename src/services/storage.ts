@@ -43,6 +43,7 @@ export const defaultTournament: Tournament = {
   maxTeams: 16,
   numberOfGroups: 4,
   teamsPerGroup: 4,
+  numberOfVenues: 4,
   maxPlayersPerTeam: 12,
   matchDurationMinutes: 40,
   breakDurationMinutes: 5,

@@ -26,7 +26,8 @@ import {
   LogIn,
   LogOut,
   User,
-  ArrowLeft
+  ArrowLeft,
+  MapPin
 } from 'lucide-react';
 import { Tournament, TournamentStatus, UserRole, UserAccount } from '@/types';
 
@@ -568,6 +569,10 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                         </div>
                         <div className="bg-emerald-950/80 border border-emerald-500/40 text-[11px] text-emerald-300 px-2.5 py-1 rounded-lg font-bold">
                           {tour.numberOfGroups || 4} Bảng × {tour.teamsPerGroup || 4} Đội
+                        </div>
+                        <div className="bg-cyan-950/80 border border-cyan-500/40 text-[11px] text-cyan-300 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-cyan-400" />
+                          <span>{tour.numberOfVenues || 4} Sân Thi Đấu</span>
                         </div>
                       </div>
 

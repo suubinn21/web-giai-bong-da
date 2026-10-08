@@ -50,6 +50,7 @@ export interface Tournament {
   numberOfGroups?: number;  // e.g. 2, 3, 4, 6, 8 (default: 4)
   teamsPerGroup?: number;   // e.g. 3, 4, 5, 6 (default: 4)
   advancePerGroup?: number; // e.g. 1, 2 (default: 2)
+  numberOfVenues?: number;  // e.g. 4 (default: 4)
 }
 
 export const getGroupLetters = (num: number = 4): string[] => {
