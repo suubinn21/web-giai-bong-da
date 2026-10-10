@@ -27,6 +27,7 @@ import {
   pushTournamentsListCloud,
   ensureTournamentInitializedInCloud,
   deleteTournamentCloud,
+  subscribeUserAccountsCloud,
 } from '@/services/dbSync';
 import { Header } from '@/components/layout/Header';
 import { Navigation, TabKey } from '@/components/layout/Navigation';
@@ -238,8 +239,21 @@ export default function Home() {
       }
     });
 
+    // Lắng nghe đồng bộ tài khoản người dùng thời gian thực từ Cloud Firestore
+    const unsubAccounts = subscribeUserAccountsCloud((cloudAccounts) => {
+      if (cloudAccounts && Array.isArray(cloudAccounts) && cloudAccounts.length > 0) {
+        AuthService.mergeCloudUsers(cloudAccounts);
+        const updatedCurrent = AuthService.getCurrentUser();
+        if (updatedCurrent) {
+          setCurrentUser(updatedCurrent);
+          setCurrentRole(updatedCurrent.role);
+        }
+      }
+    });
+
     return () => {
       unsubList();
+      unsubAccounts();
     };
   }, []);
 
@@ -406,6 +420,7 @@ export default function Home() {
   const handleClearData = () => {
     if (confirm('Xác nhận: Bạn có muốn XÓA SẠCH toàn bộ dữ liệu mẫu (đội bóng, lịch thi đấu, tỷ số, khiếu nại, thu chi) để bắt đầu giải đấu mới?')) {
       StorageService.clearAllData();
+      StorageService.saveTournamentStatsCache(tournament.id, [], []);
       setTournament(StorageService.getTournament());
       const updatedList = StorageService.getAllTournaments();
       setAllTournaments(updatedList);
@@ -426,6 +441,7 @@ export default function Home() {
         status: 'REGISTRATION',
         auditLogs: updatedLogs,
       });
+      pushTournamentsListCloud(updatedList, tournament.id);
       alert('Đã xóa sạch dữ liệu mẫu thành công! Cơ sở dữ liệu đám mây hiện đã trắng.');
     }
   };

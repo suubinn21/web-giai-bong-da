@@ -809,6 +809,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       value={username}
                       onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                       placeholder={targetRole === 'REFEREE' ? 'vd: referee_hung' : 'vd: btc_admin'}
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                       className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
@@ -847,6 +850,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             ? `Mặc định BTC: ${AuthService.BTC_DEFAULT_PASSWORD}`
                             : 'Mặc định: 123'
                         }
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                         className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
                       />
                       <button

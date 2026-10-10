@@ -247,6 +247,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       required
                       value={loginIdentifier}
                       onChange={(e) => setLoginIdentifier(e.target.value)}
+                      onBlur={() => setLoginIdentifier((prev) => prev.trim())}
                       placeholder="Nhập tên đăng nhập, email hoặc tên đội bóng..."
                       autoComplete="username"
                       autoCapitalize="none"
@@ -258,48 +259,73 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1.5">
-                      Mật khẩu
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder="Nhập mật khẩu..."
-                        autoComplete="current-password"
-                        maxLength={100}
-                        className="w-full pl-10 pr-10 py-2.5 bg-slate-950/70 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors font-mono"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3 text-slate-500 hover:text-slate-300"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Mật khẩu
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-3 w-4 h-4 text-slate-500" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      onBlur={() => setLoginPassword((prev) => prev.trim())}
+                      placeholder="Nhập mật khẩu..."
+                      autoComplete="current-password"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
+                      maxLength={100}
+                      className="w-full pl-10 pr-10 py-2.5 bg-slate-950/70 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-slate-500 hover:text-slate-300"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
+                </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-sm shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50"
-                  >
-                    {loading ? (
-                      <span className="inline-block animate-spin">⏳ Đang xác thực...</span>
-                    ) : (
-                      <>
-                        <LogIn className="w-4 h-4" />
-                        <span>Xác Nhận Đăng Nhập</span>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
+                {/* Helpful Credentials Reminder for Mobile & PC */}
+                <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-[11px] space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    <span>Ban Tổ Chức (BTC):</span>
+                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">admin</span>
+                    <span className="text-slate-400">hoặc</span>
+                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">btc</span>
+                    <span className="text-slate-400">• MK:</span>
+                    <span className="font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800 text-[10px]">Btc@2026!#</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-cyan-400 font-medium">
+                    <Shirt className="w-3.5 h-3.5 shrink-0" />
+                    <span>Đội trưởng:</span>
+                    <span className="text-slate-300">Tên đội hoặc</span>
+                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">captain_...</span>
+                    <span className="text-slate-400">• MK:</span>
+                    <span className="font-mono text-cyan-300 bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-800 text-[10px]">123</span>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-sm shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <span className="inline-block animate-spin">⏳ Đang xác thực...</span>
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4" />
+                      <span>Xác Nhận Đăng Nhập</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
           ) : (
             /* Register Form */
             <form onSubmit={handleRegisterSubmit} className="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">

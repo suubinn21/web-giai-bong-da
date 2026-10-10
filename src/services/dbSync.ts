@@ -18,6 +18,7 @@ import {
   TournamentAward,
   AuditLog,
   TournamentStatus,
+  UserAccount,
 } from '@/types';
 import { StorageService } from './storage';
 
@@ -204,5 +205,76 @@ export async function ensureTournamentInitializedInCloud(
     }
   } catch (err) {
     console.warn('[Firestore] Không thể khởi tạo giải đấu trên cloud:', err);
+  }
+}
+
+/**
+ * Lắng nghe cập nhật danh sách tài khoản người dùng trên Cloud Firestore (Realtime)
+ * Đảm bảo tài khoản tạo trên PC, điện thoại hoặc bất kỳ thiết bị nào đều đồng bộ tức thì 100%
+ */
+export function subscribeUserAccountsCloud(
+  onAccounts: (accounts: UserAccount[]) => void
+): () => void {
+  if (!db || !isFirebaseConfigured()) return () => {};
+
+  try {
+    const docRef = doc(db, 'system', 'user_accounts');
+    const unsubscribe = onSnapshot(
+      docRef,
+      (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (Array.isArray(data.accounts)) {
+            onAccounts(data.accounts as UserAccount[]);
+          }
+        }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi đồng bộ danh sách tài khoản người dùng:', err);
+      }
+    );
+    return unsubscribe;
+  } catch (error) {
+    console.warn('[Firestore] Lỗi kết nối tài khoản người dùng:', error);
+    return () => {};
+  }
+}
+
+/**
+ * Đẩy danh sách tài khoản người dùng lên Cloud Firestore
+ */
+export async function pushUserAccountsCloud(accounts: UserAccount[]): Promise<void> {
+  if (!db || !isFirebaseConfigured()) return;
+
+  try {
+    const docRef = doc(db, 'system', 'user_accounts');
+    const cleaned = cleanForFirestore({
+      accounts,
+      updatedAt: Date.now(),
+    });
+    await setDoc(docRef, cleaned, { merge: true });
+  } catch (err) {
+    console.error('[Firestore] Lỗi lưu danh sách tài khoản lên đám mây:', err);
+  }
+}
+
+/**
+ * Tải trực tiếp danh sách tài khoản người dùng từ Firestore (1 lần khi khởi tạo)
+ */
+export async function fetchUserAccountsCloud(): Promise<UserAccount[]> {
+  if (!db || !isFirebaseConfigured()) return [];
+
+  try {
+    const docRef = doc(db, 'system', 'user_accounts');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (Array.isArray(data.accounts)) {
+        return data.accounts as UserAccount[];
+      }
+    }
+    return [];
+  } catch {
+    return [];
   }
 }
