@@ -315,17 +315,17 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               <div className="space-y-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-mono font-black tracking-widest text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
-                    {tournament.shortCode || 'ITFTMS'}
+                    {tournament?.shortCode || 'ITFTMS'}
                   </span>
                   <span className="text-[11px] font-bold text-slate-300">
-                    {tournament.numberOfGroups || 4} Bảng × {tournament.teamsPerGroup || 4} Đội
+                    {tournament?.numberOfGroups || 4} Bảng × {tournament?.teamsPerGroup || 4} Đội
                   </span>
                 </div>
                 <h3 className="text-sm font-black text-white line-clamp-2">
-                  {tournament.name}
+                  {tournament?.name || 'Giải Bóng Đá'}
                 </h3>
                 <p className="text-[11px] text-slate-400">
-                  {tournament.format || 'Bóng đá 5 người'} • 40 phút • {tournament.maxTeams || 16} đội
+                  {tournament?.format || 'Bóng đá 5 người'} • 40 phút • {tournament?.maxTeams || 16} đội
                 </p>
               </div>
 
