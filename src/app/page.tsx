@@ -725,7 +725,7 @@ export default function Home() {
   }
 
   // View: Outer Portal of All Created Tournaments
-  if (viewMode === 'portal') {
+  if (viewMode === 'portal' || allTournaments.length === 0 || !tournament?.id) {
     return (
       <div className="min-h-screen bg-transparent">
         <TournamentPortal

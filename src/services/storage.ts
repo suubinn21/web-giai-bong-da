@@ -510,16 +510,60 @@ export class StorageService {
     localStorage.setItem(STORAGE_KEYS.DELETED_TOURNAMENTS, JSON.stringify(Array.from(current)));
   }
 
+  static purgeLegacyTournaments(): void {
+    if (!this.isClient) return;
+    const LEGACY_PURGED = ['TOUR-2026-IT', 'TOUR-2026-1663', 'TOUR-2026-6227', 'TOUR-2026-3065'];
+    
+    // Ghi nhận vào danh sách đã xóa
+    LEGACY_PURGED.forEach((id) => this.addDeletedTournamentId(id));
+
+    // Lọc bỏ khỏi ALL_TOURNAMENTS trong localStorage
+    const rawAll = localStorage.getItem(STORAGE_KEYS.ALL_TOURNAMENTS);
+    if (rawAll) {
+      try {
+        const parsed = JSON.parse(rawAll);
+        if (Array.isArray(parsed)) {
+          const filtered = parsed.filter((t) => t && t.id && !LEGACY_PURGED.includes(t.id));
+          localStorage.setItem(STORAGE_KEYS.ALL_TOURNAMENTS, JSON.stringify(filtered));
+        }
+      } catch {}
+    }
+
+    // Xóa activeId nếu trỏ vào giải cũ
+    const activeId = localStorage.getItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID);
+    if (activeId && LEGACY_PURGED.includes(activeId)) {
+      localStorage.removeItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID);
+      localStorage.removeItem(STORAGE_KEYS.TOURNAMENT);
+      localStorage.removeItem(STORAGE_KEYS.TEAMS);
+      localStorage.removeItem(STORAGE_KEYS.MATCHES);
+      localStorage.removeItem(STORAGE_KEYS.COMPLAINTS);
+      localStorage.removeItem(STORAGE_KEYS.FINANCES);
+    }
+
+    // Xóa các key scoped
+    LEGACY_PURGED.forEach((id) => {
+      [
+        `${STORAGE_KEYS.TEAMS}_${id}`,
+        `${STORAGE_KEYS.MATCHES}_${id}`,
+        `${STORAGE_KEYS.VENUES}_${id}`,
+        `${STORAGE_KEYS.REFEREES}_${id}`,
+        `${STORAGE_KEYS.COMPLAINTS}_${id}`,
+        `${STORAGE_KEYS.FINANCES}_${id}`,
+        `${STORAGE_KEYS.AWARDS}_${id}`,
+        `${STORAGE_KEYS.AUDIT_LOGS}_${id}`,
+        `${STORAGE_KEYS.STATUS}_${id}`,
+        `itftms_stats_cache_${id}`,
+      ].forEach((k) => localStorage.removeItem(k));
+    });
+  }
+
   static getAllTournaments(): Tournament[] {
-    if (!this.isClient) return initialTournamentsList;
+    if (!this.isClient) return [];
+    this.purgeLegacyTournaments();
     const deletedIds = new Set(this.getDeletedTournamentIds());
     const data = localStorage.getItem(STORAGE_KEYS.ALL_TOURNAMENTS);
     if (data === null) {
-      if (deletedIds.has(defaultTournament.id)) {
-        return [];
-      }
-      this.saveAllTournaments(initialTournamentsList);
-      return initialTournamentsList;
+      return [];
     }
     try {
       const parsed = JSON.parse(data);
