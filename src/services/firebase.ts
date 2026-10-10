@@ -17,14 +17,18 @@ export const isFirebaseConfigured = (): boolean => {
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Khởi tạo Firestore với cấu hình Long Polling
-// Giúp tránh lỗi ngắt kết nối WebChannel streaming (channel?VER=8... failed)
-// trên các mạng di động (3G/4G/5G), mạng chặn stream hoặc trình duyệt có extension chặn quảng cáo
+// Khởi tạo Firestore với cấu hình Auto-Detect Long Polling
+// Giúp tự động nhận diện và chuyển sang Long Polling trên các mạng di động (3G/4G/5G)
+// hoặc trình duyệt Safari/iOS khi kết nối streaming WebChannel bị hạn chế
 let dbInstance: Firestore;
 try {
-  dbInstance = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
-  });
+  if (typeof window !== 'undefined') {
+    dbInstance = initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: true,
+    });
+  } else {
+    dbInstance = getFirestore(app);
+  }
 } catch {
   dbInstance = getFirestore(app);
 }

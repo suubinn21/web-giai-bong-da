@@ -232,68 +232,95 @@ export default function Home() {
     setTournamentStatus(StorageService.getTournamentStatus());
     setMounted(true);
 
+    // Lắng nghe trạng thái mạng trực tuyến / ngoại tuyến của trình duyệt / thiết bị di động
+    const handleOnline = () => setCloudStatus('connected');
+    const handleOffline = () => setCloudStatus('offline');
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
     // Lắng nghe danh sách các giải đấu trên Firestore
-    const unsubList = subscribeTournamentsListCloud((cloudList) => {
-      if (Array.isArray(cloudList)) {
-        setAllTournaments(cloudList);
-        StorageService.saveAllTournaments(cloudList);
+    const unsubList = subscribeTournamentsListCloud(
+      (cloudList) => {
+        setCloudStatus('connected');
+        if (Array.isArray(cloudList)) {
+          setAllTournaments(cloudList);
+          StorageService.saveAllTournaments(cloudList);
 
-        if (cloudList.length === 0) {
-          setTournament({} as Tournament);
-          setTeams([]);
-          setMatches([]);
-          setFinances([]);
-          setComplaints([]);
-          StorageService.saveTeams([]);
-          StorageService.saveMatches([]);
-          setViewMode('portal');
-        } else {
-          setTournament((prev) => {
-            if (!prev || !prev.id || !cloudList.some((t) => t.id === prev.id)) {
-              return cloudList[0];
-            }
-            return prev;
-          });
-        }
-      }
-    });
-
-    // Lắng nghe danh sách ID các giải đấu đã xóa vĩnh viễn trên Cloud
-    const unsubDeleted = subscribeDeletedTournamentsCloud((cloudDeletedIds) => {
-      if (cloudDeletedIds && Array.isArray(cloudDeletedIds)) {
-        StorageService.mergeDeletedTournamentIds(cloudDeletedIds);
-        const filteredAll = StorageService.getAllTournaments();
-        setAllTournaments(filteredAll);
-
-        // Nếu giải đấu đang chọn nằm trong danh sách đã xóa
-        if (tournament.id && cloudDeletedIds.includes(tournament.id)) {
-          if (filteredAll.length > 0) {
-            handleSelectTournament(filteredAll[0]);
-          } else {
+          if (cloudList.length === 0) {
             setTournament({} as Tournament);
             setTeams([]);
             setMatches([]);
             setFinances([]);
             setComplaints([]);
+            StorageService.saveTeams([]);
+            StorageService.saveMatches([]);
             setViewMode('portal');
+          } else {
+            setTournament((prev) => {
+              if (!prev || !prev.id || !cloudList.some((t) => t.id === prev.id)) {
+                return cloudList[0];
+              }
+              return prev;
+            });
           }
         }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi đồng bộ danh sách giải đấu:', err);
+        setCloudStatus('offline');
       }
-    });
+    );
+
+    // Lắng nghe danh sách ID các giải đấu đã xóa vĩnh viễn trên Cloud
+    const unsubDeleted = subscribeDeletedTournamentsCloud(
+      (cloudDeletedIds) => {
+        setCloudStatus('connected');
+        if (cloudDeletedIds && Array.isArray(cloudDeletedIds)) {
+          StorageService.mergeDeletedTournamentIds(cloudDeletedIds);
+          const filteredAll = StorageService.getAllTournaments();
+          setAllTournaments(filteredAll);
+
+          // Nếu giải đấu đang chọn nằm trong danh sách đã xóa
+          if (tournament.id && cloudDeletedIds.includes(tournament.id)) {
+            if (filteredAll.length > 0) {
+              handleSelectTournament(filteredAll[0]);
+            } else {
+              setTournament({} as Tournament);
+              setTeams([]);
+              setMatches([]);
+              setFinances([]);
+              setComplaints([]);
+              setViewMode('portal');
+            }
+          }
+        }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi đồng bộ giải đấu đã xóa:', err);
+      }
+    );
 
     // Lắng nghe đồng bộ tài khoản người dùng thời gian thực từ Cloud Firestore
-    const unsubAccounts = subscribeUserAccountsCloud((cloudAccounts) => {
-      if (cloudAccounts && Array.isArray(cloudAccounts) && cloudAccounts.length > 0) {
-        AuthService.mergeCloudUsers(cloudAccounts);
-        const updatedCurrent = AuthService.getCurrentUser();
-        if (updatedCurrent) {
-          setCurrentUser(updatedCurrent);
-          setCurrentRole(updatedCurrent.role);
+    const unsubAccounts = subscribeUserAccountsCloud(
+      (cloudAccounts) => {
+        setCloudStatus('connected');
+        if (cloudAccounts && Array.isArray(cloudAccounts) && cloudAccounts.length > 0) {
+          AuthService.mergeCloudUsers(cloudAccounts);
+          const updatedCurrent = AuthService.getCurrentUser();
+          if (updatedCurrent) {
+            setCurrentUser(updatedCurrent);
+            setCurrentRole(updatedCurrent.role);
+          }
         }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi đồng bộ tài khoản người dùng:', err);
       }
-    });
+    );
 
     return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
       unsubList();
       unsubDeleted();
       unsubAccounts();
@@ -1081,6 +1108,7 @@ export default function Home() {
         onLogout={handleLogout}
         onGoBack={handleGoBack}
         canGoBack={canGoBack}
+        cloudStatus={cloudStatus}
       />
 
       {/* Authentication Modal */}

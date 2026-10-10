@@ -52,7 +52,8 @@ function cleanForFirestore<T>(data: T): T {
  * luôn nhìn thấy đúng 100% tất cả các giải đấu vừa được tạo.
  */
 export function subscribeTournamentsListCloud(
-  onList: (list: Tournament[], activeId?: string) => void
+  onList: (list: Tournament[], activeId?: string) => void,
+  onError?: (err: Error) => void
 ): () => void {
   if (!db || !isFirebaseConfigured()) return () => {};
 
@@ -90,11 +91,13 @@ export function subscribeTournamentsListCloud(
       },
       (err) => {
         console.warn('[Firestore] Lỗi đồng bộ danh sách giải đấu:', err);
+        if (onError) onError(err);
       }
     );
     return unsubscribe;
   } catch (error) {
     console.warn('[Firestore] Lỗi kết nối danh sách giải đấu:', error);
+    if (onError && error instanceof Error) onError(error);
     return () => {};
   }
 }
@@ -183,23 +186,32 @@ export async function deleteTournamentCloud(tournamentId: string): Promise<void>
  * Lắng nghe danh sách ID các giải đấu đã xóa vĩnh viễn trên Cloud Firestore
  */
 export function subscribeDeletedTournamentsCloud(
-  onDeleted: (ids: string[]) => void
+  onDeleted: (ids: string[]) => void,
+  onError?: (err: Error) => void
 ): () => void {
   if (!db || !isFirebaseConfigured()) return () => {};
 
   try {
     const metaRef = doc(db, 'meta', 'deleted_tournaments');
-    const unsubscribe = onSnapshot(metaRef, (snap) => {
-      if (snap.exists()) {
-        const data = snap.data();
-        if (Array.isArray(data.ids)) {
-          onDeleted(data.ids as string[]);
+    const unsubscribe = onSnapshot(
+      metaRef,
+      (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (Array.isArray(data.ids)) {
+            onDeleted(data.ids as string[]);
+          }
         }
+      },
+      (err) => {
+        console.warn('[Firestore] Lỗi lắng nghe giải đấu đã xóa:', err);
+        if (onError) onError(err);
       }
-    });
+    );
     return unsubscribe;
   } catch (err) {
     console.warn('[Firestore] Lỗi lắng nghe giải đấu đã xóa:', err);
+    if (onError && err instanceof Error) onError(err);
     return () => {};
   }
 }
@@ -270,7 +282,8 @@ export async function ensureTournamentInitializedInCloud(
  * Đảm bảo tài khoản tạo trên PC, điện thoại hoặc bất kỳ thiết bị nào đều đồng bộ tức thì 100%
  */
 export function subscribeUserAccountsCloud(
-  onAccounts: (accounts: UserAccount[]) => void
+  onAccounts: (accounts: UserAccount[]) => void,
+  onError?: (err: Error) => void
 ): () => void {
   if (!db || !isFirebaseConfigured()) return () => {};
 
@@ -288,11 +301,13 @@ export function subscribeUserAccountsCloud(
       },
       (err) => {
         console.warn('[Firestore] Lỗi đồng bộ danh sách tài khoản người dùng:', err);
+        if (onError) onError(err);
       }
     );
     return unsubscribe;
   } catch (error) {
     console.warn('[Firestore] Lỗi kết nối tài khoản người dùng:', error);
+    if (onError && error instanceof Error) onError(error);
     return () => {};
   }
 }

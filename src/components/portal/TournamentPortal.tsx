@@ -206,7 +206,9 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               title={
                 cloudStatus === 'connected'
                   ? '🟢 Firebase Firestore Realtime: Dữ liệu đám mây đang kết nối đồng bộ trực tiếp'
-                  : 'Đang kết nối...'
+                  : cloudStatus === 'connecting'
+                  ? '🟡 Đang kết nối đến Firebase...'
+                  : '⚪ Chế độ ngoại tuyến'
               }
             >
               <span className="relative flex h-2 w-2">
@@ -215,13 +217,17 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                 )}
                 <span
                   className={`relative inline-flex rounded-full h-2 w-2 ${
-                    cloudStatus === 'connected' ? 'bg-emerald-400' : 'bg-amber-400'
+                    cloudStatus === 'connected'
+                      ? 'bg-emerald-400'
+                      : cloudStatus === 'connecting'
+                      ? 'bg-amber-400'
+                      : 'bg-slate-500'
                   }`}
                 ></span>
               </span>
-              <Cloud className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline font-mono font-bold text-[11px]">
-                {cloudStatus === 'connected' ? 'Cloud Sync' : 'Đang kết nối...'}
+              <Cloud className="w-3.5 h-3.5 shrink-0" />
+              <span className="font-mono font-bold text-[10px] sm:text-[11px] whitespace-nowrap">
+                {cloudStatus === 'connected' ? 'Cloud Sync' : cloudStatus === 'connecting' ? 'Kết nối...' : 'Offline'}
               </span>
             </div>
 
