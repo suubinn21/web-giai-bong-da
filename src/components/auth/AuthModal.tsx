@@ -5,6 +5,7 @@ import {
   X, 
   LogIn, 
   UserPlus, 
+  ShieldCheck,
   Trophy, 
   Lock, 
   Mail, 
@@ -287,6 +288,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
+                {/* Helpful Credentials Reminder for Ban Tổ Chức (BTC) */}
+                <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-[11px]">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold flex-wrap">
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                    <span>Ban Tổ Chức (BTC):</span>
+                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">admin</span>
+                    <span className="text-slate-400">hoặc</span>
+                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">btc</span>
+                    <span className="text-slate-400">• MK:</span>
+                    <span className="font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800 text-[10px]">Btc@2026!#</span>
+                  </div>
+                </div>
 
                 <button
                   type="submit"
