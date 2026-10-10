@@ -237,6 +237,24 @@ export default function Home() {
       if (Array.isArray(cloudList)) {
         setAllTournaments(cloudList);
         StorageService.saveAllTournaments(cloudList);
+
+        if (cloudList.length === 0) {
+          setTournament({} as Tournament);
+          setTeams([]);
+          setMatches([]);
+          setFinances([]);
+          setComplaints([]);
+          StorageService.saveTeams([]);
+          StorageService.saveMatches([]);
+          setViewMode('portal');
+        } else {
+          setTournament((prev) => {
+            if (!prev || !prev.id || !cloudList.some((t) => t.id === prev.id)) {
+              return cloudList[0];
+            }
+            return prev;
+          });
+        }
       }
     });
 
@@ -285,20 +303,6 @@ export default function Home() {
   // Lắng nghe cập nhật thời gian thực (Real-time) cho giải đấu đang chọn
   useEffect(() => {
     if (!tournament.id || StorageService.isTournamentDeleted(tournament.id)) return;
-
-    // Đảm bảo dữ liệu ban đầu đã có trên Cloud
-    ensureTournamentInitializedInCloud(tournament.id, {
-      tournament,
-      teams: StorageService.getTeams(),
-      matches: StorageService.getMatches(),
-      venues: StorageService.getVenues(),
-      referees: StorageService.getReferees(),
-      complaints: StorageService.getComplaints(),
-      finances: StorageService.getFinances(),
-      awards: StorageService.getAwards(),
-      auditLogs: StorageService.getAuditLogs(),
-      status: StorageService.getTournamentStatus(),
-    });
 
     // Lắng nghe thời gian thực Firestore
     const unsub = subscribeTournamentCloud(

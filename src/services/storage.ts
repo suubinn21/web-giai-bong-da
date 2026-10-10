@@ -56,9 +56,7 @@ export const defaultTournament: Tournament = {
   description: 'Giải bóng đá sinh viên thường niên Khoa Công nghệ Thông tin năm 2026.',
 };
 
-export const initialTournamentsList: Tournament[] = [
-  defaultTournament,
-];
+export const initialTournamentsList: Tournament[] = [];
 
 // 4 Sân thi đấu đồng thời (Vòng bảng 4 sân, Tứ kết 4 sân)
 export const defaultVenues: Venue[] = [
@@ -540,7 +538,7 @@ export class StorageService {
   }
 
   static getActiveTournamentId(): string {
-    if (!this.isClient) return defaultTournament.id;
+    if (!this.isClient) return '';
     const id = localStorage.getItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID);
     if (id && !this.isTournamentDeleted(id)) return id;
     const all = this.getAllTournaments();
@@ -557,39 +555,10 @@ export class StorageService {
   }
 
   static getTournament(): Tournament {
-    if (!this.isClient) return defaultTournament;
-    const deletedIds = new Set(this.getDeletedTournamentIds());
-    const all = this.getAllTournaments();
-    const activeId = this.getActiveTournamentId();
-
-    if (activeId && !deletedIds.has(activeId)) {
-      const found = all.find((t) => t.id === activeId);
-      if (found) return found;
-    }
-
-    if (all.length > 0) {
-      this.setActiveTournamentId(all[0].id);
-      return all[0];
-    }
-
-    const data = localStorage.getItem(STORAGE_KEYS.TOURNAMENT);
-    if (data) {
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed && parsed.id && !deletedIds.has(parsed.id)) {
-          return parsed;
-        }
-      } catch {}
-    }
-
-    if (!deletedIds.has(defaultTournament.id)) {
-      return defaultTournament;
-    }
-
-    return {
+    const blankTournament: Tournament = {
       id: '',
-      name: 'Chưa có giải đấu',
-      shortCode: 'NONE',
+      name: '',
+      shortCode: '',
       year: 2026,
       organizer: '',
       format: 'Bóng đá 5 người (Futsal)',
@@ -607,6 +576,23 @@ export class StorageService {
       status: 'REGISTRATION',
       description: '',
     };
+
+    if (!this.isClient) return blankTournament;
+    const deletedIds = new Set(this.getDeletedTournamentIds());
+    const all = this.getAllTournaments();
+    const activeId = this.getActiveTournamentId();
+
+    if (activeId && !deletedIds.has(activeId)) {
+      const found = all.find((t) => t.id === activeId);
+      if (found) return found;
+    }
+
+    if (all.length > 0) {
+      this.setActiveTournamentId(all[0].id);
+      return all[0];
+    }
+
+    return blankTournament;
   }
 
   static saveTournament(tournament: Tournament): void {
