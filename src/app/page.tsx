@@ -323,7 +323,7 @@ export default function Home() {
         }
         if (Array.isArray(cloudData.awards)) {
           const cleanedAwards = cloudData.awards.filter(
-            (a: TournamentAward) => a.code !== 'TOP_SCORER' && a.code !== 'BEST_PLAYER' && a.code !== 'FAIR_PLAY'
+            (a: TournamentAward) => a.code !== 'TOP_SCORER' && a.code !== 'FAIR_PLAY'
           );
           setAwards(cleanedAwards);
           StorageService.saveAwards(cleanedAwards);
@@ -927,6 +927,8 @@ export default function Home() {
             awards={awards}
             onAwardsUpdate={handleAwardsUpdate}
             currentRole={currentRole}
+            matches={matches}
+            teams={teams}
           />
         )}
 

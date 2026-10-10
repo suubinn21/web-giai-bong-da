@@ -82,6 +82,7 @@ export const defaultCleanAwards: TournamentAward[] = [
   { id: 'AW-01', code: 'CHAMPION', title: '🥇 Cúp Vô Địch (Giải Nhất)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Chung kết', prizeMoney: 4000000, icon: '🏆', customImage: '/images/trophy-celebration.jpg' },
   { id: 'AW-02', code: 'RUNNER_UP', title: '🥈 Giải Nhì (Á Quân)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Chung kết', prizeMoney: 2500000, icon: '🥈' },
   { id: 'AW-03', code: 'THIRD_PLACE', title: '🥉 Giải Ba (Hạng Ba)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ Tranh 3-4', prizeMoney: 1500000, icon: '🥉' },
+  { id: 'AW-04', code: 'BEST_PLAYER', title: '⭐ Cầu Thủ Xuất Sắc Nhất (Knockout)', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả vòng Knockout', prizeMoney: 1000000, icon: '⭐', customImage: '/images/tournament-hero.jpg' },
   { id: 'AW-05', code: 'BEST_GK', title: '🧤 Thủ Môn Xuất Sắc Nhất', recipientName: 'Chưa xác định', recipientTeam: 'Chờ kết quả thi đấu', prizeMoney: 500000, icon: '🧤', customImage: '/images/goalkeeper-save.jpg' },
 ];
 
@@ -387,12 +388,20 @@ export class StorageService {
       return defaultCleanAwards;
     }
     try {
-      const parsed: TournamentAward[] = JSON.parse(data);
-      // Lọc bỏ các danh hiệu đã yêu cầu xóa (Vua Phá Lưới, Cầu Thủ Xuất Sắc, Phong Cách)
+      let parsed: TournamentAward[] = JSON.parse(data);
+      // Lọc bỏ danh hiệu FAIR_PLAY và TOP_SCORER nếu còn tồn dư cũ
       const filtered = parsed.filter(
-        (a) => a.code !== 'TOP_SCORER' && a.code !== 'BEST_PLAYER' && a.code !== 'FAIR_PLAY'
+        (a) => a.code !== 'FAIR_PLAY' && a.code !== 'TOP_SCORER'
       );
-      if (filtered.length !== parsed.length) {
+      // Đảm bảo BEST_PLAYER (Cầu thủ xuất sắc nhất Knockout) luôn có trong danh sách
+      const hasBestPlayer = filtered.some((a) => a.code === 'BEST_PLAYER');
+      if (!hasBestPlayer) {
+        const bestPlayerDef = defaultCleanAwards.find((a) => a.code === 'BEST_PLAYER');
+        if (bestPlayerDef) {
+          filtered.push(bestPlayerDef);
+        }
+      }
+      if (filtered.length !== parsed.length || !hasBestPlayer) {
         this.saveAwards(filtered);
       }
       return filtered;
