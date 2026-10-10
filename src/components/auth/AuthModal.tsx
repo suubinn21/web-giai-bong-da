@@ -5,7 +5,6 @@ import {
   X, 
   LogIn, 
   UserPlus, 
-  ShieldCheck, 
   Trophy, 
   Lock, 
   Mail, 
@@ -16,7 +15,6 @@ import {
   CheckCircle2, 
   AlertCircle,
   GraduationCap,
-  Shirt,
   Scale
 } from 'lucide-react';
 import { UserAccount, UserRole } from '@/types';
@@ -289,26 +287,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                {/* Helpful Credentials Reminder for Mobile & PC */}
-                <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 text-[11px] space-y-1.5">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                    <span>Ban Tổ Chức (BTC):</span>
-                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">admin</span>
-                    <span className="text-slate-400">hoặc</span>
-                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">btc</span>
-                    <span className="text-slate-400">• MK:</span>
-                    <span className="font-mono text-emerald-300 bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800 text-[10px]">Btc@2026!#</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-cyan-400 font-medium">
-                    <Shirt className="w-3.5 h-3.5 shrink-0" />
-                    <span>Đội trưởng:</span>
-                    <span className="text-slate-300">Tên đội hoặc</span>
-                    <span className="font-mono text-white bg-slate-800 px-1.5 py-0.5 rounded text-[10px]">captain_...</span>
-                    <span className="text-slate-400">• MK:</span>
-                    <span className="font-mono text-cyan-300 bg-cyan-950 px-1.5 py-0.5 rounded border border-cyan-800 text-[10px]">123</span>
-                  </div>
-                </div>
 
                 <button
                   type="submit"
