@@ -28,6 +28,7 @@ import {
   ensureTournamentInitializedInCloud,
   deleteTournamentCloud,
   subscribeUserAccountsCloud,
+  subscribeDeletedTournamentsCloud,
 } from '@/services/dbSync';
 import { Header } from '@/components/layout/Header';
 import { Navigation, TabKey } from '@/components/layout/Navigation';
@@ -233,9 +234,32 @@ export default function Home() {
 
     // Lắng nghe danh sách các giải đấu trên Firestore
     const unsubList = subscribeTournamentsListCloud((cloudList) => {
-      if (cloudList && cloudList.length > 0) {
+      if (Array.isArray(cloudList)) {
         setAllTournaments(cloudList);
         StorageService.saveAllTournaments(cloudList);
+      }
+    });
+
+    // Lắng nghe danh sách ID các giải đấu đã xóa vĩnh viễn trên Cloud
+    const unsubDeleted = subscribeDeletedTournamentsCloud((cloudDeletedIds) => {
+      if (cloudDeletedIds && Array.isArray(cloudDeletedIds)) {
+        StorageService.mergeDeletedTournamentIds(cloudDeletedIds);
+        const filteredAll = StorageService.getAllTournaments();
+        setAllTournaments(filteredAll);
+
+        // Nếu giải đấu đang chọn nằm trong danh sách đã xóa
+        if (tournament.id && cloudDeletedIds.includes(tournament.id)) {
+          if (filteredAll.length > 0) {
+            handleSelectTournament(filteredAll[0]);
+          } else {
+            setTournament({} as Tournament);
+            setTeams([]);
+            setMatches([]);
+            setFinances([]);
+            setComplaints([]);
+            setViewMode('portal');
+          }
+        }
       }
     });
 
@@ -253,13 +277,14 @@ export default function Home() {
 
     return () => {
       unsubList();
+      unsubDeleted();
       unsubAccounts();
     };
   }, []);
 
   // Lắng nghe cập nhật thời gian thực (Real-time) cho giải đấu đang chọn
   useEffect(() => {
-    if (!tournament.id) return;
+    if (!tournament.id || StorageService.isTournamentDeleted(tournament.id)) return;
 
     // Đảm bảo dữ liệu ban đầu đã có trên Cloud
     ensureTournamentInitializedInCloud(tournament.id, {
@@ -406,15 +431,29 @@ export default function Home() {
     setActiveTab('home');
   };
 
-  const handleDeleteTournament = (tourId: string) => {
+  const handleDeleteTournament = async (tourId: string) => {
     StorageService.deleteTournament(tourId);
-    const updatedList = StorageService.getAllTournaments().filter((t) => t.id !== tourId);
+    const updatedList = StorageService.getAllTournaments();
     setAllTournaments(updatedList);
-    if (tournament.id === tourId && updatedList.length > 0) {
-      setTournament(updatedList[0]);
+
+    if (tournament.id === tourId) {
+      if (updatedList.length > 0) {
+        handleSelectTournament(updatedList[0]);
+      } else {
+        setTournament({} as Tournament);
+        setTeams([]);
+        setMatches([]);
+        setVenues([]);
+        setReferees([]);
+        setComplaints([]);
+        setFinances([]);
+        setAwards([]);
+        setViewMode('portal');
+      }
     }
-    deleteTournamentCloud(tourId);
-    pushTournamentsListCloud(updatedList);
+
+    await deleteTournamentCloud(tourId);
+    await pushTournamentsListCloud(updatedList, updatedList[0]?.id);
   };
 
   const handleClearData = () => {

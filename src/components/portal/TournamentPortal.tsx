@@ -479,7 +479,26 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             )}
           </div>
 
-          {filteredTournaments.length === 0 ? (
+          {totalTournaments === 0 ? (
+            <div className="bg-[#0B132B]/80 border border-slate-800 rounded-3xl p-12 text-center space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center mx-auto text-emerald-400">
+                <Trophy className="w-8 h-8" />
+              </div>
+              <div className="text-xl font-bold text-white">Chưa có giải đấu nào trong hệ thống</div>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
+                Tất cả giải đấu đã được dọn sạch hoàn toàn. Bạn có thể bấm nút bên dưới để khởi tạo giải đấu mới.
+              </p>
+              {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
+                <button
+                  onClick={onCreateTournament}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-xl shadow-emerald-500/20 transition-all inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tạo Giải Đấu Mới</span>
+                </button>
+              )}
+            </div>
+          ) : filteredTournaments.length === 0 ? (
             <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-12 text-center space-y-4">
               <Trophy className="w-12 h-12 text-slate-600 mx-auto" />
               <div className="text-lg font-bold text-slate-300">Không tìm thấy giải đấu phù hợp</div>

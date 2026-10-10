@@ -6,6 +6,7 @@ import {
   setDoc,
   getDoc,
   deleteDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import {
   Tournament,
@@ -60,27 +61,32 @@ export function subscribeTournamentsListCloud(
     const unsubscribe = onSnapshot(
       colRef,
       (snapshot) => {
-        if (!snapshot.empty) {
-          const cloudTournaments: Tournament[] = [];
-          snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            if (data.tournament && data.tournament.id) {
-              cloudTournaments.push(data.tournament);
-              // Lưu trước cache số đội và số trận đấu vào StorageService để hiển thị trên Portal
-              if (Array.isArray(data.teams) || Array.isArray(data.matches)) {
-                StorageService.saveTournamentStatsCache(
-                  data.tournament.id,
-                  data.teams || [],
-                  data.matches || []
-                );
-              }
-            }
-          });
-
-          if (cloudTournaments.length > 0) {
-            onList(cloudTournaments);
-          }
+        const deletedIds = new Set(StorageService.getDeletedTournamentIds());
+        if (snapshot.empty) {
+          onList([]);
+          return;
         }
+
+        const cloudTournaments: Tournament[] = [];
+        snapshot.forEach((docSnap) => {
+          const docId = docSnap.id;
+          if (deletedIds.has(docId)) return;
+
+          const data = docSnap.data();
+          if (data.tournament && data.tournament.id && !deletedIds.has(data.tournament.id)) {
+            cloudTournaments.push(data.tournament);
+            // Lưu trước cache số đội và số trận đấu vào StorageService để hiển thị trên Portal
+            if (Array.isArray(data.teams) || Array.isArray(data.matches)) {
+              StorageService.saveTournamentStatsCache(
+                data.tournament.id,
+                data.teams || [],
+                data.matches || []
+              );
+            }
+          }
+        });
+
+        onList(cloudTournaments);
       },
       (err) => {
         console.warn('[Firestore] Lỗi đồng bộ danh sách giải đấu:', err);
@@ -149,7 +155,7 @@ export async function pushTournamentCloud(
 }
 
 /**
- * Xóa một giải đấu khỏi Cloud
+ * Xóa một giải đấu khỏi Cloud và lưu vào danh sách đã xóa vĩnh viễn (Tombstone)
  */
 export async function deleteTournamentCloud(tournamentId: string): Promise<void> {
   if (!db || !isFirebaseConfigured() || !tournamentId) return;
@@ -157,8 +163,44 @@ export async function deleteTournamentCloud(tournamentId: string): Promise<void>
   try {
     const docRef = doc(db, 'tournament_data', tournamentId);
     await deleteDoc(docRef);
+
+    // Ghi nhận tombstone lên Cloud để mọi thiết bị không bao giờ tự ý tạo lại
+    const metaRef = doc(db, 'meta', 'deleted_tournaments');
+    await setDoc(
+      metaRef,
+      {
+        ids: arrayUnion(tournamentId),
+        updatedAt: Date.now(),
+      },
+      { merge: true }
+    );
   } catch (err) {
     console.error('[Firestore] Lỗi xóa giải đấu khỏi đám mây:', err);
+  }
+}
+
+/**
+ * Lắng nghe danh sách ID các giải đấu đã xóa vĩnh viễn trên Cloud Firestore
+ */
+export function subscribeDeletedTournamentsCloud(
+  onDeleted: (ids: string[]) => void
+): () => void {
+  if (!db || !isFirebaseConfigured()) return () => {};
+
+  try {
+    const metaRef = doc(db, 'meta', 'deleted_tournaments');
+    const unsubscribe = onSnapshot(metaRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (Array.isArray(data.ids)) {
+          onDeleted(data.ids as string[]);
+        }
+      }
+    });
+    return unsubscribe;
+  } catch (err) {
+    console.warn('[Firestore] Lỗi lắng nghe giải đấu đã xóa:', err);
+    return () => {};
   }
 }
 
@@ -185,7 +227,8 @@ export async function pushTournamentsListCloud(
 }
 
 /**
- * Kiểm tra xem giải đấu đã có trên Firestore chưa, nếu chưa có thì khởi tạo ban đầu
+ * Kiểm tra xem giải đấu đã có trên Firestore chưa, nếu chưa có thì khởi tạo ban đầu.
+ * TUYỆT ĐỐI KHÔNG khởi tạo lại các giải đấu đã bị xóa!
  */
 export async function ensureTournamentInitializedInCloud(
   tournamentId: string,
@@ -193,7 +236,21 @@ export async function ensureTournamentInitializedInCloud(
 ): Promise<void> {
   if (!db || !isFirebaseConfigured() || !tournamentId) return;
 
+  // 1. Nếu đã bị đánh dấu xóa trong StorageService, không khởi tạo
+  if (StorageService.isTournamentDeleted(tournamentId)) return;
+
   try {
+    // 2. Kiểm tra danh sách đã xóa trên Cloud
+    const metaRef = doc(db, 'meta', 'deleted_tournaments');
+    const metaSnap = await getDoc(metaRef);
+    if (metaSnap.exists()) {
+      const metaData = metaSnap.data();
+      if (Array.isArray(metaData.ids) && metaData.ids.includes(tournamentId)) {
+        StorageService.addDeletedTournamentId(tournamentId);
+        return;
+      }
+    }
+
     const docRef = doc(db, 'tournament_data', tournamentId);
     const snap = await getDoc(docRef);
     if (!snap.exists()) {

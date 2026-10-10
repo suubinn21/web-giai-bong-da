@@ -31,6 +31,7 @@ const STORAGE_KEYS = {
   STATUS: 'itftms_tournament_status_2026',
   CURRENT_ROLE: 'itftms_current_role_2026',
   INITIALIZED: 'itftms_initialized_2026',
+  DELETED_TOURNAMENTS: 'itftms_deleted_tournaments_2026',
 };
 
 export const defaultTournament: Tournament = {
@@ -478,21 +479,58 @@ export class StorageService {
     this.saveAuditLogs(logs);
   }
 
+  static getDeletedTournamentIds(): string[] {
+    if (!this.isClient) return [];
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.DELETED_TOURNAMENTS);
+      return data ? JSON.parse(data) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  static addDeletedTournamentId(id: string): void {
+    if (!this.isClient || !id) return;
+    const current = this.getDeletedTournamentIds();
+    if (!current.includes(id)) {
+      current.push(id);
+      localStorage.setItem(STORAGE_KEYS.DELETED_TOURNAMENTS, JSON.stringify(current));
+    }
+  }
+
+  static isTournamentDeleted(id: string): boolean {
+    if (!id) return false;
+    return this.getDeletedTournamentIds().includes(id);
+  }
+
+  static mergeDeletedTournamentIds(ids: string[]): void {
+    if (!this.isClient || !Array.isArray(ids)) return;
+    const current = new Set(this.getDeletedTournamentIds());
+    ids.forEach((id) => {
+      if (id) current.add(id);
+    });
+    localStorage.setItem(STORAGE_KEYS.DELETED_TOURNAMENTS, JSON.stringify(Array.from(current)));
+  }
+
   static getAllTournaments(): Tournament[] {
     if (!this.isClient) return initialTournamentsList;
+    const deletedIds = new Set(this.getDeletedTournamentIds());
     const data = localStorage.getItem(STORAGE_KEYS.ALL_TOURNAMENTS);
-    if (!data) {
+    if (data === null) {
+      if (deletedIds.has(defaultTournament.id)) {
+        return [];
+      }
       this.saveAllTournaments(initialTournamentsList);
       return initialTournamentsList;
     }
     try {
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+      if (Array.isArray(parsed)) {
+        return parsed.filter((t) => t && t.id && !deletedIds.has(t.id));
       }
-      return initialTournamentsList;
+      return [];
     } catch {
-      return initialTournamentsList;
+      return [];
     }
   }
 
@@ -503,7 +541,10 @@ export class StorageService {
 
   static getActiveTournamentId(): string {
     if (!this.isClient) return defaultTournament.id;
-    return localStorage.getItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID) || defaultTournament.id;
+    const id = localStorage.getItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID);
+    if (id && !this.isTournamentDeleted(id)) return id;
+    const all = this.getAllTournaments();
+    return all.length > 0 ? all[0].id : '';
   }
 
   static setActiveTournamentId(id: string): void {
@@ -517,20 +558,55 @@ export class StorageService {
 
   static getTournament(): Tournament {
     if (!this.isClient) return defaultTournament;
-    const activeId = this.getActiveTournamentId();
+    const deletedIds = new Set(this.getDeletedTournamentIds());
     const all = this.getAllTournaments();
-    const found = all.find((t) => t.id === activeId);
-    if (found) return found;
+    const activeId = this.getActiveTournamentId();
+
+    if (activeId && !deletedIds.has(activeId)) {
+      const found = all.find((t) => t.id === activeId);
+      if (found) return found;
+    }
+
+    if (all.length > 0) {
+      this.setActiveTournamentId(all[0].id);
+      return all[0];
+    }
 
     const data = localStorage.getItem(STORAGE_KEYS.TOURNAMENT);
     if (data) {
       try {
-        return JSON.parse(data);
-      } catch {
-        return defaultTournament;
-      }
+        const parsed = JSON.parse(data);
+        if (parsed && parsed.id && !deletedIds.has(parsed.id)) {
+          return parsed;
+        }
+      } catch {}
     }
-    return defaultTournament;
+
+    if (!deletedIds.has(defaultTournament.id)) {
+      return defaultTournament;
+    }
+
+    return {
+      id: '',
+      name: 'Chưa có giải đấu',
+      shortCode: 'NONE',
+      year: 2026,
+      organizer: '',
+      format: 'Bóng đá 5 người (Futsal)',
+      maxTeams: 16,
+      numberOfGroups: 4,
+      teamsPerGroup: 4,
+      numberOfVenues: 4,
+      maxPlayersPerTeam: 12,
+      matchDurationMinutes: 40,
+      breakDurationMinutes: 5,
+      registrationFee: 500000,
+      depositFee: 50000,
+      startDate: '2026-10-15',
+      endDate: '2026-10-25',
+      status: 'REGISTRATION',
+      description: '',
+    };
   }
 
   static saveTournament(tournament: Tournament): void {
@@ -558,22 +634,55 @@ export class StorageService {
   }
 
   static deleteTournament(id: string): void {
-    if (!this.isClient) return;
-    let all = this.getAllTournaments();
-    all = all.filter((t) => t.id !== id);
-    if (all.length === 0) {
-      all = [defaultTournament];
-    }
+    if (!this.isClient || !id) return;
+    this.addDeletedTournamentId(id);
+
+    let all = this.getAllTournaments().filter((t) => t.id !== id);
     this.saveAllTournaments(all);
+
     if (this.getActiveTournamentId() === id) {
-      this.setActiveTournamentId(all[0].id);
+      if (all.length > 0) {
+        this.setActiveTournamentId(all[0].id);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.ACTIVE_TOURNAMENT_ID);
+        localStorage.removeItem(STORAGE_KEYS.TOURNAMENT);
+      }
     }
+
+    // Xóa sạch dữ liệu của giải đấu này trong localStorage
+    const keysToPurge = [
+      `${STORAGE_KEYS.TEAMS}_${id}`,
+      `${STORAGE_KEYS.MATCHES}_${id}`,
+      `${STORAGE_KEYS.VENUES}_${id}`,
+      `${STORAGE_KEYS.REFEREES}_${id}`,
+      `${STORAGE_KEYS.COMPLAINTS}_${id}`,
+      `${STORAGE_KEYS.FINANCES}_${id}`,
+      `${STORAGE_KEYS.AWARDS}_${id}`,
+      `${STORAGE_KEYS.AUDIT_LOGS}_${id}`,
+      `${STORAGE_KEYS.STATUS}_${id}`,
+      `itftms_stats_cache_${id}`,
+    ];
+    if (id === defaultTournament.id) {
+      keysToPurge.push(
+        STORAGE_KEYS.TEAMS,
+        STORAGE_KEYS.MATCHES,
+        STORAGE_KEYS.COMPLAINTS,
+        STORAGE_KEYS.FINANCES,
+        STORAGE_KEYS.TOURNAMENT
+      );
+    }
+    keysToPurge.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch {}
+    });
+
     this.logAction(
       'Ban Tổ Chức',
       'SUPER_ADMIN',
-      'XÓA GIẢI ĐẤU',
+      'XÓA GIẢI ĐẤU VĨNH VIỄN',
       `Giải ID: ${id}`,
-      `Đã xóa giải đấu khỏi danh sách hệ thống`
+      `Đã xóa vĩnh viễn giải đấu và toàn bộ dữ liệu kèm theo khỏi hệ thống.`
     );
   }
 
@@ -604,6 +713,10 @@ export class StorageService {
   static createNewTournament(tournament: Tournament, preloadDemoTeams: boolean = false): void {
     if (!this.isClient) return;
     
+    // Gỡ bỏ ID này khỏi danh sách đã xóa nếu từng bị xóa trước đó
+    const remainingDeleted = this.getDeletedTournamentIds().filter((dId) => dId !== tournament.id);
+    localStorage.setItem(STORAGE_KEYS.DELETED_TOURNAMENTS, JSON.stringify(remainingDeleted));
+
     // Save to all tournaments list and set as active
     const all = this.getAllTournaments();
     const existingIndex = all.findIndex((t) => t.id === tournament.id);
@@ -666,6 +779,7 @@ export class StorageService {
    */
   static cleanExcessGroupsData(tournament: Tournament): { teams: Team[]; matches: Match[] } {
     if (!this.isClient) return { teams: [], matches: [] };
+    if (!tournament || !tournament.id) return { teams: [], matches: [] };
     const validGroups = getGroupLetters(tournament.numberOfGroups || 4);
     const teams = this.getTeams();
     const cleanedTeams = teams.filter((t) => !t.group || validGroups.includes(t.group));
