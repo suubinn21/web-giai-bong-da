@@ -450,7 +450,7 @@ export class AuthService {
       const matchFullName =
         normalize(u.fullName) === normTarget ||
         (normCore && normalize(u.fullName) === normCore) ||
-        (normCore && normalize(u.fullName).includes(normCore));
+        (normCore && normCore.length >= 3 && normalize(u.fullName).includes(normCore));
 
       // c. Khớp thông tin Đội trưởng
       let matchCaptainInfo = false;
@@ -460,7 +460,7 @@ export class AuthService {
           (normalize(u.teamName) === normTarget ||
             normalize(u.teamName) === normCore ||
             u.teamName.toLowerCase() === cleanId ||
-            (normCore && normalize(u.teamName).includes(normCore)));
+            (normCore && normCore.length >= 3 && normalize(u.teamName).includes(normCore)));
 
         const matchTeamId =
           u.teamId &&
@@ -474,7 +474,7 @@ export class AuthService {
           (teamObj.shortName.toLowerCase() === cleanId ||
             normalize(teamObj.shortName) === normTarget ||
             normalize(teamObj.shortName) === normCore ||
-            (normCore && normCore.includes(normalize(teamObj.shortName))));
+            (normCore && normCore.length >= 3 && normCore.includes(normalize(teamObj.shortName))));
 
         const matchClass =
           teamObj &&
@@ -482,7 +482,7 @@ export class AuthService {
           (teamObj.class.toLowerCase() === cleanId ||
             normalize(teamObj.class) === normTarget ||
             normalize(teamObj.class) === normCore ||
-            (normCore && normCore.includes(normalize(teamObj.class))));
+            (normCore && normCore.length >= 3 && normCore.includes(normalize(teamObj.class))));
 
         matchCaptainInfo = Boolean(matchTeamName || matchTeamId || matchShortName || matchClass);
       }
@@ -490,8 +490,8 @@ export class AuthService {
       const isMatch = matchUsername || matchEmail || matchFullName || matchCaptainInfo;
       let isPassCorrect = verifyPassword(cleanPass, u.password);
       
-      // Hỗ trợ mật khẩu phức tạp chuẩn của BTC
-      if (!isPassCorrect && isBtcAccount) {
+      // Hỗ trợ mật khẩu phức tạp chuẩn của BTC khi tài khoản chưa khởi tạo mật khẩu
+      if (!isPassCorrect && isBtcAccount && !u.password) {
         if (cleanPass === BTC_DEFAULT_PASSWORD) {
           isPassCorrect = true;
         }
@@ -525,7 +525,7 @@ export class AuthService {
           (normCore.length >= 3 && normName.includes(normCore)) ||
           (normCore.length >= 3 && normCore.includes(normShort) && normShort.length >= 2) ||
           (normCore.length >= 3 && normCore.includes(normClass) && normClass.length >= 2) ||
-          (normShort.length >= 3 && normShort.includes(normCore))
+          (normCore.length >= 3 && normShort.length >= 3 && normShort.includes(normCore))
         );
       });
 

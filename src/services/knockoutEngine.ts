@@ -37,20 +37,25 @@ export class KnockoutEngine {
   static generateOrUpdateBracket(teams: Team[], matches: Match[]): Match[] {
     const updatedMatches = [...matches];
 
-    // Compute standings for all groups
+    // Compute standings for all groups (only assign seeds once a group has started playing)
     const standingsA = RankingEngine.calculateGroupStandings('A', teams, matches);
     const standingsB = RankingEngine.calculateGroupStandings('B', teams, matches);
     const standingsC = RankingEngine.calculateGroupStandings('C', teams, matches);
     const standingsD = RankingEngine.calculateGroupStandings('D', teams, matches);
 
-    const team1A = standingsA[0]?.teamId;
-    const team2A = standingsA[1]?.teamId;
-    const team1B = standingsB[0]?.teamId;
-    const team2B = standingsB[1]?.teamId;
-    const team1C = standingsC[0]?.teamId;
-    const team2C = standingsC[1]?.teamId;
-    const team1D = standingsD[0]?.teamId;
-    const team2D = standingsD[1]?.teamId;
+    const hasPlayedA = standingsA.some((s) => s.played > 0);
+    const hasPlayedB = standingsB.some((s) => s.played > 0);
+    const hasPlayedC = standingsC.some((s) => s.played > 0);
+    const hasPlayedD = standingsD.some((s) => s.played > 0);
+
+    const team1A = hasPlayedA ? standingsA[0]?.teamId : undefined;
+    const team2A = hasPlayedA ? standingsA[1]?.teamId : undefined;
+    const team1B = hasPlayedB ? standingsB[0]?.teamId : undefined;
+    const team2B = hasPlayedB ? standingsB[1]?.teamId : undefined;
+    const team1C = hasPlayedC ? standingsC[0]?.teamId : undefined;
+    const team2C = hasPlayedC ? standingsC[1]?.teamId : undefined;
+    const team1D = hasPlayedD ? standingsD[0]?.teamId : undefined;
+    const team2D = hasPlayedD ? standingsD[1]?.teamId : undefined;
 
     // Helper to find or create match
     const getMatch = (matchId: string): Match | undefined => updatedMatches.find((m) => m.id === matchId);

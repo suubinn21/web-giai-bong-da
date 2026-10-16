@@ -414,6 +414,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
       return;
     }
 
+    const synced = KnockoutEngine.generateOrUpdateBracket(teams, matches);
+    onMatchesUpdate(synced);
+    StorageService.saveMatches(synced);
+
     StorageService.logAction(
       currentRole,
       currentRole,

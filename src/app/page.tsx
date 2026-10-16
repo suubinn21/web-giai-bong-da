@@ -632,7 +632,7 @@ export default function Home() {
     pushTournamentCloud(updatedTour.id, {
       tournament: updatedTour,
       teams: cleaned.teams,
-      matches: cleaned.matches,
+      matches: currentMatches,
       auditLogs: updatedLogs,
     });
     alert(`Đã cập nhật cấu hình giải đấu "${updatedTour.name}" thành công!`);
@@ -793,6 +793,8 @@ export default function Home() {
           onClose={() => setAuthModalOpen(false)}
           onLoginSuccess={handleLoginSuccess}
           messageNotice={authNotice}
+          initialIdentifier={authInitialUsername}
+          initialPassword={authInitialPassword}
         />
         <UserManagementModal
           isOpen={userManagementOpen}

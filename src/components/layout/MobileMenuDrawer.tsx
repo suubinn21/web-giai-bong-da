@@ -415,13 +415,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Home */}
               <button
                 onClick={() => handlePickTab('home')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'home'
                     ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
                   <Home className="w-4 h-4" />
                 </div>
                 <span>Trang Chủ</span>
@@ -430,20 +430,20 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Live */}
               <button
                 onClick={() => handlePickTab('live')}
-                className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
                   activeTab === 'live'
                     ? 'bg-red-950/80 border-red-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-red-500/10 text-red-400">
+                  <div className="p-2 rounded-xl bg-red-500/10 text-red-400 shrink-0">
                     <Radio className="w-4 h-4" />
                   </div>
                   <span>Live Match</span>
                 </div>
                 {liveMatchCount > 0 && (
-                  <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.2 rounded-full font-black animate-pulse">
+                  <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full font-black animate-pulse">
                     {liveMatchCount}
                   </span>
                 )}
@@ -452,13 +452,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Schedule */}
               <button
                 onClick={() => handlePickTab('schedule')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'schedule'
                     ? 'bg-teal-950/80 border-teal-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-teal-500/10 text-teal-400">
+                <div className="p-2 rounded-xl bg-teal-500/10 text-teal-400 shrink-0">
                   <CalendarDays className="w-4 h-4" />
                 </div>
                 <span>Lịch &amp; Kết Quả</span>
@@ -467,13 +467,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Standings */}
               <button
                 onClick={() => handlePickTab('standings')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'standings'
                     ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
                   <Trophy className="w-4 h-4" />
                 </div>
                 <span>Bảng Xếp Hạng</span>
@@ -482,13 +482,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Teams */}
               <button
                 onClick={() => handlePickTab('teams')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'teams'
                     ? 'bg-blue-950/80 border-blue-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400">
+                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 shrink-0">
                   <Users className="w-4 h-4" />
                 </div>
                 <span>Đội &amp; Cầu Thủ</span>
@@ -498,13 +498,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('draw')}
-                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                     activeTab === 'draw'
                       ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                   }`}
                 >
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
                     <Dices className="w-4 h-4" />
                   </div>
                   <span>Bốc Thăm Bảng</span>
@@ -514,13 +514,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Knockout Bracket */}
               <button
                 onClick={() => handlePickTab('bracket')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'bracket'
                     ? 'bg-purple-950/80 border-purple-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+                <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 shrink-0">
                   <GitFork className="w-4 h-4" />
                 </div>
                 <span>Nhánh Knock-out</span>
@@ -529,20 +529,20 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Discipline */}
               <button
                 onClick={() => handlePickTab('discipline')}
-                className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
                   activeTab === 'discipline'
                     ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
                     <ShieldAlert className="w-4 h-4" />
                   </div>
                   <span>Kỷ Luật / Treo Giò</span>
                 </div>
                 {suspendedPlayersCount > 0 && (
-                  <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded-full font-bold">
+                  <span className="text-[10px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full font-bold">
                     {suspendedPlayersCount}
                   </span>
                 )}
@@ -552,20 +552,20 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {(canManage || currentRole === 'TEAM_MANAGER') && (
                 <button
                   onClick={() => handlePickTab('complaints')}
-                  className={`p-3 rounded-2xl border text-left flex items-center justify-between transition-all ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
                     activeTab === 'complaints'
                       ? 'bg-cyan-950/80 border-cyan-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400">
+                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
                       <Clock className="w-4 h-4" />
                     </div>
                     <span>Khiếu Nại 15 Phút</span>
                   </div>
                   {activeComplaintsCount > 0 && (
-                    <span className="text-[10px] bg-cyan-400 text-slate-950 px-1.5 py-0.2 rounded-full font-bold">
+                    <span className="text-[10px] bg-cyan-400 text-slate-950 px-2 py-0.5 rounded-full font-bold">
                       {activeComplaintsCount}
                     </span>
                   )}
@@ -576,13 +576,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('finance')}
-                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                     activeTab === 'finance'
                       ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                   }`}
                 >
-                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
                     <BadgeDollarSign className="w-4 h-4" />
                   </div>
                   <span>Tài Chính Lệ Phí</span>
@@ -592,13 +592,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Awards */}
               <button
                 onClick={() => handlePickTab('awards')}
-                className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                   activeTab === 'awards'
                     ? 'bg-yellow-950/80 border-yellow-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                <div className="p-2 rounded-xl bg-yellow-500/10 text-yellow-400">
+                <div className="p-2 rounded-xl bg-yellow-500/10 text-yellow-400 shrink-0">
                   <Award className="w-4 h-4" />
                 </div>
                 <span>Giải Thưởng</span>
@@ -608,13 +608,13 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('audit')}
-                  className={`p-3 rounded-2xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
                     activeTab === 'audit'
                       ? 'bg-slate-800 border-slate-600 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
                   }`}
                 >
-                  <div className="p-2 rounded-xl bg-slate-800 text-slate-300">
+                  <div className="p-2 rounded-xl bg-slate-800 text-slate-300 shrink-0">
                     <FileText className="w-4 h-4" />
                   </div>
                   <span>Audit Logs</span>
@@ -634,7 +634,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                   onClose();
                   onBackToPortal();
                 }}
-                className="w-full p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-colors"
+                className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all touch-target active:scale-95"
               >
                 <div className="flex items-center gap-2">
                   <LayoutGrid className="w-4 h-4 text-emerald-400" />
@@ -647,18 +647,16 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             {/* Sound Toggle Button (Moved from mobile header) */}
             <button
               onClick={handleToggleSound}
-              className="w-full p-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-colors"
+              className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all touch-target active:scale-95"
             >
               <div className="flex items-center gap-2">
                 {soundOn ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
                 <span>Âm thanh còi &amp; hiệu ứng ăn mừng bóng đá</span>
               </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${soundOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-500'}`}>
+              <span className={`text-[10px] px-2.5 py-1 rounded-lg font-bold ${soundOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-500'}`}>
                 {soundOn ? 'ĐANG BẬT' : 'ĐANG TẮT'}
               </span>
             </button>
-
-
 
             {/* Clear / Demo Data (Admin / Organizer) */}
             {canManage && (
@@ -669,9 +667,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                       onClose();
                       onClearData();
                     }}
-                    className="p-2.5 rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-900 active:scale-95"
+                    className="p-3 min-h-[44px] rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-900 active:scale-95 touch-target"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                    <Trash2 className="w-4 h-4 text-red-400" />
                     <span>Xóa Dữ Liệu</span>
                   </button>
                 )}
@@ -682,9 +680,9 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                       onClose();
                       onLoadDemo();
                     }}
-                    className="p-2.5 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 active:scale-95"
+                    className="p-3 min-h-[44px] rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 active:scale-95 touch-target"
                   >
-                    <Database className="w-3.5 h-3.5 text-amber-400" />
+                    <Database className="w-4 h-4 text-amber-400" />
                     <span>Nạp Dữ Liệu Demo</span>
                   </button>
                 )}

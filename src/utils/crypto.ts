@@ -262,8 +262,8 @@ export function checkPasswordStrength(password: string): PasswordStrengthResult 
     '#06B6D4', // Cyan
   ];
 
-  // BTC yêu cầu nghiêm ngặt: độ dài >= 8, có chữ, có số, và có ký tự đặc biệt hoặc chữ hoa
-  const isValidForBtc = hasMinLength && (hasUppercase || hasLowercase) && hasNumber && hasSpecialChar;
+  // BTC yêu cầu nghiêm ngặt: độ dài >= 8, có chữ HOA, chữ thường, chữ số và ký tự đặc biệt
+  const isValidForBtc = hasMinLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
 
   return {
     score: normalizedScore,

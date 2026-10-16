@@ -100,13 +100,13 @@ export const Navigation: React.FC<NavigationProps> = ({
   ];
 
   return (
-    <nav className="hidden md:block bg-slate-900/75 border-b border-slate-700/60 sticky top-16 sm:top-20 z-40 backdrop-blur-md">
+    <nav className="hidden md:block bg-[#070F1E]/90 border-b border-emerald-500/20 sticky top-20 z-40 backdrop-blur-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center space-x-1 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
+        <div className="flex items-center space-x-1.5 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
           {onBackToPortal && (
             <button
               onClick={onBackToPortal}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 whitespace-nowrap transition-all mr-1 shadow-sm"
+              className="flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 whitespace-nowrap transition-all mr-1 shadow-sm active:scale-95 touch-target"
               title="Trở về cổng danh sách các giải đấu"
             >
               <LayoutGrid className="w-4 h-4 text-emerald-400" />
@@ -121,16 +121,16 @@ export const Navigation: React.FC<NavigationProps> = ({
               <button
                 key={item.key}
                 onClick={() => onTabChange(item.key)}
-                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+                className={`relative flex items-center gap-2 min-h-[40px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap active:scale-95 touch-target ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25 font-bold scale-[1.02]'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                    ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-lg shadow-emerald-500/25 font-black scale-[1.02]'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60'
                 }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider ${item.badgeColor}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${item.badgeColor}`}>
                     {item.badge}
                   </span>
                 )}

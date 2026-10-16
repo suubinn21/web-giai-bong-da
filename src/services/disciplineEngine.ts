@@ -46,18 +46,24 @@ export class DisciplineEngine {
       }
     });
 
+    let manualOverrides: Record<
+      string,
+      { isSuspended: boolean; reason?: string; yellows: number; reds: number }
+    > = {};
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('itftms_manual_suspensions');
+        if (raw) manualOverrides = JSON.parse(raw);
+      } catch {}
+    }
+
     const reports: DisciplinaryReport[] = [];
 
     teams.forEach((team) => {
       team.players.forEach((player) => {
-        const cardInfo = playerCardMap.get(player.id) || {
-          yellows: player.yellowCards || 0,
-          reds: player.redCards || 0,
-          lastMatchMinute: 0,
-        };
-
-        const totalYellows = Math.max(player.yellowCards, cardInfo.yellows);
-        const totalReds = Math.max(player.redCards, cardInfo.reds);
+        const cardInfo = playerCardMap.get(player.id);
+        const totalYellows = cardInfo ? cardInfo.yellows : (player.yellowCards || 0);
+        const totalReds = cardInfo ? cardInfo.reds : (player.redCards || 0);
 
         let isSuspended = false;
         let suspensionReason: string | undefined = undefined;
@@ -73,6 +79,18 @@ export class DisciplineEngine {
           status = 'SUSPENDED_2_YELLOWS';
         } else if (totalYellows === 1) {
           status = 'WARNING_1_YELLOW';
+        }
+
+        // Respect manual BTC override if no new cards have been accumulated since the BTC decision
+        const override = manualOverrides[player.id];
+        if (override && totalYellows <= override.yellows && totalReds <= override.reds) {
+          isSuspended = override.isSuspended;
+          suspensionReason = override.isSuspended ? override.reason : undefined;
+          if (!isSuspended) {
+            status = totalYellows === 1 ? 'WARNING_1_YELLOW' : 'SAFE';
+          } else if (status === 'SAFE' || status === 'WARNING_1_YELLOW') {
+            status = 'SUSPENDED_RED';
+          }
         }
 
         // Keep player model in sync
@@ -134,6 +152,20 @@ export class DisciplineEngine {
 
     player.isSuspended = isSuspended;
     player.suspensionReason = isSuspended ? reason : undefined;
+
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('itftms_manual_suspensions');
+        const overrides = raw ? JSON.parse(raw) : {};
+        overrides[playerId] = {
+          isSuspended,
+          reason: isSuspended ? reason : undefined,
+          yellows: player.yellowCards || 0,
+          reds: player.redCards || 0,
+        };
+        localStorage.setItem('itftms_manual_suspensions', JSON.stringify(overrides));
+      } catch {}
+    }
 
     StorageService.saveTeams(teams);
     StorageService.logAction(

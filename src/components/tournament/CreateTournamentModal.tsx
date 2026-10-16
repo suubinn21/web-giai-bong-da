@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Tournament, TournamentStatus, getGroupLetters } from '@/types';
 import { SoundFX } from '@/utils/soundEffects';
@@ -54,6 +54,29 @@ export const CreateTournamentModal: React.FC<CreateTournamentModalProps> = ({
   
   // Choice of initial data state
   const [preloadDemo, setPreloadDemo] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isOpen && currentTournament) {
+      setName(currentTournament.name || 'Giải Bóng Đá Khoa Công Nghệ Thông Tin 2026');
+      setShortCode(currentTournament.shortCode || 'ITFTMS-2026');
+      setYear(currentTournament.year || 2026);
+      setOrganizer(currentTournament.organizer || 'Đoàn - Hội Khoa Công Nghệ Thông Tin');
+      setFormat(currentTournament.format || 'Bóng đá 5 người (Futsal)');
+      setNumberOfGroups(currentTournament.numberOfGroups || 4);
+      setTeamsPerGroup(currentTournament.teamsPerGroup || 4);
+      setNumberOfVenues(currentTournament.numberOfVenues || 4);
+      setMaxTeams(currentTournament.maxTeams || 16);
+      setMaxPlayersPerTeam(currentTournament.maxPlayersPerTeam || 12);
+      setMatchDurationMinutes(currentTournament.matchDurationMinutes || 40);
+      setBreakDurationMinutes(currentTournament.breakDurationMinutes || 5);
+      setRegistrationFee(currentTournament.registrationFee || 500000);
+      setDepositFee(currentTournament.depositFee || 50000);
+      setStartDate(currentTournament.startDate || '2026-10-15');
+      setEndDate(currentTournament.endDate || '2026-10-25');
+      setInitialStatus(currentTournament.status || 'REGISTRATION');
+      setDescription(currentTournament.description || 'Giải bóng đá thường niên sinh viên Khoa Công nghệ Thông tin.');
+    }
+  }, [isOpen, currentTournament]);
 
   if (!isOpen) return null;
 

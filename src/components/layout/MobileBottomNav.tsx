@@ -36,36 +36,38 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   return (
     <nav 
       aria-label="Thanh điều hướng di động"
-      className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#070B14]/95 backdrop-blur-xl border-t border-slate-800/90 shadow-[0_-8px_30px_rgba(0,0,0,0.5)] pb-[env(safe-area-inset-bottom,8px)]"
+      className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[#070F1E]/95 backdrop-blur-2xl border-t border-emerald-500/20 shadow-[0_-8px_32px_rgba(0,0,0,0.6)] pb-[max(env(safe-area-inset-bottom),10px)]"
     >
-      <div className="grid grid-cols-5 items-center px-2 py-1.5">
+      <div className="grid grid-cols-5 items-center px-1.5 py-1">
         
         {/* 1. Trang Chủ */}
         <button
           onClick={() => handleSelectTab('home')}
-          className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
             activeTab === 'home'
-              ? 'text-emerald-400 font-bold scale-105'
+              ? 'text-emerald-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
           }`}
+          aria-label="Trang chủ giải đấu"
         >
           <div className="relative">
             <Home className="w-5 h-5" />
             {activeTab === 'home' && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
             )}
           </div>
-          <span className="text-[10px] mt-1 tracking-tight">Trang Chủ</span>
+          <span className="text-[10px] mt-1 tracking-tight font-semibold">Trang Chủ</span>
         </button>
 
         {/* 2. Trực Tiếp (Live) */}
         <button
           onClick={() => handleSelectTab('live')}
-          className={`relative flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all ${
+          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
             activeTab === 'live'
-              ? 'text-red-400 font-bold scale-105'
+              ? 'text-red-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
           }`}
+          aria-label="Xem trực tiếp trận đấu"
         >
           <div className="relative">
             <Radio className={`w-5 h-5 ${liveMatchCount > 0 ? 'text-red-400 animate-pulse' : ''}`} />
@@ -75,46 +77,48 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               </span>
             )}
             {activeTab === 'live' && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-400 shadow-sm shadow-red-400"></span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-red-400 shadow-sm shadow-red-400"></span>
             )}
           </div>
-          <span className="text-[10px] mt-1 tracking-tight">Trực Tiếp</span>
+          <span className="text-[10px] mt-1 tracking-tight font-semibold">Trực Tiếp</span>
         </button>
 
         {/* 3. Lịch Đấu */}
         <button
           onClick={() => handleSelectTab('schedule')}
-          className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
             activeTab === 'schedule'
-              ? 'text-teal-400 font-bold scale-105'
+              ? 'text-teal-300 font-black'
               : 'text-slate-400 hover:text-slate-200'
           }`}
+          aria-label="Lịch thi đấu và kết quả"
         >
           <div className="relative">
             <CalendarDays className="w-5 h-5" />
             {activeTab === 'schedule' && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-teal-400 shadow-sm shadow-teal-400"></span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-teal-400 shadow-sm shadow-teal-400"></span>
             )}
           </div>
-          <span className="text-[10px] mt-1 tracking-tight">Lịch Đấu</span>
+          <span className="text-[10px] mt-1 tracking-tight font-semibold">Lịch Đấu</span>
         </button>
 
         {/* 4. BXH */}
         <button
           onClick={() => handleSelectTab('standings')}
-          className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
             activeTab === 'standings'
-              ? 'text-emerald-400 font-bold scale-105'
+              ? 'text-amber-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
           }`}
+          aria-label="Bảng xếp hạng giải đấu"
         >
           <div className="relative">
             <Trophy className="w-5 h-5" />
             {activeTab === 'standings' && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>
             )}
           </div>
-          <span className="text-[10px] mt-1 tracking-tight">Bảng XH</span>
+          <span className="text-[10px] mt-1 tracking-tight font-semibold">Bảng XH</span>
         </button>
 
         {/* 5. Menu Thêm (Mở Drawer chức năng) */}
@@ -123,11 +127,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             SoundFX.playClick();
             onOpenMobileMenu();
           }}
-          className={`relative flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all ${
+          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
             ['bracket', 'teams', 'draw', 'discipline', 'complaints', 'finance', 'awards', 'audit'].includes(activeTab)
-              ? 'text-cyan-400 font-bold scale-105'
+              ? 'text-cyan-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
           }`}
+          aria-label="Menu chức năng thêm"
         >
           <div className="relative">
             <MoreHorizontal className="w-5 h-5" />
@@ -135,10 +140,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
             )}
             {['bracket', 'teams', 'draw', 'discipline', 'complaints', 'finance', 'awards', 'audit'].includes(activeTab) && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400"></span>
             )}
           </div>
-          <span className="text-[10px] mt-1 tracking-tight">Thêm</span>
+          <span className="text-[10px] mt-1 tracking-tight font-semibold">Thêm</span>
         </button>
 
       </div>
@@ -147,11 +152,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       {canGoBack && onGoBack && (
         <button
           onClick={onGoBack}
-          className="fixed bottom-[74px] left-3 z-40 md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/95 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-xl backdrop-blur-md font-bold text-xs active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2"
+          className="fixed bottom-[78px] left-3 z-40 md:hidden flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full bg-slate-900/95 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-xl backdrop-blur-md font-bold text-xs active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2 touch-target"
           title="Lùi lại 1 trang"
           aria-label="Lùi lại 1 trang"
         >
-          <ArrowLeft className="w-3.5 h-3.5 text-emerald-400" />
+          <ArrowLeft className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>Lùi 1 trang</span>
         </button>
       )}

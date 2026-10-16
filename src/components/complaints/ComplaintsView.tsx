@@ -33,8 +33,10 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
   currentRole,
   currentUser,
 }) => {
-  // Recently finished match eligible for complaints
-  const finishedMatches = matches.filter((m) => m.status === 'FINISHED' && m.completedAt);
+  // Recently finished match eligible for complaints (sorted by most recent completion first)
+  const finishedMatches = [...matches]
+    .filter((m) => m.status === 'FINISHED' && m.completedAt)
+    .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime());
   
   // Phân quyền đội trưởng
   const isCaptain = currentRole === 'TEAM_MANAGER';
@@ -47,6 +49,25 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
   const [selectedMatchForComplaint, setSelectedMatchForComplaint] = useState<Match | null>(
     finishedMatches[0] || null
   );
+
+  useEffect(() => {
+    if (finishedMatches.length === 0) {
+      setSelectedMatchForComplaint(null);
+      return;
+    }
+    if (isCaptain && currentUser?.teamId) {
+      const myMatch = finishedMatches.find(
+        (m) => m.homeTeamId === currentUser.teamId || m.awayTeamId === currentUser.teamId
+      );
+      if (myMatch) {
+        setSelectedMatchForComplaint(myMatch);
+        return;
+      }
+    }
+    if (!selectedMatchForComplaint || !finishedMatches.some((m) => m.id === selectedMatchForComplaint.id)) {
+      setSelectedMatchForComplaint(finishedMatches[0]);
+    }
+  }, [matches, isCaptain, currentUser?.teamId]);
 
   // New complaint form state
   const [modalOpen, setModalOpen] = useState(false);

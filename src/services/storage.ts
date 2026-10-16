@@ -816,12 +816,24 @@ export class StorageService {
     const validTeamIds = new Set(cleanedTeams.map((t) => t.id));
 
     const matches = this.getMatches();
-    const cleanedMatches = matches.filter(
-      (m) =>
-        (!m.group || validGroups.includes(m.group)) &&
-        validTeamIds.has(m.homeTeamId) &&
-        validTeamIds.has(m.awayTeamId)
-    );
+    const cleanedMatches = matches
+      .filter((m) => {
+        if (m.round !== 'GROUP') return true;
+        if (m.group && !validGroups.includes(m.group)) return false;
+        if (m.homeTeamId && !validTeamIds.has(m.homeTeamId)) return false;
+        if (m.awayTeamId && !validTeamIds.has(m.awayTeamId)) return false;
+        return true;
+      })
+      .map((m) => {
+        if (m.round !== 'GROUP') {
+          return {
+            ...m,
+            homeTeamId: m.homeTeamId && validTeamIds.has(m.homeTeamId) ? m.homeTeamId : '',
+            awayTeamId: m.awayTeamId && validTeamIds.has(m.awayTeamId) ? m.awayTeamId : '',
+          };
+        }
+        return m;
+      });
 
     this.saveTeams(cleanedTeams);
     this.saveMatches(cleanedMatches);
@@ -891,6 +903,11 @@ export class StorageService {
     ];
 
     if (this.isClient) {
+      if (!currentTour || !currentTour.id) {
+        const demoTour: Tournament = { ...defaultTournament, id: 'TOUR-2026-DEMO' };
+        this.saveTournament(demoTour);
+        this.setActiveTournamentId(demoTour.id);
+      }
       this.saveTeams(demoTeams);
       this.saveMatches(demoMatches);
       this.saveFinances(demoFinances);

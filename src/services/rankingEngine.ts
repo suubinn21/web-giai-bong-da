@@ -41,9 +41,13 @@ export class RankingEngine {
     const withdrawnTeams = groupTeams.filter(
       (t) => t.status === 'WITHDRAWN' || t.status === 'DISQUALIFIED'
     );
+    const withdrawnIds = new Set(withdrawnTeams.map((t) => t.id));
 
-    // Apply match results
+    // Apply match results for matches between active (non-withdrawn) teams
     groupMatches.forEach((m) => {
+      if (withdrawnIds.has(m.homeTeamId) || withdrawnIds.has(m.awayTeamId)) {
+        return;
+      }
       const home = map.get(m.homeTeamId);
       const away = map.get(m.awayTeamId);
       if (!home || !away) return;
@@ -72,16 +76,23 @@ export class RankingEngine {
       }
     });
 
-    // Rule 13: Các đội cùng bảng được cộng 3 điểm khi xử lý trường hợp đội bỏ cuộc
+    // Rule 13: Các đội còn lại cùng bảng được cộng 3 điểm (xử thắng 3-0) khi có đội bỏ cuộc, không cộng trùng lặp
     if (withdrawnTeams.length > 0) {
       withdrawnTeams.forEach((wTeam) => {
+        const wEntry = map.get(wTeam.id);
         groupTeams.forEach((t) => {
-          if (t.id !== wTeam.id) {
+          if (t.id !== wTeam.id && !withdrawnIds.has(t.id)) {
             const entry = map.get(t.id);
             if (entry) {
-              // Award 3 points and default 3-0 goal bonus if not already played
+              entry.played += 1;
+              entry.won += 1;
               entry.points += 3;
               entry.goalsFor += 3;
+            }
+            if (wEntry) {
+              wEntry.played += 1;
+              wEntry.lost += 1;
+              wEntry.goalsAgainst += 3;
             }
           }
         });
@@ -92,6 +103,15 @@ export class RankingEngine {
     map.forEach((item) => {
       item.goalDifference = item.goalsFor - item.goalsAgainst;
     });
+
+    // Load any manual BTC tie-break decisions
+    let manualTieBreaks: Record<string, string[]> = {};
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('itftms_btc_tiebreaks');
+        if (raw) manualTieBreaks = JSON.parse(raw);
+      } catch {}
+    }
 
     // Sort teams using ranking criteria
     const sorted = Array.from(map.values()).sort((a, b) => {
@@ -111,22 +131,32 @@ export class RankingEngine {
       // 4. Head-to-Head
       const h2h = groupMatches.find(
         (m) =>
-          (m.homeTeamId === a.teamId && m.awayTeamId === b.teamId) ||
-          (m.homeTeamId === b.teamId && m.awayTeamId === a.teamId)
+          !withdrawnIds.has(m.homeTeamId) &&
+          !withdrawnIds.has(m.awayTeamId) &&
+          ((m.homeTeamId === a.teamId && m.awayTeamId === b.teamId) ||
+            (m.homeTeamId === b.teamId && m.awayTeamId === a.teamId))
       );
-      if (h2h && h2h.status === 'FINISHED') {
-        if (h2h.homeTeamId === a.teamId && h2h.homeScore !== h2h.awayScore) {
+      if (h2h && h2h.status === 'FINISHED' && h2h.homeScore !== h2h.awayScore) {
+        if (h2h.homeTeamId === a.teamId) {
           return h2h.awayScore - h2h.homeScore;
         }
-        if (h2h.homeTeamId === b.teamId && h2h.homeScore !== h2h.awayScore) {
+        if (h2h.homeTeamId === b.teamId) {
           return h2h.homeScore - h2h.awayScore;
         }
+      }
+
+      // 5. Manual BTC Tie-Break resolution
+      const pairKey1 = `${group}:${a.teamId}:${b.teamId}`;
+      const pairKey2 = `${group}:${b.teamId}:${a.teamId}`;
+      const resolvedPair = manualTieBreaks[pairKey1] || manualTieBreaks[pairKey2];
+      if (resolvedPair && resolvedPair.length === 2) {
+        return resolvedPair[0] === a.teamId ? -1 : 1;
       }
 
       return 0;
     });
 
-    // Check for identical tie-breaker that requires BTC confirmation
+    // Check for identical tie-breaker that requires BTC confirmation (only if H2H and manual resolution did not break the tie)
     for (let i = 0; i < sorted.length - 1; i++) {
       const cur = sorted[i];
       const nxt = sorted[i + 1];
@@ -134,13 +164,27 @@ export class RankingEngine {
       if (
         !cur.isWithdrawn &&
         !nxt.isWithdrawn &&
+        (cur.played > 0 || nxt.played > 0) &&
         cur.points === nxt.points &&
         cur.goalDifference === nxt.goalDifference &&
         cur.goalsFor === nxt.goalsFor
       ) {
-        // Tied identically! Mark as needing BTC confirmation
-        cur.needsBtcTieBreak = true;
-        nxt.needsBtcTieBreak = true;
+        const h2h = groupMatches.find(
+          (m) =>
+            !withdrawnIds.has(m.homeTeamId) &&
+            !withdrawnIds.has(m.awayTeamId) &&
+            ((m.homeTeamId === cur.teamId && m.awayTeamId === nxt.teamId) ||
+              (m.homeTeamId === nxt.teamId && m.awayTeamId === cur.teamId))
+        );
+        const h2hResolved = Boolean(h2h && h2h.status === 'FINISHED' && h2h.homeScore !== h2h.awayScore);
+        const pairKey1 = `${group}:${cur.teamId}:${nxt.teamId}`;
+        const pairKey2 = `${group}:${nxt.teamId}:${cur.teamId}`;
+        const manuallyResolved = Boolean(manualTieBreaks[pairKey1] || manualTieBreaks[pairKey2]);
+
+        if (!h2hResolved && !manuallyResolved) {
+          cur.needsBtcTieBreak = true;
+          nxt.needsBtcTieBreak = true;
+        }
       }
     }
 
@@ -165,6 +209,16 @@ export class RankingEngine {
     const teams = StorageService.getTeams();
     const winner = teams.find((t) => t.id === winnerTeamId);
     const loser = teams.find((t) => t.id === loserTeamId);
+
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('itftms_btc_tiebreaks');
+        const map: Record<string, string[]> = raw ? JSON.parse(raw) : {};
+        map[`${group}:${winnerTeamId}:${loserTeamId}`] = [winnerTeamId, loserTeamId];
+        map[`${group}:${loserTeamId}:${winnerTeamId}`] = [winnerTeamId, loserTeamId];
+        localStorage.setItem('itftms_btc_tiebreaks', JSON.stringify(map));
+      } catch {}
+    }
 
     StorageService.logAction(
       organizerName,

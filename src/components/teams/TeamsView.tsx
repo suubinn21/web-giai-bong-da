@@ -226,12 +226,17 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
       return;
     }
 
-    if (teams.length >= 16) {
-      alert('Giải đấu đã đạt giới hạn tối đa 16 đội bóng theo Điều 3.1!');
+    const maxAllowedTeams = tournament?.maxTeams || 16;
+    if (teams.length >= maxAllowedTeams) {
+      alert(`Giải đấu đã đạt giới hạn tối đa ${maxAllowedTeams} đội bóng theo Điều 3.1!`);
       return;
     }
 
-    const newId = `T${String(teams.length + 1).padStart(2, '0')}`;
+    let nextNum = teams.length + 1;
+    while (teams.some((t) => t.id === `T${String(nextNum).padStart(2, '0')}`)) {
+      nextNum++;
+    }
+    const newId = `T${String(nextNum).padStart(2, '0')}`;
     const newTeam: Team = {
       id: newId,
       name: newTeamName.trim(),
