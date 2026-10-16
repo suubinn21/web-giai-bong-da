@@ -183,13 +183,9 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Touch Target Minimum (WCAG 2.5.5 & Mobile Ergonomics: 44px x 44px) */
+/* Touch Target Minimum (WCAG 2.5.5 & Mobile Ergonomics: 44px minimum height) */
 .touch-target {
   min-height: 44px;
-  min-width: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Mobile Safe Bottom Inset */

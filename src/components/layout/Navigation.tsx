@@ -102,14 +102,14 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav className="hidden md:block bg-[#070F1E]/90 border-b border-emerald-500/20 sticky top-20 z-40 backdrop-blur-xl shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center space-x-1.5 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-2 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
           {onBackToPortal && (
             <button
               onClick={onBackToPortal}
-              className="flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 whitespace-nowrap transition-all mr-1 shadow-sm active:scale-95 touch-target"
+              className="shrink-0 flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 whitespace-nowrap transition-all shadow-sm active:scale-95"
               title="Trở về cổng danh sách các giải đấu"
             >
-              <LayoutGrid className="w-4 h-4 text-emerald-400" />
+              <LayoutGrid className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>« Cổng Các Giải</span>
             </button>
           )}
@@ -121,16 +121,16 @@ export const Navigation: React.FC<NavigationProps> = ({
               <button
                 key={item.key}
                 onClick={() => onTabChange(item.key)}
-                className={`relative flex items-center gap-2 min-h-[40px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap active:scale-95 touch-target ${
+                className={`shrink-0 relative flex items-center gap-2 min-h-[40px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap active:scale-95 ${
                   isActive
                     ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-lg shadow-emerald-500/25 font-black scale-[1.02]'
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
                 {item.badge && (
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider ${item.badgeColor}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider shrink-0 ${item.badgeColor}`}>
                     {item.badge}
                   </span>
                 )}

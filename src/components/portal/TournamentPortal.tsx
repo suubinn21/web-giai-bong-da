@@ -408,7 +408,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
           <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
             <button
               onClick={() => setStatusFilter('ALL')}
-              className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all touch-target active:scale-95 ${
+              className={`shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all active:scale-95 ${
                 statusFilter === 'ALL'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30 border border-emerald-400/40'
                   : 'bg-[#091528] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
@@ -419,7 +419,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
             <button
               onClick={() => setStatusFilter('REGISTRATION')}
-              className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all touch-target active:scale-95 ${
+              className={`shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all active:scale-95 ${
                 statusFilter === 'REGISTRATION'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/30 border border-emerald-400/40'
                   : 'bg-[#091528] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
@@ -430,7 +430,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
             <button
               onClick={() => setStatusFilter('GROUP_STAGE')}
-              className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all touch-target active:scale-95 ${
+              className={`shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all active:scale-95 ${
                 statusFilter === 'GROUP_STAGE'
                   ? 'bg-gradient-to-r from-teal-500 to-emerald-600 text-white shadow-md shadow-teal-500/30 border border-teal-400/40'
                   : 'bg-[#091528] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
@@ -441,7 +441,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
 
             <button
               onClick={() => setStatusFilter('COMPLETED')}
-              className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all touch-target active:scale-95 ${
+              className={`shrink-0 min-h-[44px] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all active:scale-95 ${
                 statusFilter === 'COMPLETED'
                   ? 'bg-slate-700 text-white border border-slate-500'
                   : 'bg-[#091528] border border-slate-700/80 text-slate-300 hover:text-white hover:border-emerald-500/50'
@@ -455,7 +455,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               <select
                 value={yearFilter}
                 onChange={(e) => setYearFilter(e.target.value)}
-                className="min-h-[44px] bg-[#091528] text-xs sm:text-sm font-bold text-slate-300 border border-slate-700 px-3.5 py-2.5 rounded-xl focus:outline-none cursor-pointer touch-target"
+                className="shrink-0 min-h-[44px] bg-[#091528] text-xs sm:text-sm font-bold text-slate-300 border border-slate-700 px-3.5 py-2.5 rounded-xl focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Năm: Tất cả</option>
                 {availableYears.map((yr) => (
