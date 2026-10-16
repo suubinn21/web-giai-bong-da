@@ -11,7 +11,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#060F1D',
+  themeColor: '#0284C7',
 };
 
 export default function RootLayout({
@@ -20,25 +20,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className="dark" suppressHydrationWarning>
+    <html lang="vi" className="light" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  var migrated = localStorage.getItem('itftms_theme_emerald_v1');
+                  var migrated = localStorage.getItem('itftms_theme_ocean_v1');
                   if (!migrated) {
-                    localStorage.setItem('itftms_theme', 'dark');
-                    localStorage.setItem('itftms_theme_emerald_v1', 'true');
+                    localStorage.setItem('itftms_theme', 'light');
+                    localStorage.setItem('itftms_theme_ocean_v1', 'true');
                   }
                   var saved = localStorage.getItem('itftms_theme');
-                  if (saved === 'light') {
-                    document.documentElement.classList.add('light');
-                    document.documentElement.classList.remove('dark');
-                  } else {
+                  if (saved === 'dark') {
                     document.documentElement.classList.add('dark');
                     document.documentElement.classList.remove('light');
+                  } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
                   }
                 } catch(e) {}
               })();
@@ -46,7 +46,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#060F1D] text-slate-100 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white relative transition-colors duration-300">
+      <body className="bg-[#F8FAFC] text-slate-900 min-h-screen font-sans antialiased selection:bg-sky-500 selection:text-white relative transition-colors duration-300">
         <SportsBackground />
         <div className="relative z-10 min-h-screen flex flex-col">
           {children}

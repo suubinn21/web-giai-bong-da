@@ -89,11 +89,11 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const roleLabels: Record<UserRole, { label: string; badge: string; color: string }> = {
-    SUPER_ADMIN: { label: 'Super Admin', badge: 'Toàn quyền', color: 'bg-red-500/20 text-red-400 border-red-500/40' },
-    ORGANIZER: { label: 'Ban Tổ Chức (BTC)', badge: 'Điều hành', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' },
-    REFEREE: { label: 'Trọng Tài', badge: 'Biên bản trận', color: 'bg-amber-500/20 text-amber-400 border-amber-500/40' },
-    TEAM_MANAGER: { label: 'Trưởng Đoàn / Đội Trưởng', badge: 'Quản lý đội', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40' },
-    STUDENT: { label: 'Sinh Viên / Cổ Động Viên', badge: 'Công khai', color: 'bg-purple-500/20 text-purple-400 border-purple-500/40' },
+    SUPER_ADMIN: { label: 'Super Admin', badge: 'Toàn quyền', color: 'bg-red-50 text-red-700 border-red-200' },
+    ORGANIZER: { label: 'Ban Tổ Chức (BTC)', badge: 'Điều hành', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    REFEREE: { label: 'Trọng Tài', badge: 'Biên bản trận', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+    TEAM_MANAGER: { label: 'Trưởng Đoàn / Đội Trưởng', badge: 'Quản lý đội', color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
+    STUDENT: { label: 'Sinh Viên / Cổ Động Viên', badge: 'Công khai', color: 'bg-purple-50 text-purple-700 border-purple-200' },
   };
 
   const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
@@ -104,60 +104,60 @@ export const Header: React.FC<HeaderProps> = ({
   > = {
     DRAFT: {
       label: 'Bản Nháp (Draft)',
-      bgClass: 'bg-slate-900 border-slate-700 text-slate-300',
-      dotClass: 'bg-slate-500',
+      bgClass: 'bg-slate-100 border-slate-200 text-slate-700',
+      dotClass: 'bg-slate-400',
     },
     REGISTRATION: {
       label: 'Đang Mở Đăng Ký',
-      bgClass: 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300',
-      dotClass: 'bg-emerald-400 animate-ping',
+      bgClass: 'bg-emerald-50 border-emerald-200 text-emerald-700',
+      dotClass: 'bg-emerald-500 animate-ping',
     },
     REGISTRATION_CLOSED: {
       label: 'Đã Chốt Danh Sách',
-      bgClass: 'bg-blue-950/80 border-blue-500/50 text-blue-300',
-      dotClass: 'bg-blue-400',
+      bgClass: 'bg-blue-50 border-blue-200 text-blue-700',
+      dotClass: 'bg-blue-500',
     },
     DRAWING: {
       label: 'Đang Bốc Thăm',
-      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
-      dotClass: 'bg-amber-400 animate-bounce',
+      bgClass: 'bg-amber-50 border-amber-200 text-amber-700',
+      dotClass: 'bg-amber-500 animate-bounce',
     },
     GROUP_STAGE: {
       label: 'Vòng Bảng (24 Trận)',
-      bgClass: 'bg-teal-950/80 border-teal-500/50 text-teal-300',
-      dotClass: 'bg-teal-400 animate-pulse',
+      bgClass: 'bg-sky-50 border-sky-200 text-sky-700',
+      dotClass: 'bg-sky-500 animate-pulse',
     },
     QUARTER_FINAL: {
       label: 'Vòng Tứ Kết',
-      bgClass: 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300',
-      dotClass: 'bg-indigo-400 animate-pulse',
+      bgClass: 'bg-indigo-50 border-indigo-200 text-indigo-700',
+      dotClass: 'bg-indigo-500 animate-pulse',
     },
     SEMI_FINAL: {
       label: 'Vòng Bán Kết',
-      bgClass: 'bg-purple-950/80 border-purple-500/50 text-purple-300',
-      dotClass: 'bg-purple-400 animate-pulse',
+      bgClass: 'bg-purple-50 border-purple-200 text-purple-700',
+      dotClass: 'bg-purple-500 animate-pulse',
     },
     THIRD_PLACE: {
       label: 'Tranh Hạng 3',
-      bgClass: 'bg-amber-950/80 border-amber-500/50 text-amber-300',
-      dotClass: 'bg-amber-400',
+      bgClass: 'bg-amber-50 border-amber-200 text-amber-700',
+      dotClass: 'bg-amber-500',
     },
     FINAL: {
       label: 'Chung Kết & Trao Cúp',
-      bgClass: 'bg-rose-950/90 border-rose-500/60 text-rose-300',
-      dotClass: 'bg-rose-400 animate-pulse',
+      bgClass: 'bg-rose-50 border-rose-200 text-rose-700',
+      dotClass: 'bg-rose-500 animate-pulse',
     },
     COMPLETED: {
       label: 'Đã Bế Mạc',
-      bgClass: 'bg-slate-900 border-slate-700/80 text-slate-400',
-      dotClass: 'bg-slate-500',
+      bgClass: 'bg-slate-100 border-slate-200 text-slate-600',
+      dotClass: 'bg-slate-400',
     },
   };
 
   const currentStage = statusConfigs[tournamentStatus] || statusConfigs.GROUP_STAGE;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#070F1E]/92 backdrop-blur-xl border-b border-emerald-500/20 text-white shadow-xl">
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200 text-slate-800 shadow-xs">
       {/* Top Banner Alert for Live Matches */}
       {liveMatchCount > 0 && (
         <div 
@@ -182,18 +182,18 @@ export const Header: React.FC<HeaderProps> = ({
             {onGoBack && canGoBack && (
               <button
                 onClick={onGoBack}
-                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 shadow-md transition-all active:scale-95 shrink-0"
+                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-blue-700 border border-slate-200 shadow-xs transition-all active:scale-95 shrink-0"
                 title={activeTab && activeTab !== 'home' ? 'Lùi lại trang trước' : 'Quay lại cổng danh sách giải đấu'}
                 aria-label="Lùi lại 1 trang"
               >
-                <ArrowLeft className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="text-xs font-bold text-emerald-300">
+                <ArrowLeft className="w-4 h-4 text-blue-600 shrink-0" />
+                <span className="text-xs font-bold text-blue-700">
                   {activeTab && activeTab !== 'home' ? 'Lùi' : 'Cổng Giải'}
                 </span>
               </button>
             )}
 
-            <div className="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-xl shadow-emerald-500/25 border border-emerald-400/40 shrink-0">
+            <div className="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-blue-600 via-sky-600 to-cyan-500 shadow-md shadow-blue-500/20 border border-sky-400/40 shrink-0">
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <Sparkles className="absolute -top-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 animate-bounce" />
             </div>
@@ -202,22 +202,22 @@ export const Header: React.FC<HeaderProps> = ({
             {onBackToPortal && (!onGoBack || !canGoBack) && (
               <button
                 onClick={onBackToPortal}
-                className="hidden lg:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
+                className="hidden lg:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-blue-700 font-bold text-xs border border-slate-200 shadow-xs transition-all shrink-0 whitespace-nowrap"
                 title="Quay lại cổng danh sách các giải đấu đã tạo"
               >
-                <LayoutGrid className="w-4 h-4 text-emerald-400 shrink-0" />
+                <LayoutGrid className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>Danh Sách Giải</span>
               </button>
             )}
 
             <div className="flex-1 min-w-0 pr-2">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] sm:text-xs font-black tracking-widest text-emerald-400 uppercase bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/40 font-mono shrink-0 whitespace-nowrap">
+                <span className="text-[10px] sm:text-xs font-black tracking-widest text-sky-700 uppercase bg-sky-50 px-2 py-0.5 rounded border border-sky-200 font-mono shrink-0 whitespace-nowrap">
                   {tournament.shortCode || 'ITFTMS 2026'}
                 </span>
-                <span className="hidden xl:inline-block text-xs text-slate-400 truncate">| {tournament.format || 'Bóng Đá 5 Người'}</span>
+                <span className="hidden xl:inline-block text-xs text-slate-500 truncate">| {tournament.format || 'Bóng Đá 5 Người'}</span>
               </div>
-              <h1 className="text-xs sm:text-sm lg:text-base font-black tracking-tight text-white truncate max-w-[140px] sm:max-w-[200px] md:max-w-xs lg:max-w-sm xl:max-w-md">
+              <h1 className="text-xs sm:text-sm lg:text-base font-black tracking-tight text-slate-900 truncate max-w-[140px] sm:max-w-[200px] md:max-w-xs lg:max-w-sm xl:max-w-md">
                 {tournament.name || 'GIẢI BÓNG ĐÁ KHOA CNTT 2026'}
               </h1>
             </div>
@@ -230,10 +230,10 @@ export const Header: React.FC<HeaderProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onEditTournament && (
               <button
                 onClick={onEditTournament}
-                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap active:scale-95"
+                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-sky-700 hover:text-sky-800 font-bold text-xs border border-slate-200 shadow-xs transition-all shrink-0 whitespace-nowrap active:scale-95"
                 title={`Cấu hình giải đấu: ${tournament.numberOfGroups || 4} Bảng × ${tournament.teamsPerGroup || 4} Đội`}
               >
-                <Edit3 className="w-4 h-4 text-cyan-400 shrink-0" />
+                <Edit3 className="w-4 h-4 text-sky-600 shrink-0" />
                 <span>Cấu Hình Bảng</span>
               </button>
             )}
@@ -242,7 +242,7 @@ export const Header: React.FC<HeaderProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onOpenCreateTournament}
-                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
+                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-sky-700 text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/20 transition-all border border-blue-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 title="Khởi tạo mùa giải bóng đá mới"
               >
                 <Plus className="w-4 h-4 shrink-0" />
@@ -254,24 +254,24 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative hidden lg:block shrink-0">
               <button
                 onClick={() => canManage && setStatusMenuOpen(!statusMenuOpen)}
-                className={`flex items-center gap-2 text-xs font-bold min-h-[40px] px-3.5 rounded-xl border shadow-sm transition-all shrink-0 whitespace-nowrap ${currentStage.bgClass} ${
-                  canManage ? 'cursor-pointer hover:brightness-110 active:scale-95' : 'cursor-default'
+                className={`flex items-center gap-2 text-xs font-bold min-h-[40px] px-3.5 rounded-xl border shadow-xs transition-all shrink-0 whitespace-nowrap ${currentStage.bgClass} ${
+                  canManage ? 'cursor-pointer hover:brightness-95 active:scale-95' : 'cursor-default'
                 }`}
                 title={canManage ? 'Bấm để thay đổi giai đoạn giải đấu' : 'Giai đoạn hiện tại của giải đấu'}
               >
                 <span className="relative flex h-2 w-2 shrink-0">
                   <span className={`w-2 h-2 rounded-full ${currentStage.dotClass} shrink-0`}></span>
                 </span>
-                <span className="text-slate-400 font-medium whitespace-nowrap">Giai đoạn:</span>
+                <span className="text-slate-500 font-medium whitespace-nowrap">Giai đoạn:</span>
                 <span className="font-extrabold whitespace-nowrap">{currentStage.label}</span>
-                {canManage && <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />}
+                {canManage && <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />}
               </button>
 
               {canManage && statusMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-[#070F1E] border border-slate-700/80 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="px-3.5 py-2 text-[11px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-800 flex items-center justify-between">
+                <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3.5 py-2 text-[11px] font-black text-slate-500 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
                     <span>Chuyển Giai Đoạn Giải</span>
-                    <span className="text-[10px] text-emerald-400 font-normal">BTC / Admin</span>
+                    <span className="text-[10px] text-blue-600 font-bold">BTC / Admin</span>
                   </div>
                   <div className="max-h-80 overflow-y-auto py-1">
                     {(Object.entries(statusConfigs) as [TournamentStatus, typeof currentStage][]).map(([key, config]) => (
@@ -284,14 +284,14 @@ export const Header: React.FC<HeaderProps> = ({
                         className={`w-full text-left px-3.5 py-2.5 text-xs flex items-center justify-between transition-colors min-h-[40px] ${
                           tournamentStatus === key
                             ? `${config.bgClass} font-black border-y border-transparent`
-                            : 'text-slate-300 hover:bg-slate-800'
+                            : 'text-slate-700 hover:bg-slate-50'
                         }`}
                       >
                         <div className="flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full ${config.dotClass} shrink-0`}></span>
                           <span>{config.label}</span>
                         </div>
-                        {tournamentStatus === key && <span className="text-xs font-bold text-emerald-400">✓</span>}
+                        {tournamentStatus === key && <span className="text-xs font-bold text-blue-600">✓</span>}
                       </button>
                     ))}
                   </div>
@@ -301,12 +301,12 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Cloud Realtime Sync Status Indicator (Desktop only) */}
             <div
-              className={`hidden lg:flex items-center gap-1.5 min-h-[40px] px-3 rounded-xl border text-xs font-semibold shadow-sm transition-all shrink-0 whitespace-nowrap ${
+              className={`hidden lg:flex items-center gap-1.5 min-h-[40px] px-3 rounded-xl border text-xs font-semibold shadow-xs transition-all shrink-0 whitespace-nowrap ${
                 cloudStatus === 'connected'
-                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                   : cloudStatus === 'connecting'
-                  ? 'bg-amber-950/40 border-amber-500/40 text-amber-400'
-                  : 'bg-slate-900 border-slate-700 text-slate-400'
+                  ? 'bg-amber-50 border-amber-200 text-amber-700'
+                  : 'bg-slate-100 border-slate-200 text-slate-600'
               }`}
               title={
                 cloudStatus === 'connected'
@@ -318,15 +318,15 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <span className="relative flex h-2 w-2 shrink-0">
                 {cloudStatus === 'connected' && (
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
                 )}
                 <span
                   className={`relative inline-flex rounded-full h-2 w-2 ${
                     cloudStatus === 'connected'
-                      ? 'bg-emerald-400'
+                      ? 'bg-emerald-500'
                       : cloudStatus === 'connecting'
-                      ? 'bg-amber-400'
-                      : 'bg-slate-500'
+                      ? 'bg-amber-500'
+                      : 'bg-slate-400'
                   }`}
                 ></span>
               </span>
@@ -340,10 +340,10 @@ export const Header: React.FC<HeaderProps> = ({
             {canManage && onOpenUserManagement && (
               <button
                 onClick={onOpenUserManagement}
-                className="hidden xl:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-xs font-bold text-emerald-400 transition-all shadow-sm shrink-0 active:scale-95"
+                className="hidden xl:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-blue-700 transition-all shadow-xs shrink-0 active:scale-95"
                 title="Tạo và quản lý tài khoản Ban Tổ Chức & Trọng tài"
               >
-                <Users className="w-4 h-4 text-emerald-400 shrink-0" />
+                <Users className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>Cấp Tài Khoản</span>
               </button>
             )}
@@ -353,13 +353,13 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={toggleSound}
               className={`hidden md:flex items-center justify-center min-h-[40px] min-w-[40px] rounded-xl border transition-all shrink-0 ${
                 soundOn
-                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400 hover:bg-emerald-900/50'
-                  : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
+                  ? 'bg-sky-50 border-sky-200 text-sky-700 hover:bg-sky-100'
+                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600'
               }`}
               title={soundOn ? 'Âm thanh còi & ăn mừng: BẬT' : 'Âm thanh: TẮT'}
               aria-label="Bật tắt âm thanh hiệu ứng"
             >
-              {soundOn ? <Volume2 className="w-4 h-4 shrink-0" /> : <VolumeX className="w-4 h-4 shrink-0" />}
+              {soundOn ? <Volume2 className="w-4 h-4 shrink-0 text-sky-600" /> : <VolumeX className="w-4 h-4 shrink-0" />}
             </button>
 
             {/* User Profile / Login System (Desktop only, mobile in Menu Hamburger) */}
@@ -367,54 +367,54 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative hidden md:block shrink-0">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
+                  className="flex items-center gap-2 min-h-[40px] px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 shadow-xs transition-all shrink-0 whitespace-nowrap"
                   title="Thông tin tài khoản & Đổi vai trò"
                 >
                   <img
                     src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
                     alt={currentUser.fullName}
-                    className="w-7 h-7 rounded-lg object-cover border border-emerald-500/40 shrink-0"
+                    className="w-7 h-7 rounded-lg object-cover border border-sky-300 shrink-0"
                   />
                   <div className="flex flex-col text-left">
-                    <span className="text-xs font-bold text-white max-w-[110px] truncate leading-tight">
+                    <span className="text-xs font-bold text-slate-900 max-w-[110px] truncate leading-tight">
                       {currentUser.fullName}
                     </span>
-                    <span className={`text-[10px] font-semibold text-emerald-400`}>
+                    <span className="text-[10px] font-semibold text-blue-600">
                       {roleLabels[currentRole]?.label || currentRole}
                     </span>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 ml-0.5 shrink-0" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 ml-0.5 shrink-0" />
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-[#070F1E] border border-slate-700/80 rounded-2xl shadow-2xl py-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl py-3 z-50 animate-in fade-in zoom-in-95 duration-150">
                     {/* User Info Header */}
-                    <div className="px-4 pb-3 border-b border-slate-800 flex items-center gap-3">
+                    <div className="px-4 pb-3 border-b border-slate-100 flex items-center gap-3">
                       <img
                         src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150'}
                         alt={currentUser.fullName}
-                        className="w-10 h-10 rounded-xl object-cover border border-emerald-500/50 shrink-0"
+                        className="w-10 h-10 rounded-xl object-cover border border-sky-300 shrink-0"
                       />
                       <div className="min-w-0 flex-1">
-                        <div className="text-xs font-bold text-white truncate">{currentUser.fullName}</div>
-                        <div className="text-[11px] text-slate-400 font-mono truncate">@{currentUser.username} • {currentUser.email}</div>
-                        <span className={`inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${roleLabels[currentRole]?.color || 'bg-slate-800 text-slate-300'}`}>
+                        <div className="text-xs font-bold text-slate-900 truncate">{currentUser.fullName}</div>
+                        <div className="text-[11px] text-slate-500 font-mono truncate">@{currentUser.username} • {currentUser.email}</div>
+                        <span className={`inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded border ${roleLabels[currentRole]?.color || 'bg-slate-100 text-slate-700 border-slate-200'}`}>
                           {roleLabels[currentRole]?.label}
                         </span>
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="pt-2 border-t border-slate-800 px-3 space-y-1">
+                    <div className="pt-2 px-3 space-y-1">
                       {onOpenAuthModal && (
                         <button
                           onClick={() => {
                             setUserMenuOpen(false);
                             onOpenAuthModal();
                           }}
-                          className="w-full text-left px-3 py-2 text-xs text-slate-300 hover:text-white hover:bg-slate-800/80 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
+                          className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:text-blue-700 hover:bg-blue-50/80 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
                         >
-                          <User className="w-4 h-4 text-cyan-400" />
+                          <User className="w-4 h-4 text-sky-600" />
                           <span>Đổi Tài Khoản / Đăng Ký Mới</span>
                         </button>
                       )}
@@ -425,9 +425,9 @@ export const Header: React.FC<HeaderProps> = ({
                             setUserMenuOpen(false);
                             onLogout();
                           }}
-                          className="w-full text-left px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
+                          className="w-full text-left px-3 py-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
                         >
-                          <LogOut className="w-4 h-4 text-red-400" />
+                          <LogOut className="w-4 h-4 text-red-600" />
                           <span>Đăng Xuất</span>
                         </button>
                       )}
@@ -439,25 +439,25 @@ export const Header: React.FC<HeaderProps> = ({
                             setUserMenuOpen(false);
                             onOpenUserManagement();
                           }}
-                          className="w-full text-left px-3 py-2 text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 rounded-xl flex items-center gap-2 transition-colors font-bold min-h-[38px]"
+                          className="w-full text-left px-3 py-2 text-xs text-blue-700 hover:text-blue-800 hover:bg-blue-50 rounded-xl flex items-center gap-2 transition-colors font-bold min-h-[38px]"
                         >
-                          <Users className="w-4 h-4 text-emerald-400" />
+                          <Users className="w-4 h-4 text-blue-600" />
                           <span>Quản Lý Tài Khoản (BTC/Trọng Tài)</span>
                         </button>
                       )}
 
                       {/* Database Utilities inside User Menu for Admin/BTC */}
                       {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
-                        <div className="pt-2 border-t border-slate-800 space-y-1">
+                        <div className="pt-2 border-t border-slate-100 space-y-1">
                           {onClearData && (
                             <button
                               onClick={() => {
                                 setUserMenuOpen(false);
                                 onClearData();
                               }}
-                              className="w-full text-left px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-950/40 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
+                              className="w-full text-left px-3 py-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
                             >
-                              <Trash2 className="w-4 h-4 text-red-400" />
+                              <Trash2 className="w-4 h-4 text-red-600" />
                               <span>Xóa Sạch Dữ Liệu Mẫu</span>
                             </button>
                           )}
@@ -467,9 +467,9 @@ export const Header: React.FC<HeaderProps> = ({
                                 setUserMenuOpen(false);
                                 onLoadDemo();
                               }}
-                              className="w-full text-left px-3 py-2 text-xs text-amber-300 hover:text-amber-200 hover:bg-amber-950/40 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
+                              className="w-full text-left px-3 py-2 text-xs text-amber-700 hover:text-amber-800 hover:bg-amber-50 rounded-xl flex items-center gap-2 transition-colors min-h-[38px]"
                             >
-                              <Database className="w-4 h-4 text-amber-400" />
+                              <Database className="w-4 h-4 text-amber-600" />
                               <span>Nạp Dữ Liệu Mẫu (Demo)</span>
                             </button>
                           )}
@@ -484,7 +484,7 @@ export const Header: React.FC<HeaderProps> = ({
               onOpenAuthModal && (
                 <button
                   onClick={onOpenAuthModal}
-                  className="hidden md:inline-flex items-center gap-2 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
+                  className="hidden md:inline-flex items-center gap-2 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-sky-700 text-white font-black text-xs sm:text-sm shadow-md shadow-blue-500/20 transition-all border border-blue-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 >
                   <LogIn className="w-4 h-4 shrink-0" />
                   <span>Đăng Nhập</span>
@@ -496,11 +496,11 @@ export const Header: React.FC<HeaderProps> = ({
             {onOpenMobileMenu && (
               <button
                 onClick={onOpenMobileMenu}
-                className="flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-400 hover:text-white md:hidden transition-all shadow-md active:scale-95"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-blue-700 hover:text-blue-800 md:hidden transition-all shadow-xs active:scale-95"
                 title="Mở menu chức năng giải đấu"
                 aria-label="Mở menu chức năng"
               >
-                <Menu className="w-6 h-6 text-emerald-400" />
+                <Menu className="w-6 h-6 text-blue-600" />
               </button>
             )}
 

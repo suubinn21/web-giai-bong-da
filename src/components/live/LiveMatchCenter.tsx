@@ -499,7 +499,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
       </div>
 
       {/* Main Stadium Live Scoreboard Card */}
-      <div className="relative rounded-3xl overflow-hidden border-2 border-emerald-500/40 shadow-[0_12px_50px_rgba(0,0,0,0.7)] bg-[#071322] backdrop-blur-md">
+      <div className="relative rounded-3xl overflow-hidden border border-blue-500/40 shadow-xl bg-[#0B1A30]">
         {/* Stadium Action Photo Overlay with balanced floodlights */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 transform scale-105 pointer-events-none mix-blend-luminosity"
@@ -508,12 +508,12 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
         <div className="absolute inset-0 bg-gradient-to-b from-[#071526]/95 via-[#06101c]/92 to-[#030810]/98 pointer-events-none" />
         
         {/* Stadium lighting glow overlays */}
-        <div className="absolute top-0 left-1/4 right-1/4 h-32 bg-emerald-500/25 blur-3xl pointer-events-none"></div>
+        <div className="absolute top-0 left-1/4 right-1/4 h-32 bg-sky-500/25 blur-3xl pointer-events-none"></div>
         <div className="absolute -top-10 left-10 w-48 h-48 bg-cyan-500/15 blur-3xl pointer-events-none"></div>
-        <div className="absolute -top-10 right-10 w-48 h-48 bg-emerald-500/15 blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-10 right-10 w-48 h-48 bg-blue-500/15 blur-3xl pointer-events-none"></div>
 
         {/* Top Info Bar */}
-        <div className="px-6 py-3.5 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs bg-[#071322]/90 backdrop-blur-sm">
+        <div className="px-6 py-3.5 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs bg-[#0B1A30]">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="font-extrabold text-emerald-300 bg-emerald-950/90 border border-emerald-500/50 px-3 py-1 rounded-lg uppercase tracking-wider text-xs shadow-sm">
               {activeMatch.roundLabel}
@@ -580,7 +580,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                   style={{ backgroundColor: homeTeam?.primaryColor || '#1e3a8a' }}
                 />
                 <div 
-                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50 backdrop-blur-md"
+                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50"
                   style={{ 
                     background: `linear-gradient(135deg, ${homeTeam?.primaryColor || '#1e3a8a'} 0%, #08111e 100%)`, 
                     borderColor: homeTeam?.secondaryColor || '#34d399' 
@@ -666,7 +666,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                   style={{ backgroundColor: awayTeam?.primaryColor || '#059669' }}
                 />
                 <div 
-                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50 backdrop-blur-md"
+                  className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl flex items-center justify-center text-3xl sm:text-5xl font-extrabold shadow-2xl border-2 border-white/50"
                   style={{ 
                     background: `linear-gradient(135deg, ${awayTeam?.primaryColor || '#059669'} 0%, #08111e 100%)`, 
                     borderColor: awayTeam?.secondaryColor || '#38bdf8' 
@@ -702,7 +702,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
         {/* Live Match Operational Control Bar for Organizer / Referee */}
         {canEdit && (
-          <div className="px-5 sm:px-6 py-3.5 sm:py-4 bg-[#071322]/95 backdrop-blur-xl border-t-2 border-emerald-500/40 flex flex-wrap items-center justify-between gap-3 shadow-2xl">
+          <div className="px-5 sm:px-6 py-3.5 sm:py-4 bg-[#081525] border-t-2 border-sky-500/40 flex flex-wrap items-center justify-between gap-3 shadow-2xl">
             
             {/* Timer controls */}
             <div className="flex flex-wrap items-center gap-2.5">
@@ -970,23 +970,23 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       {/* MODAL 1: Add Goal */}
       {goalModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>⚽</span> Ghi Nhận Bàn Thắng Mới
             </h3>
 
             {/* Team Picker */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Chọn Đội Ghi Bàn</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Chọn Đội Ghi Bàn</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setEventTeamId(homeTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === homeTeam?.id
-                      ? 'bg-blue-600 text-white border-blue-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {homeTeam?.name}
@@ -994,10 +994,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 <button
                   type="button"
                   onClick={() => setEventTeamId(awayTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === awayTeam?.id
-                      ? 'bg-emerald-600 text-white border-emerald-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {awayTeam?.name}
@@ -1007,13 +1007,13 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Player Scorer (Filters out suspended players!) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-bold text-slate-700 mb-1">
                 Cầu Thủ Ghi Bàn (Không cho phép cầu thủ bị treo giò)
               </label>
               <select
                 value={selectedPlayerId}
                 onChange={(e) => setSelectedPlayerId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 focus:border-emerald-500 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
               >
                 <option value="">-- Chọn cầu thủ ghi bàn --</option>
                 {(eventTeamId === homeTeam?.id ? homeTeam?.players : awayTeam?.players)?.map((p) => (
@@ -1026,11 +1026,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Assist Player */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Cầu Thủ Kiến Tạo (Tùy chọn)</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Cầu Thủ Kiến Tạo (Tùy chọn)</label>
               <select
                 value={selectedAssistId}
                 onChange={(e) => setSelectedAssistId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 focus:border-emerald-500 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
               >
                 <option value="">-- Không có kiến tạo --</option>
                 {(eventTeamId === homeTeam?.id ? homeTeam?.players : awayTeam?.players)?.map((p) => (
@@ -1044,24 +1044,24 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
             {/* Minute */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Phút ghi bàn (1-40)</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Phút ghi bàn (1-40)</label>
                 <input
                   type="number"
                   min={1}
                   max={45}
                   value={eventMinute}
                   onChange={(e) => setEventMinute(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
                 />
               </div>
 
               <div className="flex items-center pt-5">
-                <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
                   <input
                     type="checkbox"
                     checked={isOwnGoal}
                     onChange={(e) => setIsOwnGoal(e.target.checked)}
-                    className="rounded bg-slate-800 border-slate-700 text-emerald-500"
+                    className="rounded bg-slate-100 border-slate-300 text-blue-600 focus:ring-blue-500"
                   />
                   <span>Phản lưới nhà (OG)</span>
                 </label>
@@ -1069,11 +1069,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setGoalModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Hủy
               </button>
@@ -1081,7 +1081,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 type="button"
                 onClick={handleSaveGoal}
                 disabled={!selectedPlayerId}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-lg shadow-emerald-500/30 border border-emerald-300 transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-md shadow-blue-500/25 transition-all cursor-pointer"
               >
                 ⚽ Xác Nhận Bàn Thắng
               </button>
@@ -1092,23 +1092,23 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       {/* MODAL 2: Add Card */}
       {cardModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <span>⚠️</span> Phạt Thẻ Trọng Tài (Điều 11 & 12)
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <span>⚠️</span> Phạt Thẻ Trọng Tài (Điều 11 &amp; 12)
             </h3>
 
             {/* Team Picker */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Chọn Đội Phạt Thẻ</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Chọn Đội Phạt Thẻ</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setEventTeamId(homeTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === homeTeam?.id
-                      ? 'bg-blue-600 text-white border-blue-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {homeTeam?.name}
@@ -1116,10 +1116,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 <button
                   type="button"
                   onClick={() => setEventTeamId(awayTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === awayTeam?.id
-                      ? 'bg-emerald-600 text-white border-emerald-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {awayTeam?.name}
@@ -1129,11 +1129,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Player */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Cầu Thủ Nhận Thẻ</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Cầu Thủ Nhận Thẻ</label>
               <select
                 value={selectedPlayerId}
                 onChange={(e) => setSelectedPlayerId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               >
                 <option value="">-- Chọn cầu thủ --</option>
                 {(eventTeamId === homeTeam?.id ? homeTeam?.players : awayTeam?.players)?.map((p) => (
@@ -1146,15 +1146,15 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Card Type */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Loại Thẻ</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Loại Thẻ</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setCardType('YELLOW')}
-                  className={`p-2 rounded-xl text-xs font-black border transition-colors flex items-center justify-center gap-1.5 ${
+                  className={`p-2.5 rounded-xl text-xs font-black border transition-colors flex items-center justify-center gap-1.5 ${
                     cardType === 'YELLOW'
-                      ? 'bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 border-amber-300 shadow-md'
-                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                      ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs ring-1 ring-amber-400'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   <span>🟨</span> Thẻ Vàng (Tích Lũy)
@@ -1162,10 +1162,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 <button
                   type="button"
                   onClick={() => setCardType('RED')}
-                  className={`p-2 rounded-xl text-xs font-black border transition-colors flex items-center justify-center gap-1.5 ${
+                  className={`p-2.5 rounded-xl text-xs font-black border transition-colors flex items-center justify-center gap-1.5 ${
                     cardType === 'RED'
-                      ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white border-red-400 shadow-md'
-                      : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                      ? 'bg-rose-100 text-rose-900 border-rose-300 shadow-xs ring-1 ring-rose-400'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   <span>🟥</span> Thẻ Đỏ Trực Tiếp
@@ -1175,22 +1175,22 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Card Reason */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Lý Do Phạt Thẻ</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Lý Do Phạt Thẻ</label>
               <input
                 type="text"
                 value={cardReason}
                 onChange={(e) => setCardReason(e.target.value)}
                 placeholder="VD: Phạm lỗi kéo người, phản ứng trọng tài..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               />
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setCardModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Hủy
               </button>
@@ -1198,7 +1198,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 type="button"
                 onClick={handleSaveCard}
                 disabled={!selectedPlayerId}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 text-xs font-black shadow-lg shadow-amber-500/30 border border-amber-300 transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-md shadow-amber-500/25 transition-all cursor-pointer"
               >
                 ⚠️ Xác Nhận Thẻ Phạt
               </button>
@@ -1209,23 +1209,23 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       {/* MODAL 3: Substitution (Rule #6.2: Unlimited Substitutions) */}
       {subModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>🔄</span> Thay Người (Không Giới Hạn - Điều 6.2)
             </h3>
 
             {/* Team Picker */}
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Chọn Đội Thay Người</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Chọn Đội Thay Người</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setEventTeamId(homeTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === homeTeam?.id
-                      ? 'bg-blue-600 text-white border-blue-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {homeTeam?.name}
@@ -1233,10 +1233,10 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 <button
                   type="button"
                   onClick={() => setEventTeamId(awayTeam?.id || '')}
-                  className={`p-2 rounded-xl text-xs font-bold border transition-colors ${
+                  className={`p-2.5 rounded-xl text-xs font-bold border transition-colors ${
                     eventTeamId === awayTeam?.id
-                      ? 'bg-emerald-600 text-white border-emerald-400'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
                   {awayTeam?.name}
@@ -1246,11 +1246,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Player Out */}
             <div>
-              <label className="block text-xs font-semibold text-red-400 mb-1">Cầu Thủ Rời Sân (OUT)</label>
+              <label className="block text-xs font-bold text-rose-600 mb-1">Cầu Thủ Rời Sân (OUT)</label>
               <select
                 value={selectedPlayerOutId}
                 onChange={(e) => setSelectedPlayerOutId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-rose-400 focus:bg-white"
               >
                 <option value="">-- Chọn cầu thủ ra sân --</option>
                 {(eventTeamId === homeTeam?.id ? homeTeam?.players : awayTeam?.players)?.map((p) => (
@@ -1263,11 +1263,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
             {/* Player In */}
             <div>
-              <label className="block text-xs font-semibold text-emerald-400 mb-1">Cầu Thủ Vào Sân (IN)</label>
+              <label className="block text-xs font-bold text-emerald-700 mb-1">Cầu Thủ Vào Sân (IN)</label>
               <select
                 value={selectedPlayerInId}
                 onChange={(e) => setSelectedPlayerInId(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-emerald-400 focus:bg-white"
               >
                 <option value="">-- Chọn cầu thủ vào sân --</option>
                 {(eventTeamId === homeTeam?.id ? homeTeam?.players : awayTeam?.players)?.map((p) => (
@@ -1279,11 +1279,11 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setSubModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Hủy
               </button>
@@ -1291,7 +1291,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 type="button"
                 onClick={handleSaveSubstitution}
                 disabled={!selectedPlayerOutId || !selectedPlayerInId}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-lg shadow-cyan-500/30 border border-cyan-300 transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-md shadow-blue-500/25 transition-all cursor-pointer"
               >
                 🔄 Xác Nhận Thay Người
               </button>
@@ -1302,46 +1302,46 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       {/* MODAL 4: Penalty Shootout 6m for Knockout (Rule #8) */}
       {penaltyModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-purple-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>🥅</span> Luân Lưu 6m - Phân Định Thắng Thua (Điều 8)
             </h3>
-            <p className="text-xs text-slate-300 bg-purple-950/40 p-2.5 rounded-lg border border-purple-500/30">
+            <p className="text-xs text-purple-800 bg-purple-50 p-2.5 rounded-xl border border-purple-200">
               Trận đấu knockout hòa sau 40 phút chính thức: Không đá hiệp phụ, tiến hành đá luân lưu 6m để xác định đội đi tiếp.
             </p>
 
             <div className="grid grid-cols-2 gap-4 py-4">
-              <div className="p-4 rounded-xl bg-slate-800 text-center border border-slate-700">
-                <span className="text-xs text-slate-300 font-bold block mb-2">{homeTeam?.shortName}</span>
+              <div className="p-4 rounded-2xl bg-slate-50 text-center border border-slate-200">
+                <span className="text-xs text-slate-700 font-bold block mb-2">{homeTeam?.shortName}</span>
                 <input
                   type="number"
                   min={0}
                   max={20}
                   value={penHome}
                   onChange={(e) => setPenHome(Number(e.target.value))}
-                  className="w-16 h-12 text-center text-2xl font-black bg-slate-900 text-white rounded-lg border-2 border-purple-400 mx-auto"
+                  className="w-16 h-12 text-center text-2xl font-black bg-white text-slate-900 rounded-xl border-2 border-purple-400 mx-auto shadow-xs"
                 />
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-800 text-center border border-slate-700">
-                <span className="text-xs text-slate-300 font-bold block mb-2">{awayTeam?.shortName}</span>
+              <div className="p-4 rounded-2xl bg-slate-50 text-center border border-slate-200">
+                <span className="text-xs text-slate-700 font-bold block mb-2">{awayTeam?.shortName}</span>
                 <input
                   type="number"
                   min={0}
                   max={20}
                   value={penAway}
                   onChange={(e) => setPenAway(Number(e.target.value))}
-                  className="w-16 h-12 text-center text-2xl font-black bg-slate-900 text-white rounded-lg border-2 border-purple-400 mx-auto"
+                  className="w-16 h-12 text-center text-2xl font-black bg-white text-slate-900 rounded-xl border-2 border-purple-400 mx-auto shadow-xs"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setPenaltyModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Hủy
               </button>
@@ -1349,7 +1349,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 type="button"
                 onClick={handleSavePenalty}
                 disabled={penHome === penAway}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-lg shadow-purple-600/30 border border-purple-300 transition-all cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-black shadow-md shadow-purple-600/25 transition-all cursor-pointer"
               >
                 🥅 Xác Nhận Tỷ Số Penalty
               </button>
@@ -1360,19 +1360,19 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       {/* MODAL 5: Post-Match Edit with Audit Log (Rule #26) */}
       {postEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <FileEdit className="w-5 h-5 text-amber-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <FileEdit className="w-5 h-5 text-amber-500" />
               Chỉnh Sửa Dữ Liệu Sau Trận Đấu (Điều 26)
             </h3>
-            <p className="text-xs text-amber-300 bg-amber-950/40 p-2.5 rounded-lg border border-amber-500/30">
+            <p className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200">
               Quy định nghiêm ngặt: Trận đấu đã FINISHED. Mọi chỉnh sửa bắt buộc phải ghi rõ lý do và được lưu trữ vĩnh viễn trong Audit Log của BTC.
             </p>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-slate-300 font-semibold block mb-1">Tỷ số {homeTeam?.shortName}</label>
+                <label className="text-xs text-slate-700 font-bold block mb-1">Tỷ số {homeTeam?.shortName}</label>
                 <input
                   type="number"
                   min={0}
@@ -1381,12 +1381,12 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                     activeMatch.homeScore = Number(e.target.value);
                     onMatchesUpdate([...matches]);
                   }}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl p-2 font-mono font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl p-2 font-mono font-bold focus:bg-white focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs text-slate-300 font-semibold block mb-1">Tỷ số {awayTeam?.shortName}</label>
+                <label className="text-xs text-slate-700 font-bold block mb-1">Tỷ số {awayTeam?.shortName}</label>
                 <input
                   type="number"
                   min={0}
@@ -1395,13 +1395,13 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                     activeMatch.awayScore = Number(e.target.value);
                     onMatchesUpdate([...matches]);
                   }}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl p-2 font-mono font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl p-2 font-mono font-bold focus:bg-white focus:border-blue-500"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-bold text-white block mb-1">
+              <label className="text-xs font-bold text-slate-800 block mb-1">
                 Lý Do Chỉnh Sửa (Bắt buộc theo Điều 26)
               </label>
               <textarea
@@ -1409,25 +1409,25 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 value={postEditReason}
                 onChange={(e) => setPostEditReason(e.target.value)}
                 placeholder="VD: Nhập sai biên bản giấy do trọng tài ghi nhầm phút 35..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 focus:border-amber-500 focus:outline-none"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 text-xs rounded-xl p-2.5 focus:border-amber-500 focus:bg-white focus:outline-none"
               ></textarea>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setPostEditModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white text-xs font-bold border border-slate-700 transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold border border-slate-200 transition-all cursor-pointer"
               >
                 Hủy
               </button>
               <button
                 type="button"
                 onClick={handleSavePostEdit}
-                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/30 border border-amber-300 transition-all cursor-pointer flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-xs font-black shadow-md shadow-amber-500/25 transition-all cursor-pointer flex items-center gap-1.5"
               >
                 <FileEdit className="w-3.5 h-3.5" />
-                <span>Xác Nhận & Ghi Audit Log</span>
+                <span>Xác Nhận &amp; Ghi Audit Log</span>
               </button>
             </div>
           </div>

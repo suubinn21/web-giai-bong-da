@@ -199,33 +199,33 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
     <div className="space-y-6">
       
       {/* Top Banner Card with 15-min Live Countdown Timer */}
-      <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-cyan-500/20 text-cyan-400 text-xs font-bold px-3 py-1 rounded-full border border-cyan-500/30 flex items-center gap-1.5">
+              <span className="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
                 CỔNG KHIẾU NẠI 15 PHÚT SAU TRẬN ĐẤU
               </span>
-              <span className="text-xs text-slate-400">Quy định Điều 17</span>
+              <span className="text-xs text-slate-500 font-medium">Quy định Điều 17</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900">
               Quyền Khiếu Nại Của Các Đội Bóng
             </h2>
-            <p className="text-xs text-slate-400 mt-1 max-w-xl">
-              Đội bóng có quyền gửi khiếu nại trong vòng đúng <strong>15 phút</strong> sau khi trận đấu kết thúc.
+            <p className="text-xs text-slate-600 mt-1 max-w-xl">
+              Đội bóng có quyền gửi khiếu nại trong vòng đúng <strong className="text-slate-800">15 phút</strong> sau khi trận đấu kết thúc.
               Hệ thống tự động đếm ngược và khóa vĩnh viễn khi hết giờ.
             </p>
           </div>
 
           {/* Real-time 15-Minute Countdown Display */}
-          <div className="flex items-center gap-4 bg-slate-900/90 p-4 rounded-2xl border border-slate-800 self-start md:self-auto">
+          <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 self-start md:self-auto shadow-xs">
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400">
+              <span className="text-[10px] uppercase font-bold text-slate-500">
                 Thời Hạn Khiếu Nại Trận Gần Nhất
               </span>
-              <span className="text-xs text-emerald-400 font-semibold">
+              <span className="text-xs text-blue-600 font-bold">
                 {selectedMatchForComplaint?.roundLabel || 'Trận 01'}
               </span>
             </div>
@@ -233,13 +233,13 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             <div
               className={`px-4 py-2 rounded-xl font-mono text-xl font-black flex items-center gap-2 shadow-inner border ${
                 !isWindowExpired
-                  ? 'bg-cyan-950/80 text-cyan-300 border-cyan-500/50 animate-pulse'
-                  : 'bg-red-950/80 text-red-400 border-red-500/40'
+                  ? 'bg-blue-50 text-blue-700 border-blue-200 animate-pulse'
+                  : 'bg-rose-50 text-rose-700 border-rose-200'
               }`}
             >
               {!isWindowExpired ? (
                 <>
-                  <Clock className="w-5 h-5 animate-spin-slow" />
+                  <Clock className="w-5 h-5" />
                   <span>{formatMinSec(timeLeftSec)}</span>
                 </>
               ) : (
@@ -270,7 +270,7 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
               }}
               disabled={isWindowExpired || !canSubmit}
               title={!canSubmit ? 'Chỉ dành cho Đội trưởng hoặc Ban Tổ Chức' : undefined}
-              className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-slate-950 font-bold text-xs shadow-lg transition-all"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-40 text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
             >
               + Gửi Khiếu Nại
             </button>
@@ -280,38 +280,38 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
       </div>
 
       {/* Complaints List */}
-      <div className="bg-[#0B132B]/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-        <div className="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
+        <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-cyan-400" />
-            <h4 className="text-sm font-black text-white">
+            <FileText className="w-4 h-4 text-blue-600" />
+            <h4 className="text-sm font-black text-slate-900">
               Danh Sách Đơn Khiếu Nại Đã Nhận ({complaints.length})
             </h4>
           </div>
-          <span className="text-xs text-slate-400">Trạng thái: PENDING ➔ UNDER_REVIEW ➔ RESOLVED</span>
+          <span className="text-xs text-slate-500">Trạng thái: PENDING ➔ UNDER_REVIEW ➔ RESOLVED</span>
         </div>
 
-        <div className="divide-y divide-slate-800/60">
+        <div className="divide-y divide-slate-100">
           {complaints.length === 0 ? (
-            <div className="text-center py-12 text-slate-500 text-xs">
+            <div className="text-center py-12 text-slate-400 text-xs font-medium">
               Chưa có đơn khiếu nại nào được gửi.
             </div>
           ) : (
             complaints.map((c) => {
               const statusBadges: Record<ComplaintStatus, { label: string; color: string }> = {
-                PENDING: { label: 'Chờ Tiếp Nhận', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' },
-                UNDER_REVIEW: { label: 'Đang Xem Xét (Tổ VAR)', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' },
-                APPROVED: { label: 'Chấp Thuận Khiếu Nại', color: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' },
-                REJECTED: { label: 'Bác Bỏ Khiếu Nại', color: 'bg-red-500/20 text-red-300 border-red-500/40' },
-                RESOLVED: { label: 'Đã Giải Quyết', color: 'bg-purple-500/20 text-purple-300 border-purple-500/40' },
+                PENDING: { label: 'Chờ Tiếp Nhận', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+                UNDER_REVIEW: { label: 'Đang Xem Xét (Tổ VAR)', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+                APPROVED: { label: 'Chấp Thuận Khiếu Nại', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+                REJECTED: { label: 'Bác Bỏ Khiếu Nại', color: 'bg-rose-50 text-rose-700 border-rose-200' },
+                RESOLVED: { label: 'Đã Giải Quyết', color: 'bg-purple-50 text-purple-700 border-purple-200' },
               };
 
               return (
-                <div key={c.id} className="p-5 hover:bg-slate-800/30 transition-colors">
+                <div key={c.id} className="p-5 hover:bg-slate-50/70 transition-colors">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-slate-400 font-bold">{c.id}</span>
-                      <span className="text-sm font-bold text-white">{c.title}</span>
+                      <span className="font-mono text-xs text-slate-500 font-bold">{c.id}</span>
+                      <span className="text-sm font-bold text-slate-900">{c.title}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -331,7 +331,7 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                             setReviewStatus(c.status);
                             setReviewModalOpen(true);
                           }}
-                          className="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg border border-slate-700 transition-colors"
+                          className="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-blue-700 rounded-lg border border-slate-200 font-bold transition-colors"
                         >
                           Xử Lý BTC
                         </button>
@@ -339,11 +339,11 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-300 mb-2">{c.content}</p>
+                  <p className="text-xs text-slate-600 mb-2">{c.content}</p>
 
-                  <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+                  <div className="flex flex-wrap items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
                     <div className="flex items-center gap-3">
-                      <span>Đội gửi: <strong className="text-white">{c.teamName}</strong></span>
+                      <span>Đội gửi: <strong className="text-slate-800">{c.teamName}</strong></span>
                       <span>•</span>
                       <span>Loại: {c.type}</span>
                     </div>
@@ -351,11 +351,11 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                   </div>
 
                   {c.reviewerResponse && (
-                    <div className="mt-3 p-3 rounded-xl bg-slate-900/80 border border-purple-500/30 text-xs">
-                      <span className="font-bold text-purple-300 block mb-1">
+                    <div className="mt-3 p-3 rounded-xl bg-purple-50/70 border border-purple-200 text-xs">
+                      <span className="font-bold text-purple-800 block mb-1">
                         Kết Luận Chính Thức Của Ban Tổ Chức:
                       </span>
-                      <span className="text-slate-300">{c.reviewerResponse}</span>
+                      <span className="text-slate-700">{c.reviewerResponse}</span>
                     </div>
                   )}
                 </div>
@@ -367,22 +367,22 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
 
       {/* Modal 1: Submit Complaint */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Clock className="w-5 h-5 text-cyan-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-blue-600" />
               Gửi Đơn Khiếu Nại (Điều 17)
             </h3>
-            <p className="text-xs text-cyan-300 bg-cyan-950/40 p-2.5 rounded-lg border border-cyan-500/30">
+            <p className="text-xs text-blue-800 bg-blue-50 p-2.5 rounded-xl border border-blue-200">
               Thời gian còn lại: <strong>{formatMinSec(timeLeftSec)}</strong>. Đơn khiếu nại sẽ được Ban Tổ Chức và Tổ VAR tiếp nhận ngay lập tức.
             </p>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Đội Khiếu Nại</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Đội Khiếu Nại</label>
               {isCaptain && currentUser?.teamId ? (
-                <div className="w-full bg-slate-800 border border-emerald-500/40 text-emerald-400 font-bold text-xs rounded-xl p-2.5 flex items-center justify-between">
+                <div className="w-full bg-slate-50 border border-blue-200 text-blue-700 font-bold text-xs rounded-xl p-2.5 flex items-center justify-between">
                   <span>{myTeam?.name || currentUser.teamName || 'Đội của bạn'}</span>
-                  <span className="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">
+                  <span className="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded border border-blue-200">
                     Đội của bạn (Đã khóa)
                   </span>
                 </div>
@@ -390,7 +390,7 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                 <select
                   value={formTeamId}
                   onChange={(e) => setFormTeamId(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
                 >
                   {teams.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -406,8 +406,8 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
               selectedMatchForComplaint.homeTeamId !== currentUser.teamId &&
               selectedMatchForComplaint.awayTeamId !== currentUser.teamId
             ) && (
-              <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-300 text-xs flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>
                   Trận đấu <strong>{selectedMatchForComplaint.roundLabel}</strong> không có sự tham gia của đội bạn ({myTeam?.name}). Theo Điều 17 Điều lệ giải, chỉ 2 đội trực tiếp thi đấu mới được gửi khiếu nại.
                 </span>
@@ -415,11 +415,11 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             )}
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Loại Khiếu Nại</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Loại Khiếu Nại</label>
               <select
                 value={formType}
                 onChange={(e) => setFormType(e.target.value as ComplaintType)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               >
                 <option value="REFEREE_DECISION">Quyết định của Trọng tài (Bàn thắng/Thẻ phạt)</option>
                 <option value="PLAYER_ELIGIBILITY">Tư cách cầu thủ (Gian lận sinh viên/Treo giò)</option>
@@ -430,43 +430,43 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Tiêu Đề Khiếu Nại</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Tiêu Đề Khiếu Nại</label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
                 placeholder="VD: Khiếu nại tình huống thẻ vàng phút 25..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               />
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Nội Dung Chi Tiết</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Nội Dung Chi Tiết</label>
               <textarea
                 rows={3}
                 value={formContent}
                 onChange={(e) => setFormContent(e.target.value)}
                 placeholder="Mô tả chi tiết tình huống, phút diễn ra, cầu thủ liên quan..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               ></textarea>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Link Ảnh / Video Bằng Chứng</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Link Ảnh / Video Bằng Chứng</label>
               <input
                 type="text"
                 value={formEvidenceUrl}
                 onChange={(e) => setFormEvidenceUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold border border-slate-200"
               >
                 Hủy
               </button>
@@ -480,7 +480,7 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
                   selectedMatchForComplaint.homeTeamId !== currentUser.teamId &&
                   selectedMatchForComplaint.awayTeamId !== currentUser.teamId)
                 }
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 text-xs font-bold shadow-lg transition-all"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-40 text-white text-xs font-bold shadow-xs transition-all"
               >
                 Nộp Đơn Khiếu Nại
               </button>
@@ -491,19 +491,19 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
 
       {/* Modal 2: BTC Review */}
       {reviewModalOpen && selectedComplaint && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-purple-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-purple-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-purple-600" />
               Giải Quyết Khiếu Nại (Ban Tổ Chức)
             </h3>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Cập Nhật Trạng Thái</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Cập Nhật Trạng Thái</label>
               <select
                 value={reviewStatus}
                 onChange={(e) => setReviewStatus(e.target.value as ComplaintStatus)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 font-bold focus:border-blue-500 focus:bg-white"
               >
                 <option value="UNDER_REVIEW">Đang Kiểm Tra Lại Băng Hình</option>
                 <option value="APPROVED">Chấp Thuận Khiếu Nại (Sửa Biên Bản)</option>
@@ -513,30 +513,30 @@ export const ComplaintsView: React.FC<ComplaintsViewProps> = ({
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-white block mb-1">Ý Kiến Kết Luận Của BTC</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Ý Kiến Kết Luận Của BTC</label>
               <textarea
                 rows={3}
                 value={reviewResponse}
                 onChange={(e) => setReviewResponse(e.target.value)}
                 placeholder="Nhập thông báo kết luận gửi cho các đội bóng..."
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               ></textarea>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setReviewModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold border border-slate-200"
               >
                 Đóng
               </button>
               <button
                 type="button"
                 onClick={handleSaveReview}
-                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-lg"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-xs"
               >
-                Lưu Kết Luận & Ghi Audit Log
+                Lưu Kết Luận &amp; Ghi Audit Log
               </button>
             </div>
           </div>

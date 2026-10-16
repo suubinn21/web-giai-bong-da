@@ -744,9 +744,9 @@ export default function Home() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-transparent flex flex-col items-center justify-center text-white">
-        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <div className="text-sm font-bold text-emerald-400">Đang khởi tạo ITFTMS 2026...</div>
+      <div className="min-h-screen bg-transparent flex flex-col items-center justify-center text-slate-800">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div className="text-sm font-bold text-blue-600">Đang khởi tạo ITFTMS 2026...</div>
       </div>
     );
   }
@@ -820,7 +820,7 @@ export default function Home() {
   const suspendedPlayers = teams.flatMap((t) => t.players).filter((p) => p.isSuspended);
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent text-slate-100">
+    <div className="min-h-screen flex flex-col bg-transparent text-slate-900">
       
       {/* Header with Role Switcher, Tournament Stage, Sound FX, Clear & Load Data */}
       <Header
@@ -940,7 +940,7 @@ export default function Home() {
               onTournamentUpdate={handleTournamentUpdate}
             />
           ) : (
-            <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-10 text-center text-slate-400">
+            <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-600 shadow-sm">
               Chức năng Bốc thăm chia bảng chỉ dành riêng cho Ban Tổ Chức (BTC) điều hành.
             </div>
           )
@@ -966,7 +966,7 @@ export default function Home() {
               currentUser={currentUser}
             />
           ) : (
-            <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-10 text-center text-slate-400">
+            <div className="bg-white border border-slate-200 rounded-3xl p-10 text-center text-slate-600 shadow-sm">
               Chức năng Khiếu nại 15 phút chỉ dành riêng cho Đội trưởng và Ban Tổ Chức theo Điều 17.
             </div>
           )
@@ -982,12 +982,12 @@ export default function Home() {
               currentRole={currentRole}
             />
           ) : (
-            <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
-              <div className="w-14 h-14 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-2xl">
+            <div className="bg-white border border-rose-200 rounded-3xl p-12 text-center space-y-4 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto text-2xl">
                 🔒
               </div>
-              <h3 className="text-xl font-black text-white">Khu Vực Bảo Mật Ban Tổ Chức</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              <h3 className="text-xl font-black text-slate-900">Khu Vực Bảo Mật Ban Tổ Chức</h3>
+              <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                 Thông tin tài chính, thu chi và lệ phí chỉ dành riêng cho Ban Tổ Chức (BTC) và Quản Trị Viên. Trọng tài, Đội trưởng và Sinh viên không được cấp quyền truy cập.
               </p>
             </div>
@@ -1012,12 +1012,12 @@ export default function Home() {
               onOpenUserManagement={() => setUserManagementOpen(true)}
             />
           ) : (
-            <div className="bg-[#0B132B] border border-red-500/30 rounded-3xl p-12 text-center space-y-4 shadow-xl">
-              <div className="w-14 h-14 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-400 flex items-center justify-center mx-auto text-2xl">
+            <div className="bg-white border border-rose-200 rounded-3xl p-12 text-center space-y-4 shadow-sm">
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto text-2xl">
                 🔒
               </div>
               <h3 className="text-xl font-black text-white">Khu Vực Bảo Mật Ban Tổ Chức</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                 Nhật ký hệ thống (Audit Logs) chỉ dành riêng cho Ban Tổ Chức và Quản Trị Viên kiểm soát dữ liệu.
               </p>
             </div>
@@ -1027,13 +1027,13 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#0B132B] border-t border-slate-800 text-slate-400 py-8 px-4 sm:px-6 lg:px-8 mt-12">
+      <footer className="bg-white border-t border-slate-200 text-slate-600 py-8 px-4 sm:px-6 lg:px-8 mt-12 shadow-xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-3">
-            <span className="font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
+            <span className="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
               ITFTMS 2026
             </span>
-            <span>Khoa Công Nghệ Thông Tin • Ban Thể Thao Đoàn - Hội</span>
+            <span className="font-semibold text-slate-800">Khoa Công Nghệ Thông Tin • Ban Thể Thao Đoàn - Hội</span>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 text-slate-500">
@@ -1046,8 +1046,8 @@ export default function Home() {
             <span>Luật 2 thẻ vàng Điều 11</span>
           </div>
 
-          <div className="text-slate-400">
-            Hệ Thống Quản Lý & Điều Hành Giải Bóng Đá CNTT 2026
+          <div className="text-slate-500">
+            Hệ Thống Quản Lý &amp; Điều Hành Giải Bóng Đá CNTT 2026
           </div>
         </div>
       </footer>

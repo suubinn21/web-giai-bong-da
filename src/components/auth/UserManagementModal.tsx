@@ -136,16 +136,16 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const canManage = currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER';
   if (!canManage) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div className="bg-[#0B132B] border border-red-500/50 rounded-3xl p-6 max-w-md w-full text-center">
-          <ShieldAlert className="w-12 h-12 text-red-400 mx-auto mb-3" />
-          <h3 className="text-lg font-black text-white mb-2">Quyền Truy Cập Bị Từ Chối</h3>
-          <p className="text-xs text-slate-400 mb-4">
-            Chức năng quản lý và cấp tài khoản Ban Tổ Chức & Trọng tài chỉ dành riêng cho quyền Admin (Ban Tổ Chức).
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50">
+        <div className="bg-white border border-rose-200 rounded-3xl p-6 max-w-md w-full text-center shadow-2xl">
+          <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto mb-3" />
+          <h3 className="text-lg font-black text-slate-900 mb-2">Quyền Truy Cập Bị Từ Chối</h3>
+          <p className="text-xs text-slate-600 mb-4">
+            Chức năng quản lý và cấp tài khoản Ban Tổ Chức &amp; Trọng tài chỉ dành riêng cho quyền Admin (Ban Tổ Chức).
           </p>
           <button
             onClick={onClose}
-            className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold"
+            className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold"
           >
             Đóng
           </button>
@@ -302,33 +302,33 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
   const captainCount = users.filter((u) => u.role === 'TEAM_MANAGER').length;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl max-h-[92vh] bg-[#0A1128] border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl max-h-[92vh] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 text-slate-800">
         
         {/* Header */}
-        <div className="px-5 py-4 border-b border-slate-800 bg-slate-950/60 flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 via-sky-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
               <Users className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black text-white">
-                  Quản Lý Tài Khoản & Phân Quyền
+                <h2 className="text-base sm:text-lg font-black text-slate-900">
+                  Quản Lý Tài Khoản &amp; Phân Quyền
                 </h2>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                   Admin Control
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-400">
-                Tạo và cấp tài khoản đăng nhập cho Ban Tổ Chức (BTC) & Trọng Tài điều hành giải đấu
+              <p className="text-[11px] sm:text-xs text-slate-500">
+                Tạo và cấp tài khoản đăng nhập cho Ban Tổ Chức (BTC) &amp; Trọng Tài điều hành giải đấu
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-900 border border-slate-800 hover:border-slate-700 active:scale-95 transition-all"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-800 bg-slate-100 border border-slate-200 hover:border-slate-300 active:scale-95 transition-all"
             aria-label="Đóng"
           >
             <X className="w-5 h-5" />
@@ -336,19 +336,19 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-5 pt-3 border-b border-slate-800 bg-slate-900/40 flex items-center justify-between">
+        <div className="px-5 pt-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('list')}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
                 activeTab === 'list'
-                  ? 'border-emerald-500 text-emerald-400 bg-slate-800/60 font-black'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-blue-600 text-blue-700 bg-white font-black'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
               <Users className="w-4 h-4" />
               <span>Danh Sách Tài Khoản</span>
-              <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-300 font-mono">
+              <span className="text-[10px] bg-slate-200/70 px-2 py-0.5 rounded-full text-slate-700 font-mono">
                 {users.length}
               </span>
             </button>
@@ -361,29 +361,29 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
               }}
               className={`px-4 py-2.5 rounded-t-xl text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
                 activeTab === 'create'
-                  ? 'border-emerald-500 text-emerald-400 bg-slate-800/60 font-black'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-blue-600 text-blue-700 bg-white font-black'
+                  : 'border-transparent text-slate-600 hover:text-slate-900'
               }`}
             >
-              <UserPlus className="w-4 h-4 text-emerald-400" />
+              <UserPlus className="w-4 h-4 text-blue-600" />
               <span>Tạo Tài Khoản Mới</span>
-              <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">
+              <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded font-bold">
                 Mới
               </span>
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-[11px] text-slate-400">
-            <span>BTC: <strong className="text-emerald-400 font-mono bg-emerald-950/80 border border-emerald-800/80 px-1.5 py-0.5 rounded">{AuthService.BTC_DEFAULT_PASSWORD}</strong></span>
+          <div className="hidden sm:flex items-center gap-2 text-[11px] text-slate-500">
+            <span>BTC: <strong className="text-blue-700 font-mono bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">{AuthService.BTC_DEFAULT_PASSWORD}</strong></span>
             <span>•</span>
-            <span>Trọng tài / Đội trưởng: <strong className="text-white font-mono bg-slate-800 px-1.5 py-0.5 rounded">123</strong></span>
+            <span>Trọng tài / Đội trưởng: <strong className="text-slate-800 font-mono bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">123</strong></span>
           </div>
         </div>
 
         {/* Notification Toast */}
         {actionSuccessMsg && (
-          <div className="mx-5 mt-3 p-3 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 flex items-center gap-2 text-xs font-bold text-emerald-300 animate-in fade-in">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="mx-5 mt-3 p-3 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-2 text-xs font-bold text-emerald-800 animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{actionSuccessMsg}</span>
           </div>
         )}
@@ -404,7 +404,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Tìm theo họ tên, @username, SĐT, email..."
-                    className="w-full bg-slate-900/90 border border-slate-700/80 text-white text-xs rounded-xl pl-9 pr-3 py-2.5 focus:border-emerald-500 focus:outline-none transition-colors"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 text-xs rounded-xl pl-9 pr-3 py-2.5 focus:border-blue-500 focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -414,8 +414,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     onClick={() => setFilterRole('ALL')}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-colors ${
                       filterRole === 'ALL'
-                        ? 'bg-slate-700 text-white'
-                        : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
                     }`}
                   >
                     Tất cả ({users.length})
@@ -425,8 +425,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     onClick={() => setFilterRole('ORGANIZER')}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                       filterRole === 'ORGANIZER'
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/60'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100'
                     }`}
                   >
                     <ShieldCheck className="w-3.5 h-3.5" />
@@ -437,8 +437,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     onClick={() => setFilterRole('REFEREE')}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                       filterRole === 'REFEREE'
-                        ? 'bg-amber-600 text-white'
-                        : 'bg-amber-950/40 text-amber-400 border border-amber-800/60'
+                        ? 'bg-amber-600 text-white shadow-xs'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100'
                     }`}
                   >
                     <Scale className="w-3.5 h-3.5" />
@@ -449,8 +449,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     onClick={() => setFilterRole('TEAM_MANAGER')}
                     className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-colors ${
                       filterRole === 'TEAM_MANAGER'
-                        ? 'bg-cyan-600 text-white'
-                        : 'bg-cyan-950/40 text-cyan-400 border border-cyan-800/60'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100'
                     }`}
                   >
                     Đội Trưởng ({captainCount})
@@ -460,12 +460,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
               {/* Accounts Table / Cards */}
               {filteredUsers.length === 0 ? (
-                <div className="py-12 text-center bg-slate-900/40 border border-slate-800 rounded-2xl">
-                  <Users className="w-10 h-10 text-slate-600 mx-auto mb-2" />
-                  <p className="text-xs text-slate-400 font-medium">Không tìm thấy tài khoản phù hợp</p>
+                <div className="py-12 text-center bg-slate-50 border border-slate-200 rounded-2xl">
+                  <Users className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-500 font-medium">Không tìm thấy tài khoản phù hợp</p>
                   <button
                     onClick={() => setActiveTab('create')}
-                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all"
+                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white text-xs font-bold rounded-xl shadow-md transition-all"
                   >
                     <UserPlus className="w-3.5 h-3.5" />
                     <span>Tạo tài khoản mới ngay</span>
@@ -482,12 +482,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     return (
                       <div
                         key={u.id}
-                        className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 ${
+                        className={`p-4 rounded-2xl border transition-all flex flex-col justify-between gap-3 bg-white shadow-xs ${
                           isReferee
-                            ? 'bg-amber-950/15 border-amber-800/40 hover:border-amber-600/60'
+                            ? 'border-amber-200 hover:border-amber-400'
                             : isBTC
-                            ? 'bg-emerald-950/15 border-emerald-800/40 hover:border-emerald-600/60'
-                            : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                            ? 'border-blue-200 hover:border-blue-400'
+                            : 'border-slate-200 hover:border-slate-300'
                         }`}
                       >
                         {/* Top Info */}
@@ -497,35 +497,35 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             alt={u.fullName}
                             className={`w-11 h-11 rounded-2xl object-cover border-2 shrink-0 ${
                               isReferee
-                                ? 'border-amber-500/50'
+                                ? 'border-amber-300'
                                 : isBTC
-                                ? 'border-emerald-500/50'
-                                : 'border-cyan-500/40'
+                                ? 'border-blue-300'
+                                : 'border-slate-200'
                             }`}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="text-xs sm:text-sm font-black text-white truncate">
+                              <span className="text-xs sm:text-sm font-black text-slate-900 truncate">
                                 {u.fullName}
                               </span>
                               {isSelf && (
-                                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200">
                                   Bạn
                                 </span>
                               )}
                             </div>
 
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="font-mono text-xs font-bold text-emerald-400">
+                              <span className="font-mono text-xs font-bold text-blue-600">
                                 @{u.username}
                               </span>
                               <span
                                 className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
                                   isReferee
-                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
                                     : isBTC
-                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                                    : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
+                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                    : 'bg-indigo-50 text-indigo-700 border-indigo-200'
                                 }`}
                               >
                                 {isReferee
@@ -537,16 +537,16 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             </div>
 
                             {/* Contact Info */}
-                            <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400 truncate">
+                            <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-500 truncate">
                               {u.phone && (
                                 <span className="flex items-center gap-1 font-mono">
-                                  <Phone className="w-3 h-3 text-slate-500" />
+                                  <Phone className="w-3 h-3 text-slate-400" />
                                   {u.phone}
                                 </span>
                               )}
                               {u.email && (
                                 <span className="flex items-center gap-1 truncate">
-                                  <Mail className="w-3 h-3 text-slate-500" />
+                                  <Mail className="w-3 h-3 text-slate-400" />
                                   <span className="truncate">{u.email}</span>
                                 </span>
                               )}
@@ -555,19 +555,19 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         </div>
 
                         {/* Bottom Actions */}
-                        <div className="pt-2.5 border-t border-slate-800/80 flex items-center justify-between gap-2">
-                          <div className="text-[11px] text-slate-400 flex items-center gap-1.5 flex-wrap">
-                            <span className="text-slate-500">Mật khẩu:</span>
+                        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                          <div className="text-[11px] text-slate-500 flex items-center gap-1.5 flex-wrap">
+                            <span className="text-slate-400">Mật khẩu:</span>
                             {(() => {
                               const info = AuthService.formatPasswordDisplay(u.password, u.role);
                               return (
                                 <span
                                   className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${
                                     info.isBtcDefault
-                                      ? 'bg-emerald-950/80 border-emerald-700/80 text-emerald-300'
+                                      ? 'bg-blue-50 border-blue-200 text-blue-700'
                                       : info.isDefault
-                                      ? 'bg-emerald-950/60 border-emerald-800/80 text-emerald-300'
-                                      : 'bg-amber-950/60 border-amber-800/80 text-amber-300'
+                                      ? 'bg-slate-100 border-slate-200 text-slate-700'
+                                      : 'bg-amber-50 border-amber-200 text-amber-700'
                                   }`}
                                   title="Mật khẩu đã được mã hóa băm SHA-256 an toàn"
                                 >
@@ -582,13 +582,13 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             {/* Copy Info Button */}
                             <button
                               onClick={() => handleCopyCredentials(u)}
-                              className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1 transition-all active:scale-95"
+                              className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1 transition-all active:scale-95"
                               title="Sao chép tài khoản & mật khẩu"
                             >
                               {copiedId === u.id ? (
                                 <>
-                                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                  <span className="text-emerald-400 font-bold">Đã chép</span>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span className="text-emerald-600 font-bold">Đã chép</span>
                                 </>
                               ) : (
                                 <>
@@ -605,7 +605,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                                 setNewResetPassword('');
                                 setResetModalError(null);
                               }}
-                              className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-amber-400 border border-amber-500/30 transition-all active:scale-95"
+                              className="p-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 transition-all active:scale-95"
                               title="Đặt lại hoặc đổi mật khẩu"
                             >
                               <KeyRound className="w-3.5 h-3.5" />
@@ -615,7 +615,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             {!isSelf && (
                               <button
                                 onClick={() => handleDeleteUser(u)}
-                                className="p-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-500/30 transition-all active:scale-95"
+                                className="p-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 transition-all active:scale-95"
                                 title="Xóa tài khoản"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -637,63 +637,63 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
               
               {/* Success Result Banner */}
               {successCreatedUser && (
-                <div className="p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500/80 shadow-lg space-y-3 animate-in fade-in">
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-md space-y-3 animate-in fade-in">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-300">
                       <CheckCircle2 className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-black text-white">
+                      <h4 className="text-sm font-black text-slate-900">
                         Tạo Tài Khoản Thành Công!
                       </h4>
-                      <p className="text-xs text-emerald-300">
+                      <p className="text-xs text-emerald-800">
                         Đã cấp tài khoản cho {successCreatedUser.role === 'REFEREE' ? 'Trọng tài' : 'Ban Tổ Chức'}{' '}
                         <strong>{successCreatedUser.fullName}</strong>
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-950/80 border border-emerald-800/60 text-xs font-mono space-y-2">
+                  <div className="p-3.5 rounded-xl bg-white border border-emerald-200 text-xs font-mono space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Tên đăng nhập:</span>
-                      <strong className="text-emerald-400">@{successCreatedUser.username}</strong>
+                      <span className="text-slate-500">Tên đăng nhập:</span>
+                      <strong className="text-blue-600">@{successCreatedUser.username}</strong>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Mật khẩu khởi tạo:</span>
-                      <strong className="text-white bg-slate-800 px-2 py-0.5 rounded font-bold font-mono">
+                      <span className="text-slate-500">Mật khẩu khởi tạo:</span>
+                      <strong className="text-slate-900 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-bold font-mono">
                         {successCreatedUser.role === 'ORGANIZER' ? AuthService.BTC_DEFAULT_PASSWORD : '123'} (Mặc định)
                       </strong>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Trạng thái mã băm:</span>
-                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800 flex items-center gap-1">
+                      <span className="text-slate-500">Trạng thái mã băm:</span>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 flex items-center gap-1">
                         <ShieldCheck className="w-3.5 h-3.5" />
                         Đã băm Salted SHA-256
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">Vai trò:</span>
-                      <strong className="text-amber-400">
+                      <span className="text-slate-500">Vai trò:</span>
+                      <strong className="text-amber-700">
                         {successCreatedUser.role === 'REFEREE' ? 'Trọng Tài' : 'Ban Tổ Chức (BTC)'}
                       </strong>
                     </div>
-                    <div className="pt-1 text-[10px] text-slate-400 font-mono flex items-center justify-between border-t border-slate-900">
+                    <div className="pt-1 text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100">
                       <span>Lưu trữ: Mã hóa an toàn (Client Encrypted)</span>
-                      <span className="text-emerald-400 font-bold">●●●●●●●● (Salted SHA-256)</span>
+                      <span className="text-blue-600 font-bold">●●●●●●●● (Salted SHA-256)</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleCopyCredentials(successCreatedUser)}
-                      className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95"
+                      className="flex-1 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-98 shadow-xs"
                     >
                       <Copy className="w-3.5 h-3.5" />
                       <span>Sao Chép Thông Tin Gửi Qua Zalo</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('list')}
-                      className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all"
+                      className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs transition-all"
                     >
                       Xem Danh Sách
                     </button>
@@ -706,8 +706,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 
                 {/* Role Choice Cards */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-2">
-                    1. Chọn vai trò tài khoản muốn tạo <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold text-slate-700 mb-2">
+                    1. Chọn vai trò tài khoản muốn tạo <span className="text-red-500">*</span>
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     
@@ -716,29 +716,29 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       onClick={() => setTargetRole('REFEREE')}
                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
                         targetRole === 'REFEREE'
-                          ? 'bg-amber-950/50 border-amber-500 shadow-md shadow-amber-500/10'
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 opacity-70'
+                          ? 'bg-amber-50/70 border-amber-400 shadow-xs ring-1 ring-amber-400'
+                          : 'bg-white border-slate-200 hover:border-slate-300 opacity-80'
                       }`}
                     >
                       <div
                         className={`p-2.5 rounded-xl border shrink-0 ${
                           targetRole === 'REFEREE'
-                            ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
-                            : 'bg-slate-800 border-slate-700 text-slate-400'
+                            ? 'bg-amber-100 border-amber-300 text-amber-700'
+                            : 'bg-slate-100 border-slate-200 text-slate-500'
                         }`}
                       >
                         <Scale className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-black text-white">Tài Khoản Trọng Tài</span>
+                          <span className="text-xs font-black text-slate-900">Tài Khoản Trọng Tài</span>
                           {targetRole === 'REFEREE' && (
-                            <span className="text-[10px] bg-amber-500 text-black px-1.5 py-0.2 rounded font-black">
+                            <span className="text-[10px] bg-amber-500 text-white px-1.5 py-0.2 rounded font-black">
                               Đang chọn
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
                           Biên bản trận đấu, nhập tỷ số trực tiếp, rút thẻ phạt và tự động đồng bộ vào danh sách điều hành trận.
                         </p>
                       </div>
@@ -749,29 +749,29 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       onClick={() => setTargetRole('ORGANIZER')}
                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 ${
                         targetRole === 'ORGANIZER'
-                          ? 'bg-emerald-950/50 border-emerald-500 shadow-md shadow-emerald-500/10'
-                          : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 opacity-70'
+                          ? 'bg-blue-50/70 border-blue-500 shadow-xs ring-1 ring-blue-500'
+                          : 'bg-white border-slate-200 hover:border-slate-300 opacity-80'
                       }`}
                     >
                       <div
                         className={`p-2.5 rounded-xl border shrink-0 ${
                           targetRole === 'ORGANIZER'
-                            ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                            : 'bg-slate-800 border-slate-700 text-slate-400'
+                            ? 'bg-blue-100 border-blue-300 text-blue-700'
+                            : 'bg-slate-100 border-slate-200 text-slate-500'
                         }`}
                       >
                         <ShieldCheck className="w-5 h-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-black text-white">Tài Khoản Ban Tổ Chức (BTC)</span>
+                          <span className="text-xs font-black text-slate-900">Tài Khoản Ban Tổ Chức (BTC)</span>
                           {targetRole === 'ORGANIZER' && (
-                            <span className="text-[10px] bg-emerald-500 text-black px-1.5 py-0.2 rounded font-black">
+                            <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-black">
                               Đang chọn
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
                           Toàn quyền điều hành giải đấu, bốc thăm bảng, xếp lịch, thu chi tài chính và giải quyết khiếu nại.
                         </p>
                       </div>
@@ -783,25 +783,25 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 {/* Full Name & Username */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      Họ và tên nhân sự <span className="text-red-400">*</span>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Họ và tên nhân sự <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                       <input
                         type="text"
                         required
                         value={fullName}
                         onChange={(e) => handleFullNameChange(e.target.value)}
                         placeholder={targetRole === 'REFEREE' ? 'Ví dụ: Trần Văn Hùng' : 'Ví dụ: Nguyễn Thành Công'}
-                        className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                        className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
-                      Tên đăng nhập (@username) <span className="text-red-400">*</span>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Tên đăng nhập (@username) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -812,7 +812,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       autoCapitalize="none"
                       autoCorrect="off"
                       spellCheck={false}
-                      className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm font-mono text-emerald-400 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono text-blue-600 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
                     />
                   </div>
                 </div>
@@ -821,8 +821,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="block text-xs font-bold text-slate-300">
-                        Mật khẩu khởi tạo <span className="text-red-400">*</span>
+                      <label className="block text-xs font-bold text-slate-700">
+                        Mật khẩu khởi tạo <span className="text-red-500">*</span>
                       </label>
                       {targetRole === 'ORGANIZER' && (
                         <button
@@ -831,7 +831,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                             const rand = AuthService.generateStrongPassword(12);
                             setPassword(rand);
                           }}
-                          className="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono flex items-center gap-1"
+                          className="text-[10px] text-blue-600 hover:text-blue-700 underline font-mono flex items-center gap-1"
                         >
                           <Sparkles className="w-3 h-3" />
                           <span>Tạo mật khẩu ngẫu nhiên</span>
@@ -839,7 +839,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       )}
                     </div>
                     <div className="relative">
-                      <KeyRound className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
@@ -853,12 +853,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         autoCapitalize="none"
                         autoCorrect="off"
                         spellCheck={false}
-                        className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                        className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white font-mono"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                        className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700"
                       >
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -866,35 +866,35 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
                     {/* Real-time strength meter when role is BTC */}
                     {targetRole === 'ORGANIZER' && (
-                      <div className="mt-2 p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
+                      <div className="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
                         {(() => {
                           const str = AuthService.checkPasswordStrength(password);
                           return (
                             <div>
                               <div className="flex items-center justify-between text-[11px] mb-1">
-                                <span className="text-slate-400">Độ phức tạp mật khẩu BTC:</span>
+                                <span className="text-slate-600">Độ phức tạp mật khẩu BTC:</span>
                                 <strong style={{ color: str.color }}>{str.label}</strong>
                               </div>
-                              <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
+                              <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden flex gap-0.5">
                                 {[0, 1, 2, 3].map((step) => (
                                   <div
                                     key={step}
                                     className="h-full flex-1 transition-all"
                                     style={{
-                                      backgroundColor: step <= str.score ? str.color : '#334155',
+                                      backgroundColor: step <= str.score ? str.color : '#CBD5E1',
                                     }}
                                   />
                                 ))}
                               </div>
                               {!str.isValidForBtc ? (
-                                <span className="text-[10px] text-amber-300 mt-1.5 block">
+                                <span className="text-[10px] text-amber-700 mt-1.5 block">
                                   ⚠️ Yêu cầu BTC: {str.errors.join(', ')}. Gợi ý mặc định:{' '}
-                                  <strong className="font-mono text-emerald-400">
+                                  <strong className="font-mono text-blue-700">
                                     {AuthService.BTC_DEFAULT_PASSWORD}
                                   </strong>
                                 </span>
                               ) : (
-                                <span className="text-[10px] text-emerald-400 mt-1 block flex items-center gap-1">
+                                <span className="text-[10px] text-emerald-700 mt-1 block flex items-center gap-1">
                                   <CheckCircle2 className="w-3 h-3" />
                                   Mật khẩu đạt chuẩn bảo mật cho Ban Tổ Chức (Mã băm Salted SHA-256).
                                 </span>
@@ -906,24 +906,24 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     )}
 
                     {targetRole === 'REFEREE' && (
-                      <span className="text-[10px] text-slate-400 mt-1 block">
-                        Khuyến nghị giữ mật khẩu mặc định là <strong className="text-emerald-400">123</strong>. Mật khẩu sẽ tự động được băm bảo mật bằng thuật toán Salted SHA-256 trước khi lưu vào hệ thống.
+                      <span className="text-[10px] text-slate-500 mt-1 block">
+                        Khuyến nghị giữ mật khẩu mặc định là <strong className="text-blue-700">123</strong>. Mật khẩu sẽ tự động được băm bảo mật bằng thuật toán Salted SHA-256 trước khi lưu vào hệ thống.
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Số điện thoại liên hệ
                     </label>
                     <div className="relative">
-                      <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="Ví dụ: 0901 234 567"
-                        className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                        className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
                       />
                     </div>
                   </div>
@@ -932,24 +932,24 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 {/* Email & Referee Code (if Referee) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Email (Tùy chọn)
                     </label>
                     <div className="relative">
-                      <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                      <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder={username ? `${username}@itftms.vn` : 'email@itftms.vn'}
-                        className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                        className="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
                       />
                     </div>
                   </div>
 
                   {targetRole === 'REFEREE' && (
                     <div>
-                      <label className="block text-xs font-bold text-slate-300 mb-1">
+                      <label className="block text-xs font-bold text-slate-700 mb-1">
                         Mã trọng tài (Hiển thị biên bản)
                       </label>
                       <input
@@ -957,7 +957,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         value={refereeCode}
                         onChange={(e) => setRefereeCode(e.target.value)}
                         placeholder="Ví dụ: TT-01, TT-02..."
-                        className="w-full px-3.5 py-2.5 bg-slate-950 border border-amber-500/50 rounded-xl text-xs sm:text-sm font-mono text-amber-300 placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-amber-300 rounded-xl text-xs sm:text-sm font-mono text-amber-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 focus:bg-white"
                       />
                     </div>
                   )}
@@ -965,8 +965,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
                 {/* Error Banner */}
                 {errorMsg && (
-                  <div className="p-3 rounded-xl bg-red-950/60 border border-red-500/60 flex items-center gap-2 text-xs text-red-300 animate-in fade-in">
-                    <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-center gap-2 text-xs text-rose-700 animate-in fade-in">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                     <span>{errorMsg}</span>
                   </div>
                 )}
@@ -975,10 +975,10 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className={`w-full py-3 rounded-xl font-black text-xs sm:text-sm shadow-xl transition-all flex items-center justify-center gap-2 active:scale-98 ${
+                    className={`w-full py-3 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-98 ${
                       targetRole === 'REFEREE'
-                        ? 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-black shadow-amber-500/20'
-                        : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/20'
+                        ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white shadow-amber-500/20'
+                        : 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-blue-500/20'
                     }`}
                   >
                     <UserPlus className="w-4 h-4" />
@@ -998,19 +998,19 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
         {/* MODAL CON: ĐẶT LẠI MẬT KHẨU CHO NGƯỜI DÙNG */}
         {resetTargetUser && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
-            <div className="relative w-full max-w-lg bg-[#0B132B] border border-slate-700/80 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 animate-in fade-in duration-150">
+            <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 animate-in zoom-in-95 text-slate-800">
               
               {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  <div className="p-2.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200">
                     <KeyRound className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-base font-black text-white">Đặt Lại / Đổi Mật Khẩu</h3>
-                    <p className="text-xs text-slate-400">
-                      Tài khoản: <strong className="text-emerald-400 font-mono">@{resetTargetUser.username}</strong> ({resetTargetUser.fullName})
+                    <h3 className="text-base font-black text-slate-900">Đặt Lại / Đổi Mật Khẩu</h3>
+                    <p className="text-xs text-slate-500">
+                      Tài khoản: <strong className="text-blue-600 font-mono">@{resetTargetUser.username}</strong> ({resetTargetUser.fullName})
                     </p>
                   </div>
                 </div>
@@ -1019,41 +1019,41 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     setResetTargetUser(null);
                     setResetModalError(null);
                   }}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-slate-800 rounded-xl hover:bg-slate-100 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {resetModalError && (
-                <div className="p-3 rounded-xl bg-red-950/70 border border-red-500/60 text-xs text-red-300 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                   <span>{resetModalError}</span>
                 </div>
               )}
 
               {/* Option 1: Quick Reset to Default */}
-              <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2.5">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">
+                  <span className="text-xs font-bold text-slate-800">
                     Cách 1: Đặt lại về mật khẩu chuẩn của hệ thống
                   </span>
-                  <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full font-bold">
                     Khuyến nghị
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-slate-600 leading-relaxed">
                   {resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN' ? (
                     <>
                       Tài khoản Ban Tổ Chức (BTC) sẽ được đặt lại về mật khẩu phức tạp mặc định:{' '}
-                      <strong className="text-emerald-400 font-mono bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80">
+                      <strong className="text-blue-700 font-mono bg-blue-100/70 px-2 py-0.5 rounded border border-blue-200">
                         {AuthService.BTC_DEFAULT_PASSWORD}
                       </strong>
                     </>
                   ) : (
                     <>
                       Tài khoản sẽ được đặt lại về mật khẩu mặc định:{' '}
-                      <strong className="text-white font-mono bg-slate-800 px-2 py-0.5 rounded">
+                      <strong className="text-slate-900 font-mono bg-slate-200/80 px-2 py-0.5 rounded border border-slate-300">
                         123
                       </strong>
                     </>
@@ -1062,17 +1062,17 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 <button
                   type="button"
                   onClick={() => handleQuickResetToDefault(resetTargetUser)}
-                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 active:scale-98 transition-all"
+                  className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 active:scale-98 transition-all shadow-xs"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+                  <RefreshCw className="w-3.5 h-3.5 text-sky-400" />
                   <span>Xác Nhận Đặt Lại Về Mặc Định (Mã Băm SHA-256)</span>
                 </button>
               </div>
 
               {/* Option 2: Custom Password */}
-              <form onSubmit={handleCustomResetPassword} className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
+              <form onSubmit={handleCustomResetPassword} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-200">
+                  <span className="text-xs font-bold text-slate-800">
                     Cách 2: Tự đặt mật khẩu mới riêng
                   </span>
                   <button
@@ -1081,7 +1081,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       const rand = AuthService.generateStrongPassword(12);
                       setNewResetPassword(rand);
                     }}
-                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline font-mono flex items-center gap-1"
+                    className="text-[10px] text-blue-600 hover:text-blue-700 underline font-mono flex items-center gap-1"
                   >
                     <Sparkles className="w-3 h-3" />
                     <span>Tạo mật khẩu mạnh</span>
@@ -1089,7 +1089,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                 </div>
 
                 <div className="relative">
-                  <KeyRound className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                  <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
                     type={showResetPassword ? 'text' : 'password'}
                     required
@@ -1100,12 +1100,12 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                         ? 'Nhập mật khẩu phức tạp mới (>= 8 ký tự)...'
                         : 'Nhập mật khẩu mới...'
                     }
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 font-mono"
                   />
                   <button
                     type="button"
                     onClick={() => setShowResetPassword(!showResetPassword)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-700"
                   >
                     {showResetPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -1119,23 +1119,23 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                       return (
                         <div>
                           <div className="flex items-center justify-between text-[11px] mb-1">
-                            <span className="text-slate-400">Độ phức tạp:</span>
+                            <span className="text-slate-600">Độ phức tạp:</span>
                             <strong style={{ color: str.color }}>{str.label}</strong>
                           </div>
-                          <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden flex gap-0.5">
+                          <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden flex gap-0.5">
                             {[0, 1, 2, 3].map((step) => (
                               <div
                                 key={step}
                                 className="h-full flex-1 transition-all"
                                 style={{
-                                  backgroundColor: step <= str.score ? str.color : '#334155',
+                                  backgroundColor: step <= str.score ? str.color : '#CBD5E1',
                                 }}
                               />
                             ))}
                           </div>
                           {(resetTargetUser.role === 'ORGANIZER' || resetTargetUser.role === 'SUPER_ADMIN') && !str.isValidForBtc && (
-                            <div className="text-[10px] text-amber-300 mt-1.5 flex items-center gap-1">
-                              <AlertCircle className="w-3 h-3 text-amber-400 shrink-0" />
+                            <div className="text-[10px] text-amber-700 mt-1.5 flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3 text-amber-500 shrink-0" />
                               <span>Yêu cầu BTC: {str.errors.join(', ')}</span>
                             </div>
                           )}
@@ -1147,7 +1147,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-98 transition-all"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 active:scale-98 transition-all"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>Lưu Mật Khẩu Mới (Mã Băm Salted SHA-256)</span>
@@ -1161,7 +1161,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({
                     setResetTargetUser(null);
                     setResetModalError(null);
                   }}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold"
                 >
                   Hủy Bỏ
                 </button>

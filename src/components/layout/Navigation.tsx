@@ -100,16 +100,16 @@ export const Navigation: React.FC<NavigationProps> = ({
   ];
 
   return (
-    <nav className="hidden md:block bg-[#070F1E]/90 border-b border-emerald-500/20 sticky top-20 z-40 backdrop-blur-xl shadow-md">
+    <nav className="hidden md:block bg-white border-b border-slate-200 sticky top-18 sm:top-20 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-2 overflow-x-auto py-2.5 no-scrollbar scroll-smooth">
           {onBackToPortal && (
             <button
               onClick={onBackToPortal}
-              className="shrink-0 flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-400 bg-emerald-950/70 hover:bg-emerald-900/90 border border-emerald-500/40 whitespace-nowrap transition-all shadow-sm active:scale-95"
+              className="shrink-0 flex items-center gap-1.5 min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 whitespace-nowrap transition-all shadow-xs active:scale-95"
               title="Trở về cổng danh sách các giải đấu"
             >
-              <LayoutGrid className="w-4 h-4 text-emerald-400 shrink-0" />
+              <LayoutGrid className="w-4 h-4 text-sky-600 shrink-0" />
               <span>« Cổng Các Giải</span>
             </button>
           )}
@@ -123,8 +123,8 @@ export const Navigation: React.FC<NavigationProps> = ({
                 onClick={() => onTabChange(item.key)}
                 className={`shrink-0 relative flex items-center gap-2 min-h-[40px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap active:scale-95 ${
                   isActive
-                    ? 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white shadow-lg shadow-emerald-500/25 font-black scale-[1.02]'
-                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60'
+                    ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 font-black scale-[1.02]'
+                    : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50/70 border border-transparent hover:border-blue-100'
                 }`}
               >
                 <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />

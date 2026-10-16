@@ -273,38 +273,34 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
   return (
     <div className="space-y-6">
       
-      {/* Studio Header Banner with Draw Ceremony photo */}
-      <div className="relative rounded-3xl overflow-hidden border border-emerald-500/40 bg-slate-900/90 p-6 sm:p-8 shadow-2xl backdrop-blur-md">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transform scale-105 pointer-events-none"
-          style={{ backgroundImage: `url('/images/draw-ceremony.jpg')` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/60 pointer-events-none" />
+      {/* Studio Header Banner with Clean Ocean Blue Styling */}
+      <div className="relative rounded-3xl overflow-hidden border border-slate-200 bg-white p-6 sm:p-8 shadow-xs">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/40 via-sky-50/30 to-slate-50/60 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+              <span className="bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
                 <Dices className="w-3.5 h-3.5" />
-                BỐC THĂM & CHIA BẢNG ĐẤU (ĐIỀU 21)
+                BỐC THĂM &amp; CHIA BẢNG ĐẤU (ĐIỀU 21)
               </span>
               {isLocked ? (
-                <span className="bg-red-500/20 text-red-400 border border-red-500/40 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                <span className="bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   <Lock className="w-3 h-3" /> ĐÃ KHÓA KẾT QUẢ
                 </span>
               ) : (
-                <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                   <Unlock className="w-3 h-3" /> CHO PHÉP CHỈNH SỬA
                 </span>
               )}
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-white">
-              Studio Điều Hành & Hiệu Chỉnh Bảng Đấu
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+              Studio Điều Hành &amp; Hiệu Chỉnh Bảng Đấu
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
-              Hỗ trợ đầy đủ: <strong>Bốc thăm tự động 3D</strong>, <strong>chuyển bảng trực tiếp trên từng đội</strong>, <strong>hoán đổi vị trí 2 đội</strong> hoặc <strong>đặt lại bảng đấu</strong>.
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
+              Hỗ trợ đầy đủ: <strong>Bốc thăm tự động</strong>, <strong>chuyển bảng trực tiếp trên từng đội</strong>, <strong>hoán đổi vị trí 2 đội</strong> hoặc <strong>đặt lại bảng đấu</strong>.
             </p>
           </div>
 
@@ -314,17 +310,17 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               <button
                 onClick={() => setShowConfigPanel(!showConfigPanel)}
                 disabled={isLocked}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 disabled:opacity-50 text-emerald-300 border border-emerald-500/40 font-bold text-xs sm:text-sm transition-all shadow-md"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-700 border border-slate-200 font-bold text-xs sm:text-sm transition-all shadow-xs cursor-pointer"
                 title="Tùy chỉnh số lượng bảng đấu và số đội 1 bảng"
               >
-                <Layers className="w-4 h-4 text-emerald-400" />
-                <span>Số Bảng ({groups.length}) & Số Đội/Bảng ({groupCapacity})</span>
+                <Layers className="w-4 h-4 text-blue-600" />
+                <span>Số Bảng ({groups.length}) &amp; Số Đội/Bảng ({groupCapacity})</span>
               </button>
 
               <button
                 onClick={handleAutoDrawAll}
                 disabled={isLocked || isDrawing}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-500/25 transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 text-white font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer"
               >
                 <Shuffle className={`w-4 h-4 ${isDrawing ? 'animate-spin' : ''}`} />
                 <span>{isDrawing ? 'Đang Quay Cầu...' : 'Bốc Thăm Tự Động'}</span>
@@ -333,17 +329,17 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               <button
                 onClick={() => setSwapModalOpen(true)}
                 disabled={isLocked}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-cyan-300 border border-slate-700 font-bold text-xs sm:text-sm transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-700 border border-slate-200 font-bold text-xs sm:text-sm transition-all cursor-pointer"
                 title="Hoán đổi vị trí 2 đội bóng giữa các bảng"
               >
-                <ArrowLeftRight className="w-4 h-4" />
+                <ArrowLeftRight className="w-4 h-4 text-blue-600" />
                 <span>Hoán Đổi 2 Đội</span>
               </button>
 
               <button
                 onClick={handleResetDraw}
                 disabled={isLocked}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-amber-300 border border-amber-500/30 font-bold text-xs sm:text-sm transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 disabled:opacity-50 text-amber-700 border border-amber-200 font-bold text-xs sm:text-sm transition-all cursor-pointer"
                 title="Đưa tất cả đội về danh sách chờ bốc thăm"
               >
                 <RotateCcw className="w-4 h-4" />
@@ -352,10 +348,10 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
               <button
                 onClick={toggleLock}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
                   isLocked
-                    ? 'bg-slate-800 text-amber-400 border-amber-500/40 hover:bg-slate-700'
-                    : 'bg-red-950/60 text-red-300 border-red-500/40 hover:bg-red-900/60'
+                    ? 'bg-slate-100 text-amber-700 border-amber-200 hover:bg-slate-200'
+                    : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'
                 }`}
               >
                 {isLocked ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
@@ -368,28 +364,28 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
         {/* Inline Group Configuration Panel */}
         {showConfigPanel && canManage && !isLocked && (
-          <div className="mt-6 p-5 rounded-2xl bg-slate-950/90 border border-emerald-500/50 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="mt-6 p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-xs space-y-4 text-slate-800">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
-                <Layers className="w-5 h-5 text-emerald-400" />
-                <h4 className="text-sm font-black text-white uppercase tracking-wider">
-                  Cấu Hình Số Lượng Bảng Đấu & Số Đội 1 Bảng
+                <Layers className="w-5 h-5 text-blue-600" />
+                <h4 className="text-sm font-black text-slate-900 uppercase tracking-wider">
+                  Cấu Hình Số Lượng Bảng Đấu &amp; Số Đội 1 Bảng
                 </h4>
               </div>
-              <span className="text-xs font-mono font-bold text-emerald-300 bg-emerald-950 px-2.5 py-1 rounded border border-emerald-800">
+              <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded border border-blue-200">
                 Tổng: {numberOfGroups} bảng × {teamsPerGroup} đội = {numberOfGroups * teamsPerGroup} đội
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">
                   Số lượng bảng đấu:
                 </label>
                 <select
                   value={numberOfGroups}
                   onChange={(e) => setNumberOfGroups(Number(e.target.value))}
-                  className="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-bold text-sm rounded-xl p-3 focus:outline-none focus:border-emerald-500 cursor-pointer"
+                  className="w-full bg-white border border-slate-200 text-slate-900 font-bold text-sm rounded-xl p-3 focus:outline-none focus:border-blue-500 cursor-pointer"
                 >
                   <option value={2}>2 Bảng (Bảng A, B)</option>
                   <option value={3}>3 Bảng (Bảng A, B, C)</option>
@@ -401,13 +397,13 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1.5">
+                <label className="text-xs font-bold text-slate-700 block mb-1.5">
                   Số đội trong 1 bảng:
                 </label>
                 <select
                   value={teamsPerGroup}
                   onChange={(e) => setTeamsPerGroup(Number(e.target.value))}
-                  className="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-bold text-sm rounded-xl p-3 focus:outline-none focus:border-emerald-500 cursor-pointer"
+                  className="w-full bg-white border border-slate-200 text-slate-900 font-bold text-sm rounded-xl p-3 focus:outline-none focus:border-blue-500 cursor-pointer"
                 >
                   <option value={3}>3 Đội / bảng</option>
                   <option value={4}>4 Đội / bảng (Chuẩn ITFTMS)</option>
@@ -419,21 +415,21 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-              <div className="text-xs text-slate-400">
-                Các bảng sẽ tạo: <strong className="text-white">{getGroupLetters(numberOfGroups).map(g => `Bảng ${g}`).join(', ')}</strong>
+              <div className="text-xs text-slate-600">
+                Các bảng sẽ tạo: <strong className="text-slate-900">{getGroupLetters(numberOfGroups).map(g => `Bảng ${g}`).join(', ')}</strong>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setShowConfigPanel(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold hover:bg-slate-700 transition-colors"
+                  className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold hover:bg-slate-200 transition-colors"
                 >
                   Đóng
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveGroupConfig}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-xs font-black shadow-lg shadow-emerald-500/25 hover:from-emerald-400 hover:to-teal-500 transition-all"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white text-xs font-black shadow-xs hover:from-blue-500 hover:to-cyan-500 transition-all cursor-pointer"
                 >
                   Lưu Cấu Hình Bảng
                 </button>
@@ -444,13 +440,13 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
         {/* Real-time Ball Reveal Spotlight Banner */}
         {currentRevealedTeam && (
-          <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-900/90 via-teal-900/90 to-blue-900/90 border border-emerald-400/50 shadow-2xl flex items-center justify-between animate-bounce">
+          <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-xl flex items-center justify-between animate-bounce">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-white text-slate-950 font-black text-xl flex items-center justify-center shadow-lg animate-spin-slow">
+              <div className="w-12 h-12 rounded-full bg-white text-slate-950 font-black text-xl flex items-center justify-center shadow-md">
                 ⚽
               </div>
               <div>
-                <span className="text-xs text-emerald-300 font-bold uppercase tracking-widest block">
+                <span className="text-xs text-blue-100 font-bold uppercase tracking-widest block">
                   Vừa Bốc Trúng Quả Cầu:
                 </span>
                 <span className="text-lg font-black text-white">
@@ -460,8 +456,8 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
             </div>
 
             <div className="text-right">
-              <span className="text-xs text-slate-300 block">Xếp Vào Bảng:</span>
-              <span className="text-2xl font-black text-amber-300 font-mono">
+              <span className="text-xs text-blue-100 block">Xếp Vào Bảng:</span>
+              <span className="text-2xl font-black text-yellow-300 font-mono">
                 BẢNG {revealedGroup}
               </span>
             </div>
@@ -472,26 +468,26 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
       {/* Unassigned Teams Pool (If any teams don't have a group yet) */}
       {unassignedTeams.length > 0 && (
-        <div className="bg-slate-900/90 border border-amber-500/40 rounded-3xl p-5 shadow-xl space-y-3">
+        <div className="bg-amber-50/70 border border-amber-200 rounded-3xl p-5 shadow-xs space-y-3 text-slate-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-400" />
-              <h3 className="text-xs font-black uppercase tracking-wider text-amber-300">
+              <AlertCircle className="w-4 h-4 text-amber-600" />
+              <h3 className="text-xs font-black uppercase tracking-wider text-amber-900">
                 ĐỘI CHƯA PHÂN BẢNG ({unassignedTeams.length} ĐỘI ĐANG CHỜ TRONG HỘP BỐC THĂM)
               </h3>
             </div>
-            <span className="text-xs text-slate-400">Chọn bảng để đưa đội vào thi đấu</span>
+            <span className="text-xs text-slate-500">Chọn bảng để đưa đội vào thi đấu</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {unassignedTeams.map((t) => (
               <div
                 key={t.id}
-                className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2"
+                className="p-3 rounded-2xl bg-white border border-amber-200 flex items-center justify-between gap-2 shadow-xs"
               >
                 <div className="truncate">
-                  <span className="text-xs font-bold text-white block truncate">{t.name}</span>
-                  <span className="text-[10px] text-slate-400">{t.class}</span>
+                  <span className="text-xs font-bold text-slate-900 block truncate">{t.name}</span>
+                  <span className="text-[10px] text-slate-500">{t.class}</span>
                 </div>
 
                 {canManage && !isLocked && (
@@ -502,7 +498,7 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
                         handleQuickChangeGroup(t.id, e.target.value as 'A' | 'B' | 'C' | 'D');
                       }
                     }}
-                    className="bg-slate-800 border border-slate-700 text-emerald-400 font-bold text-xs rounded-xl px-2 py-1"
+                    className="bg-slate-50 border border-slate-200 text-blue-700 font-bold text-xs rounded-xl px-2 py-1 focus:bg-white"
                   >
                     <option value="">+ Vào Bảng...</option>
                     {groups.map((gOpt) => (
@@ -522,21 +518,21 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
           const groupTeams = teams.filter((t) => t.group === grp);
 
           const groupColorPalette: Record<string, { header: string; border: string }> = {
-            A: { header: 'from-blue-600 to-indigo-700', border: 'border-blue-500/40' },
-            B: { header: 'from-emerald-600 to-teal-700', border: 'border-emerald-500/40' },
-            C: { header: 'from-amber-600 to-orange-700', border: 'border-amber-500/40' },
-            D: { header: 'from-purple-600 to-pink-700', border: 'border-purple-500/40' },
-            E: { header: 'from-cyan-600 to-blue-700', border: 'border-cyan-500/40' },
-            F: { header: 'from-rose-600 to-red-700', border: 'border-rose-500/40' },
-            G: { header: 'from-teal-600 to-emerald-700', border: 'border-teal-500/40' },
-            H: { header: 'from-fuchsia-600 to-purple-700', border: 'border-fuchsia-500/40' },
+            A: { header: 'from-blue-600 to-sky-600', border: 'border-blue-200' },
+            B: { header: 'from-emerald-600 to-teal-600', border: 'border-emerald-200' },
+            C: { header: 'from-amber-600 to-orange-600', border: 'border-amber-200' },
+            D: { header: 'from-purple-600 to-indigo-600', border: 'border-purple-200' },
+            E: { header: 'from-cyan-600 to-blue-600', border: 'border-cyan-200' },
+            F: { header: 'from-rose-600 to-red-600', border: 'border-rose-200' },
+            G: { header: 'from-teal-600 to-emerald-600', border: 'border-teal-200' },
+            H: { header: 'from-fuchsia-600 to-purple-600', border: 'border-fuchsia-200' },
           };
-          const colorConfig = groupColorPalette[grp] || { header: 'from-slate-700 to-slate-800', border: 'border-slate-600' };
+          const colorConfig = groupColorPalette[grp] || { header: 'from-slate-700 to-slate-800', border: 'border-slate-200' };
 
           return (
             <div
               key={grp}
-              className={`rounded-2xl border ${colorConfig.border} bg-[#0B132B]/80 overflow-hidden shadow-xl flex flex-col`}
+              className={`rounded-3xl border ${colorConfig.border} bg-white overflow-hidden shadow-xs flex flex-col`}
             >
               {/* Group Card Header */}
               <div
@@ -544,9 +540,9 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               >
                 <div>
                   <h3 className="text-xl font-black tracking-tight">BẢNG {grp}</h3>
-                  <span className="text-[11px] opacity-80">{groupCapacity} Đội bóng vòng bảng</span>
+                  <span className="text-[11px] opacity-90">{groupCapacity} Đội bóng vòng bảng</span>
                 </div>
-                <span className="text-xs font-extrabold bg-black/30 px-2.5 py-1 rounded-full font-mono">
+                <span className="text-xs font-black bg-white/20 text-white px-2.5 py-1 rounded-full font-mono">
                   {groupTeams.length} / {groupCapacity} ĐỘI
                 </span>
               </div>
@@ -556,23 +552,23 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
                 {groupTeams.map((t, idx) => (
                   <div
                     key={t.id}
-                    className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all flex flex-col gap-2"
+                    className="p-3 rounded-2xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all flex flex-col gap-2"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 truncate">
-                        <span className="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[11px] font-mono font-bold text-slate-400 flex-shrink-0">
+                        <span className="w-5 h-5 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[11px] font-mono font-bold text-slate-700 flex-shrink-0">
                           {idx + 1}
                         </span>
                         <div className="truncate">
-                          <h4 className="text-xs font-bold text-white truncate">{t.name}</h4>
-                          <span className="text-[10px] text-slate-400">
+                          <h4 className="text-xs font-bold text-slate-900 truncate">{t.name}</h4>
+                          <span className="text-[10px] text-slate-500">
                             {t.class} • #{t.captainName}
                           </span>
                         </div>
                       </div>
 
                       <div
-                        className="w-3.5 h-3.5 rounded-full border flex-shrink-0"
+                        className="w-3.5 h-3.5 rounded-full border flex-shrink-0 shadow-xs"
                         style={{ backgroundColor: t.primaryColor, borderColor: t.secondaryColor }}
                         title={`Màu áo: ${t.primaryColor}`}
                       ></div>
@@ -580,7 +576,7 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
                     {/* Direct Quick Group Changer */}
                     {canManage && !isLocked && (
-                      <div className="flex items-center justify-between pt-1 border-t border-slate-800/60 text-[11px]">
+                      <div className="flex items-center justify-between pt-1 border-t border-slate-200 text-[11px]">
                         <span className="text-slate-500">Chuyển bảng:</span>
                         <select
                           value={t.group || ''}
@@ -590,7 +586,7 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
                               e.target.value
                             )
                           }
-                          className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-[10px] rounded px-2 py-0.5 cursor-pointer"
+                          className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-[10px] rounded-lg px-2 py-0.5 cursor-pointer focus:border-blue-500"
                         >
                           {groups.map((gOpt) => (
                             <option key={gOpt} value={gOpt}>Sang Bảng {gOpt}</option>
@@ -606,7 +602,7 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
                 {Array.from({ length: Math.max(0, groupCapacity - groupTeams.length) }).map((_, emptyIdx) => (
                   <div
                     key={emptyIdx}
-                    className="p-3 rounded-xl border border-dashed border-slate-800 bg-slate-950/30 text-slate-600 text-xs text-center flex items-center justify-center gap-2"
+                    className="p-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 text-slate-400 text-xs text-center flex items-center justify-center gap-2"
                   >
                     <span>Vị trí {groupTeams.length + emptyIdx + 1}: Chờ bốc thăm</span>
                   </div>
@@ -614,9 +610,9 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               </div>
 
               {/* Card Footer */}
-              <div className="p-3 bg-slate-950/60 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+              <div className="p-3 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
                 <span>Thể thức: Vòng tròn 1 lượt</span>
-                <span className="text-emerald-400 font-bold">Top 2 vào Tứ kết</span>
+                <span className="text-blue-600 font-bold">Top 2 vào Tứ kết</span>
               </div>
             </div>
           );
@@ -625,22 +621,22 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
 
       {/* SWAP MODAL: Allows swapping 2 teams between groups or resolving full group collision */}
       {swapModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-cyan-500/40 rounded-2xl p-6 shadow-2xl space-y-4">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <ArrowLeftRight className="w-5 h-5 text-cyan-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-slate-800">
+            <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+              <ArrowLeftRight className="w-5 h-5 text-blue-600" />
               Hoán Đổi Vị Trí Giữa 2 Đội Bóng
             </h3>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Bảng đấu đã đủ 4 đội hoặc bạn muốn đổi vị trí. Hãy chọn 2 đội bóng để hoán đổi bảng cho nhau:
             </p>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Đội bóng thứ nhất</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Đội bóng thứ nhất</label>
               <select
                 value={swapTeam1Id}
                 onChange={(e) => setSwapTeam1Id(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               >
                 <option value="">-- Chọn đội 1 --</option>
                 {teams.map((t) => (
@@ -651,16 +647,16 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               </select>
             </div>
 
-            <div className="text-center font-bold text-cyan-400 text-xs flex items-center justify-center gap-2">
+            <div className="text-center font-bold text-blue-600 text-xs flex items-center justify-center gap-2">
               <span>⮁ HOÁN ĐỔI VỚI ⮁</span>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Đội bóng thứ hai</label>
+              <label className="text-xs font-bold text-slate-700 block mb-1">Đội bóng thứ hai</label>
               <select
                 value={swapTeam2Id}
                 onChange={(e) => setSwapTeam2Id(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white"
               >
                 <option value="">-- Chọn đội 2 --</option>
                 {teams.map((t) => (
@@ -671,11 +667,11 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
               </select>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setSwapModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold border border-slate-200"
               >
                 Hủy
               </button>
@@ -683,7 +679,7 @@ export const DrawStudio: React.FC<DrawStudioProps> = ({
                 type="button"
                 onClick={handleExecuteSwap}
                 disabled={!swapTeam1Id || !swapTeam2Id || swapTeam1Id === swapTeam2Id}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 text-xs font-bold shadow-lg"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer"
               >
                 Xác Nhận Hoán Đổi
               </button>

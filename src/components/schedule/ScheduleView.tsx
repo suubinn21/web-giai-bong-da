@@ -312,7 +312,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       <div
         key={m.id}
         onClick={() => onSelectMatch(m.id)}
-        className={`bg-slate-900/75 backdrop-blur-md border border-slate-700/60 ${pitchStyle.border} rounded-2xl p-4 shadow-xl transition-all cursor-pointer hover:bg-slate-800/70 flex flex-col justify-between group`}
+        className={`bg-white border border-slate-200 ${pitchStyle.border} rounded-2xl p-4 shadow-xs transition-all cursor-pointer hover:shadow-md hover:border-blue-400 flex flex-col justify-between group text-slate-800`}
       >
         {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
         <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
@@ -490,7 +490,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       </div>
 
       {/* Quick Stage & Round Selector Pills */}
-      <div className="bg-slate-900/75 backdrop-blur-md border border-slate-700/60 rounded-2xl p-3.5 space-y-2.5">
+      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2.5 shadow-xs text-slate-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
             <CalendarDays className="w-4 h-4 text-emerald-400" />
@@ -602,7 +602,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       </div>
 
       {/* Filter & Sort Bar */}
-      <div className="bg-slate-900/75 backdrop-blur-md border border-slate-700/60 rounded-2xl p-4 space-y-3 text-xs">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 text-xs shadow-xs text-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-wider">
             <Filter className="w-4 h-4 text-emerald-400" />
@@ -782,7 +782,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             const timesInDay = Array.from(new Set(dayMatches.map((m) => m.time || 'TBD'))).sort();
 
             return (
-              <div key={dateStr} className="space-y-5 bg-slate-900/50 backdrop-blur-md p-4 sm:p-5 rounded-3xl border border-slate-700/60 shadow-xl">
+              <div key={dateStr} className="space-y-5 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs text-slate-800">
                 {/* Matchday Header Banner */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-3">
                   <div className="flex items-center gap-3">
@@ -996,8 +996,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
       {/* Edit Match Schedule Modal */}
       {editingMatch && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 text-slate-800">
             {/* Modal Header */}
             <div className="flex items-start justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-3">

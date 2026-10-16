@@ -468,18 +468,18 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
     <div className="space-y-6">
       
       {/* Top Banner Card */}
-      <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
-              HỒ SƠ ĐỘI BÓNG & CẦU THỦ
+            <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
+              HỒ SƠ ĐỘI BÓNG &amp; CẦU THỦ
             </span>
-            <span className="text-xs text-slate-400">Quy định Điều 14, 15 & 16</span>
+            <span className="text-xs text-slate-500 font-medium">Quy định Điều 14, 15 &amp; 16</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white">
-            Danh Sách Đội & Đăng Ký Cầu Thủ
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+            Danh Sách Đội &amp; Đăng Ký Cầu Thủ
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             Quy tắc: Tối đa 16 đội, 12 cầu thủ/đội, không trùng số áo, một cầu thủ chỉ được đá cho một đội duy nhất.
           </p>
         </div>
@@ -492,7 +492,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 setNewCaptainUsername(AuthService.generateCaptainUsername(newTeamShortName || ''));
                 setTeamModalOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>+ Đăng Ký Đội Mới (BTC)</span>
@@ -500,13 +500,13 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
           )}
 
           {/* Group Filter */}
-          <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800 flex-wrap">
+          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 flex-wrap">
             <button
               onClick={() => setFilterGroup('ALL')}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
                 filterGroup === 'ALL'
-                  ? 'bg-emerald-500 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Tất Cả ({groups.length} Bảng)
@@ -517,8 +517,8 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 onClick={() => setFilterGroup(g)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
                   filterGroup === g
-                    ? 'bg-emerald-500 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Bảng {g}
@@ -530,12 +530,12 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
       {/* When 0 teams exist: Friendly Empty State */}
       {teams.length === 0 ? (
-        <div className="bg-[#0B132B]/90 border border-slate-800 rounded-3xl p-12 text-center shadow-xl space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-3xl">
+        <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-xs space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mx-auto text-3xl">
             ⚽
           </div>
-          <h3 className="text-xl font-bold text-white">Chưa Có Đội Bóng Nào Trong Cơ Sở Dữ Liệu</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+          <h3 className="text-xl font-bold text-slate-900">Chưa Có Đội Bóng Nào Trong Cơ Sở Dữ Liệu</h3>
+          <p className="text-xs text-slate-600 max-w-md mx-auto">
             {isOrganizerOrAdmin
               ? 'Dữ liệu giải đấu đang chờ tạo. Là Ban Tổ Chức, bạn có thể tạo trước các đội bóng tham gia và hệ thống sẽ tự động cấp tài khoản cho từng Đội trưởng.'
               : 'Ban Tổ Chức đang trong quá trình khởi tạo danh sách các đội bóng tham dự giải.'}
@@ -544,7 +544,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={() => setTeamModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Đăng Ký Đội Bóng Đầu Tiên (BTC)</span>
@@ -572,40 +572,40 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                     className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
                         ? isThisMyTeam
-                          ? 'bg-emerald-950/40 border-emerald-400 shadow-lg shadow-emerald-500/20'
-                          : 'bg-slate-800/90 border-emerald-500 shadow-lg shadow-emerald-500/10'
+                          ? 'bg-blue-50 border-blue-500 shadow-md ring-2 ring-blue-500/20'
+                          : 'bg-sky-50 border-sky-500 shadow-md ring-2 ring-sky-500/20'
                         : isThisMyTeam
-                        ? 'bg-emerald-950/20 border-emerald-600/40 hover:bg-emerald-900/30'
-                        : 'bg-[#0B132B]/80 border-slate-800 hover:bg-slate-800/50'
+                        ? 'bg-blue-50/40 border-blue-200 hover:bg-blue-50/70'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 shadow-2xs'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
                         <span
-                          className="w-3.5 h-3.5 rounded-full border"
+                          className="w-3.5 h-3.5 rounded-full border shadow-2xs"
                           style={{ backgroundColor: t.primaryColor, borderColor: t.secondaryColor }}
                         ></span>
-                        <span className="text-xs font-black text-white">{t.name}</span>
+                        <span className="text-xs font-black text-slate-900">{t.name}</span>
                       </div>
 
                       <div className="flex items-center gap-1.5">
                         {isThisMyTeam && (
-                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 shadow-sm animate-pulse">
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-blue-600 text-white shadow-2xs">
                             ⭐ ĐỘI CỦA BẠN
                           </span>
                         )}
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-900 text-emerald-400 border border-slate-700">
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-blue-700 border border-slate-200">
                           Bảng {t.group || '?'}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500">
                       <span>Lớp {t.class}</span>
                       <div className="flex items-center gap-2">
                         <span>{t.players.length}/12 cầu thủ</span>
                         {isWithdrawn && (
-                          <span className="text-[9px] bg-red-500/20 text-red-400 px-1 rounded font-bold">
+                          <span className="text-[9px] bg-red-50 text-red-600 border border-red-200 px-1 rounded font-bold">
                             BỎ CUỘC
                           </span>
                         )}
@@ -622,9 +622,9 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               
               {/* Alert thông báo phân quyền cho Đội trưởng khi đang xem đội khác */}
               {isCaptain && !isMyTeam && (
-                <div className="p-3.5 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg">
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                   <div className="flex items-center gap-2">
-                    <ShieldAlert className="w-5 h-5 text-amber-400 shrink-0" />
+                    <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0" />
                     <div>
                       <strong>Chế độ xem chỉ đọc:</strong> Bạn là Đội trưởng của đội <strong>{currentUser?.teamName || 'đội khác'}</strong>. Theo phân quyền, bạn không được phép thêm hoặc sửa thành viên của đội bóng khác.
                     </div>
@@ -632,7 +632,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   {currentUser?.teamId && (
                     <button
                       onClick={() => setSelectedTeamId(currentUser.teamId!)}
-                      className="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold whitespace-nowrap text-xs flex items-center gap-1.5 self-start sm:self-auto transition-all"
+                      className="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold whitespace-nowrap text-xs flex items-center gap-1.5 self-start sm:self-auto transition-all"
                     >
                       <ArrowRight className="w-3.5 h-3.5" />
                       <span>« Chuyển Về Đội Của Bạn</span>
@@ -642,12 +642,12 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               )}
 
               {/* Team Hero Header with athletic match photo */}
-              <div className="relative rounded-3xl overflow-hidden border-2 border-slate-700/80 bg-slate-950 p-6 shadow-2xl backdrop-blur-md">
+              <div className="relative rounded-3xl overflow-hidden border border-slate-200 bg-white p-6 shadow-xs">
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 transform scale-105 pointer-events-none"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.03] transform scale-105 pointer-events-none"
                   style={{ backgroundImage: `url('/images/futsal-action.jpg')` }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white via-white/95 to-sky-50/40 pointer-events-none" />
 
                 <div className="relative z-10 space-y-4">
                   {/* Top Row: Team Identity & Action Buttons */}
@@ -655,7 +655,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                     <div className="flex items-center gap-4">
                       {/* Jersey Visualizer Graphic */}
                       <div 
-                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center border-2 shadow-xl shrink-0"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex flex-col items-center justify-center border-2 shadow-md shrink-0"
                         style={{ backgroundColor: selectedTeam.primaryColor, borderColor: selectedTeam.secondaryColor }}
                       >
                         <Shirt className="w-6 h-6 text-white drop-shadow" />
@@ -664,25 +664,25 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide">
+                          <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-wide">
                             {selectedTeam.name}
                           </h3>
-                          <span className="text-xs bg-emerald-950 text-emerald-300 border border-emerald-500/50 px-2.5 py-0.5 rounded font-mono font-bold">
+                          <span className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded font-mono font-bold">
                             BẢNG {selectedTeam.group || 'CHƯA GÁN'}
                           </span>
                           {isMyTeam && (
-                            <span className="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/60 px-2.5 py-0.5 rounded-full font-bold">
+                            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full font-bold">
                               ⭐ ĐỘI CỦA BẠN (Toàn quyền quản lý)
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-300 mt-1 font-medium">
+                        <p className="text-xs text-slate-600 mt-1 font-medium">
                           {selectedTeam.department?.toLowerCase().startsWith('khoa') ? selectedTeam.department : `Khoa ${selectedTeam.department}`} • Lớp {selectedTeam.class}
                         </p>
-                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-200">
-                          <span>Trưởng đoàn: <strong className="text-white">{selectedTeam.leaderName}</strong></span>
-                          <span className="text-slate-500">•</span>
-                          <span>Đội trưởng: <strong className="text-white">{selectedTeam.captainName}</strong></span>
+                        <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-600">
+                          <span>Trưởng đoàn: <strong className="text-slate-900">{selectedTeam.leaderName}</strong></span>
+                          <span className="text-slate-300">•</span>
+                          <span>Đội trưởng: <strong className="text-slate-900">{selectedTeam.captainName}</strong></span>
                         </div>
                       </div>
                     </div>
@@ -693,10 +693,10 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                       {isOrganizerOrAdmin && (
                         <button
                           onClick={handleOpenEditTeam}
-                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold text-xs border border-slate-700 transition-all shadow-md"
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs border border-slate-200 transition-all shadow-xs"
                           title="BTC sửa tên đội, đổi bảng đấu, màu áo"
                         >
-                          <Edit3 className="w-3.5 h-3.5" />
+                          <Edit3 className="w-3.5 h-3.5 text-blue-600" />
                           <span>Sửa Đội / Đổi Bảng</span>
                         </button>
                       )}
@@ -705,7 +705,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                       {canManageThisTeamPlayers && (
                         <button
                           onClick={() => setPlayerModalOpen(true)}
-                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>{isMyTeam ? '+ Thêm Cầu Thủ Đội Mình' : '+ Thêm Cầu Thủ'}</span>
@@ -718,8 +718,8 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                           onClick={() => handleToggleWithdrawn(selectedTeam.id)}
                           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
                             selectedTeam.status === 'WITHDRAWN'
-                              ? 'bg-emerald-950 text-emerald-400 border-emerald-500/40 hover:bg-emerald-900/60'
-                              : 'bg-red-950/80 text-red-300 border-red-500/50 hover:bg-red-900/60'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                              : 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'
                           }`}
                           title="Quy định Điều 13: Xử lý đội bỏ cuộc"
                         >
@@ -732,51 +732,51 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
                   {/* Section: Hộp Tài Khoản Đội Trưởng & Trạng Thái Quyền */}
                   {isMyTeam ? (
-                    <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-emerald-900/50 to-teal-950/90 border-2 border-emerald-500/60 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/40">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-300">
                           <ShieldCheck className="w-5 h-5" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-black text-white">⭐ BẠN ĐANG ĐĂNG NHẬP VỚI TƯ CÁCH ĐỘI TRƯỞNG</span>
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 text-[10px] font-bold">
+                            <span className="text-sm font-black text-slate-900">⭐ BẠN ĐANG ĐĂNG NHẬP VỚI TƯ CÁCH ĐỘI TRƯỞNG</span>
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
                               ĐÃ KÍCH HOẠT
                             </span>
                           </div>
-                          <p className="text-xs text-emerald-200/90 mt-0.5">
+                          <p className="text-xs text-slate-600 mt-0.5">
                             Bạn có toàn quyền thêm mới, cập nhật số áo, vị trí và thông tin cầu thủ cho đội <strong>{selectedTeam.name}</strong>.
                           </p>
                         </div>
                       </div>
                       <button
                         onClick={() => setPlayerModalOpen(true)}
-                        className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
+                        className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
                       >
                         <Plus className="w-4 h-4" />
                         <span>Thêm Cầu Thủ</span>
                       </button>
                     </div>
                   ) : isOrganizerOrAdmin ? (
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border-2 border-cyan-500/40 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <div className="p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                       <div className="flex items-start sm:items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-500/40 mt-0.5 sm:mt-0">
-                          <KeyRound className="w-5 h-5 text-cyan-400" />
+                        <div className="w-10 h-10 rounded-xl bg-sky-100 text-blue-600 flex items-center justify-center shrink-0 border border-sky-200 mt-0.5 sm:mt-0">
+                          <KeyRound className="w-5 h-5" />
                         </div>
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs sm:text-sm font-bold text-white">Tài khoản Đội trưởng (BTC bàn giao):</span>
-                            <code className="px-2.5 py-1 rounded-lg bg-cyan-950/90 text-cyan-300 border border-cyan-500/50 font-mono font-bold text-xs sm:text-sm tracking-wide">
+                            <span className="text-xs sm:text-sm font-bold text-slate-900">Tài khoản Đội trưởng (BTC bàn giao):</span>
+                            <code className="px-2.5 py-1 rounded-lg bg-white text-blue-700 border border-blue-200 font-mono font-bold text-xs sm:text-sm tracking-wide shadow-2xs">
                               {captainUsername}
                             </code>
-                            <span className="text-slate-500">•</span>
-                            <span className="text-xs sm:text-sm font-medium text-slate-300">Mật khẩu:</span>
-                            <code className="px-2.5 py-1 rounded-lg bg-slate-900 text-amber-300 border border-amber-500/50 font-mono font-bold text-xs sm:text-sm">
+                            <span className="text-slate-400">•</span>
+                            <span className="text-xs sm:text-sm font-medium text-slate-600">Mật khẩu:</span>
+                            <code className="px-2.5 py-1 rounded-lg bg-white text-amber-700 border border-amber-300 font-mono font-bold text-xs sm:text-sm shadow-2xs">
                               123
                             </code>
                           </div>
-                          <p className="text-[11px] text-slate-300 mt-1">
-                            💡 BTC có thể sao chép tài khoản để gửi cho Đội trưởng. Đội trưởng có thể đăng nhập bằng tài khoản <strong className="text-cyan-400 font-mono">{captainUsername}</strong> hoặc trực tiếp tên đội <strong className="text-cyan-400 font-mono">"{selectedTeam.name}"</strong> (mật khẩu: 123).
+                          <p className="text-[11px] text-slate-600 mt-1">
+                            💡 BTC có thể sao chép tài khoản để gửi cho Đội trưởng. Đội trưởng có thể đăng nhập bằng tài khoản <strong className="text-blue-700 font-mono">{captainUsername}</strong> hoặc trực tiếp tên đội <strong className="text-blue-700 font-mono">&quot;{selectedTeam.name}&quot;</strong> (mật khẩu: 123).
                           </p>
                         </div>
                       </div>
@@ -789,17 +789,17 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                             setHeaderCopied(true);
                             setTimeout(() => setHeaderCopied(false), 2000);
                           }}
-                          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all"
+                          className="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs"
                           title="Sao chép tài khoản và mật khẩu cho Đội trưởng"
                         >
-                          {headerCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {headerCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                           <span>{headerCopied ? 'Đã Sao Chép' : 'Sao Chép Cho Đội Trưởng'}</span>
                         </button>
 
                         {onOpenAuthModal && (
                           <button
                             onClick={() => onOpenAuthModal(undefined, captainUsername, '123')}
-                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 flex items-center gap-1.5 transition-all active:scale-95"
+                            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 flex items-center gap-1.5 transition-all active:scale-95"
                             title="Đăng nhập ngay vào tài khoản Đội trưởng đội này"
                           >
                             <LogIn className="w-3.5 h-3.5" />
@@ -811,74 +811,74 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   ) : null}
 
                   {/* Section: 4 Stat Cards hiển thị rõ ràng, tương phản cao, sắc nét */}
-                  <div className="pt-2 border-t border-slate-700/60 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div className="pt-2 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     {/* Đội Hình Đăng Ký */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
-                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
-                        <span className="text-xs font-semibold text-slate-300">Đội Hình Đăng Ký</span>
-                        <Users className="w-4 h-4 text-emerald-400" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs hover:border-blue-400 hover:bg-white transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-500 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-600">Đội Hình Đăng Ký</span>
+                        <Users className="w-4 h-4 text-blue-600" />
                       </div>
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono">
+                        <span className="text-xl sm:text-2xl font-black text-blue-700 font-mono">
                           {selectedTeam.players.length}
                         </span>
-                        <span className="text-xs font-semibold text-slate-300 font-mono">/ 12 Cầu thủ</span>
+                        <span className="text-xs font-semibold text-slate-500 font-mono">/ 12 Cầu thủ</span>
                       </div>
-                      <span className="text-[10px] font-medium text-emerald-300/80 mt-1 block">
+                      <span className="text-[10px] font-medium text-slate-500 mt-1 block">
                         {selectedTeam.players.length >= 5 ? '✓ Đủ tối thiểu 5 cầu thủ' : 'Cần tối thiểu 5 cầu thủ'}
                       </span>
                     </div>
 
                     {/* Bảng Thi Đấu */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-cyan-500/50 transition-all flex flex-col justify-between">
-                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
-                        <span className="text-xs font-semibold text-slate-300">Bảng Thi Đấu</span>
-                        <Shirt className="w-4 h-4 text-cyan-400" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs hover:border-blue-400 hover:bg-white transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-500 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-600">Bảng Thi Đấu</span>
+                        <Shirt className="w-4 h-4 text-sky-600" />
                       </div>
-                      <div className="text-lg sm:text-xl font-black text-cyan-300 font-mono">
+                      <div className="text-lg sm:text-xl font-black text-sky-700 font-mono">
                         {selectedTeam.group ? `BẢNG ${selectedTeam.group}` : 'CHƯA CHIA BẢNG'}
                       </div>
-                      <span className="text-[10px] font-medium text-cyan-300/80 mt-1 block">
+                      <span className="text-[10px] font-medium text-slate-500 mt-1 block">
                         {selectedTeam.group ? 'Vòng Bảng Chính Thức' : 'Chờ bốc thăm chia bảng'}
                       </span>
                     </div>
 
                     {/* Hồ Sơ Đội Bóng */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-emerald-500/50 transition-all flex flex-col justify-between">
-                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
-                        <span className="text-xs font-semibold text-slate-300">Hồ Sơ Đội Bóng</span>
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs hover:border-blue-400 hover:bg-white transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-500 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-600">Hồ Sơ Đội Bóng</span>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                       </div>
                       <div>
                         {selectedTeam.status === 'APPROVED' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950/90 text-emerald-300 border border-emerald-500/50 font-bold text-xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
                             ✓ ĐÃ DUYỆT HỢP LỆ
                           </span>
                         ) : selectedTeam.status === 'WITHDRAWN' ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-950/90 text-red-300 border border-red-500/50 font-bold text-xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200 font-bold text-xs">
                             BỎ CUỘC (ĐIỀU 13)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-950/90 text-amber-300 border border-amber-500/50 font-bold text-xs">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs">
                             CHỜ PHÊ DUYỆT
                           </span>
                         )}
                       </div>
-                      <span className="text-[10px] font-medium text-slate-400 mt-1 block">
+                      <span className="text-[10px] font-medium text-slate-500 mt-1 block">
                         Theo Điều lệ Giải đấu
                       </span>
                     </div>
 
                     {/* Chi Đoàn / Lớp */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 shadow-lg hover:border-blue-500/50 transition-all flex flex-col justify-between">
-                      <div className="flex items-center justify-between text-slate-300 mb-1.5">
-                        <span className="text-xs font-semibold text-slate-300">Chi Đoàn / Đơn Vị</span>
-                        <Users className="w-4 h-4 text-blue-400" />
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs hover:border-blue-400 hover:bg-white transition-all flex flex-col justify-between">
+                      <div className="flex items-center justify-between text-slate-500 mb-1.5">
+                        <span className="text-xs font-semibold text-slate-600">Chi Đoàn / Đơn Vị</span>
+                        <Users className="w-4 h-4 text-indigo-600" />
                       </div>
-                      <div className="text-sm font-black text-white truncate" title={selectedTeam.class || 'Khoa CNTT'}>
+                      <div className="text-sm font-black text-slate-900 truncate" title={selectedTeam.class || 'Khoa CNTT'}>
                         {selectedTeam.class || 'Khoa CNTT'}
                       </div>
-                      <span className="text-[10px] font-medium text-slate-300 truncate mt-1 block" title={selectedTeam.department}>
+                      <span className="text-[10px] font-medium text-slate-500 truncate mt-1 block" title={selectedTeam.department}>
                         {selectedTeam.department?.toLowerCase().startsWith('khoa') ? selectedTeam.department : `Khoa ${selectedTeam.department}`}
                       </span>
                     </div>
@@ -886,35 +886,35 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
                   {/* Strip Tài Chính: Chỉ hiển thị cho Super Admin & BTC */}
                   {isOrganizerOrAdmin && (
-                    <div className="pt-2 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
-                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Lệ Phí Thi Đấu</span>
-                        <span className="font-mono font-bold text-base text-emerald-400 block">
+                    <div className="pt-2 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
+                        <span className="text-[11px] font-semibold text-slate-500 block mb-1">Lệ Phí Thi Đấu</span>
+                        <span className="font-mono font-bold text-base text-blue-700 block">
                           {selectedTeam.registrationFee.toLocaleString()} đ
                         </span>
                         <span className="text-[10px] text-slate-500">Quy định Điều lệ</span>
                       </div>
-                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
-                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Ký Quỹ Điều Lệ</span>
-                        <span className="font-mono font-bold text-base text-cyan-400 block">
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
+                        <span className="text-[11px] font-semibold text-slate-500 block mb-1">Ký Quỹ Điều Lệ</span>
+                        <span className="font-mono font-bold text-base text-sky-700 block">
                           {selectedTeam.depositFee.toLocaleString()} đ
                         </span>
                         <span className="text-[10px] text-slate-500">Ký quỹ kỷ luật</span>
                       </div>
-                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
-                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Trạng Thái Đóng Phí</span>
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
+                        <span className="text-[11px] font-semibold text-slate-500 block mb-1">Trạng Thái Đóng Phí</span>
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-md font-bold text-xs ${
                           selectedTeam.feeStatus === 'PAID'
-                            ? 'bg-emerald-950/90 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-amber-950/90 text-amber-300 border border-amber-500/40'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-amber-50 text-amber-800 border border-amber-200'
                         }`}>
                           {selectedTeam.feeStatus === 'PAID' ? '✓ Đã Thanh Toán' : 'Chưa Thanh Toán'}
                         </span>
                         <span className="text-[10px] text-slate-500 block mt-1">BTC xác nhận</span>
                       </div>
-                      <div className="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-md">
-                        <span className="text-[11px] font-semibold text-slate-400 block mb-1">Chỉ Số Nhân Sự</span>
-                        <span className="font-mono font-bold text-base text-white block">
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs">
+                        <span className="text-[11px] font-semibold text-slate-500 block mb-1">Chỉ Số Nhân Sự</span>
+                        <span className="font-mono font-bold text-base text-slate-900 block">
                           {selectedTeam.players.length} / 12 Cầu thủ
                         </span>
                         <span className="text-[10px] text-slate-500">Tối đa 12 người</span>
@@ -925,15 +925,15 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               </div>
 
               {/* Players Table */}
-              <div className="bg-[#0B132B]/90 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
-                <div className="p-4 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xs">
+                <div className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-emerald-400" />
-                    <h4 className="text-sm font-black text-white">
+                    <Users className="w-4 h-4 text-blue-600" />
+                    <h4 className="text-sm font-black text-slate-900">
                       Danh Sách Đăng Ký Cầu Thủ ({selectedTeam.players.length}/12)
                     </h4>
                   </div>
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500 font-medium">
                     {canManageThisTeamPlayers ? 'Bạn có quyền quản lý thành viên đội này' : 'Chế độ chỉ đọc'}
                   </span>
                 </div>
@@ -948,7 +948,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-950/60 text-slate-400 font-bold border-b border-slate-800 text-[11px]">
+                      <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 text-[11px]">
                         <tr>
                           <th className="py-3 px-3 text-center w-12">SỐ ÁO</th>
                           <th className="py-3 px-3">HỌ VÀ TÊN</th>
@@ -963,40 +963,40 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                           )}
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800/60">
+                      <tbody className="divide-y divide-slate-100">
                         {selectedTeam.players.map((p) => (
-                          <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
-                            <td className="py-3 px-3 text-center font-mono font-black text-emerald-400">
+                          <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                            <td className="py-3 px-3 text-center font-mono font-black text-blue-700">
                               #{p.jerseyNumber}
                             </td>
-                            <td className="py-3 px-3 font-semibold text-white">
+                            <td className="py-3 px-3 font-semibold text-slate-900">
                               {p.name}
                             </td>
-                            <td className="py-3 px-3 font-mono text-slate-400">{p.studentId}</td>
+                            <td className="py-3 px-3 font-mono text-slate-500">{p.studentId}</td>
                             <td className="py-3 px-2 text-center">
-                              <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-800 text-cyan-300">
+                              <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-100 text-blue-700 border border-slate-200">
                                 {p.position}
                               </span>
                             </td>
-                            <td className="py-3 px-2 text-center text-slate-400">{p.cohort}</td>
-                            <td className="py-3 px-2 text-center font-mono font-bold text-emerald-400">
+                            <td className="py-3 px-2 text-center text-slate-600">{p.cohort}</td>
+                            <td className="py-3 px-2 text-center font-mono font-bold text-blue-700">
                               {p.goals > 0 ? `⚽ ${p.goals}` : '-'}
                             </td>
                             <td className="py-3 px-2 text-center font-mono">
-                              {p.yellowCards > 0 && <span className="text-amber-400 mr-1">{p.yellowCards}🟨</span>}
-                              {p.redCards > 0 && <span className="text-red-400">{p.redCards}🟥</span>}
-                              {p.yellowCards === 0 && p.redCards === 0 && <span className="text-slate-600">-</span>}
+                              {p.yellowCards > 0 && <span className="text-amber-500 mr-1">{p.yellowCards}🟨</span>}
+                              {p.redCards > 0 && <span className="text-red-500">{p.redCards}🟥</span>}
+                              {p.yellowCards === 0 && p.redCards === 0 && <span className="text-slate-400">-</span>}
                             </td>
                             <td className="py-3 px-3 text-center">
                               {p.isSuspended ? (
                                 <span 
-                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-red-400 bg-red-950/60 border border-red-500/40 px-2 py-0.5 rounded-full"
+                                  className="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full"
                                   title={p.suspensionReason}
                                 >
                                   🔒 TREO GIÒ
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 px-2 py-0.5 rounded-full">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                                   ✓ HỢP LỆ
                                 </span>
                               )}
@@ -1006,14 +1006,14 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                                 <div className="flex items-center justify-center gap-1.5">
                                   <button
                                     onClick={() => handleOpenEditPlayer(p)}
-                                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-colors"
+                                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-blue-600 border border-slate-200 transition-colors"
                                     title="Sửa thông tin cầu thủ"
                                   >
                                     <Edit3 className="w-3.5 h-3.5" />
                                   </button>
                                   <button
                                     onClick={() => handleDeletePlayer(p.id)}
-                                    className="p-1.5 rounded-lg bg-red-950/60 hover:bg-red-900 text-red-400 border border-red-500/30 transition-colors"
+                                    className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition-colors"
                                     title="Xóa cầu thủ khỏi đội"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -1037,98 +1037,98 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
       {/* Modal 1: Register New Team (Rule #14) */}
       {teamModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Shirt className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Shirt className="w-5 h-5 text-blue-600" />
                 Đăng Ký Đội Bóng Mới (Điều 14)
               </h3>
               <button
                 onClick={() => setTeamModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Tên Đội Bóng</label>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Tên Đội Bóng</label>
               <input
                 type="text"
                 value={newTeamName}
                 onChange={(e) => setNewTeamName(e.target.value)}
                 placeholder="VD: CNTT K22 Chiến Binh"
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Tên Viết Tắt (Short Name)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Tên Viết Tắt (Short Name)</label>
                 <input
                   type="text"
                   value={newTeamShortName}
                   onChange={(e) => handleShortNameChange(e.target.value)}
                   placeholder="VD: CNTT-K22"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold uppercase"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-bold uppercase focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Chi Đoàn / Lớp</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Chi Đoàn / Lớp</label>
                 <input
                   type="text"
                   value={newTeamClass}
                   onChange={(e) => setNewTeamClass(e.target.value)}
                   placeholder="VD: 22CNTT1"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Trưởng Đoàn</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Trưởng Đoàn</label>
                 <input
                   type="text"
                   value={newTeamLeader}
                   onChange={(e) => setNewTeamLeader(e.target.value)}
                   placeholder="VD: ThS. Lê Văn Hùng"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Đội Trưởng</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Đội Trưởng</label>
                 <input
                   type="text"
                   value={newTeamCaptain}
                   onChange={(e) => setNewTeamCaptain(e.target.value)}
                   placeholder="VD: Nguyễn Văn Nam"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Số Điện Thoại</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Số Điện Thoại</label>
                 <input
                   type="text"
                   value={newTeamPhone}
                   onChange={(e) => setNewTeamPhone(e.target.value)}
                   placeholder="09..."
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Bảng Đấu (Tùy Chọn)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Bảng Đấu (Tùy Chọn)</label>
                 <select
                   value={newTeamGroup}
                   onChange={(e) => setNewTeamGroup(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 >
                   <option value="NONE">Chờ Bốc Thăm Sau</option>
                   {groups.map((g) => (
@@ -1140,70 +1140,70 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Màu Áo Chính (Hex)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Màu Áo Chính (Hex)</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={newTeamPrimaryColor}
                     onChange={(e) => setNewTeamPrimaryColor(e.target.value)}
-                    className="w-9 h-9 rounded cursor-pointer bg-transparent"
+                    className="w-9 h-9 rounded cursor-pointer bg-transparent border border-slate-200"
                   />
-                  <span className="font-mono text-xs text-slate-300">{newTeamPrimaryColor}</span>
+                  <span className="font-mono text-xs text-slate-600">{newTeamPrimaryColor}</span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Màu Áo Phụ / Viền</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Màu Áo Phụ / Viền</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={newTeamSecondaryColor}
                     onChange={(e) => setNewTeamSecondaryColor(e.target.value)}
-                    className="w-9 h-9 rounded cursor-pointer bg-transparent"
+                    className="w-9 h-9 rounded cursor-pointer bg-transparent border border-slate-200"
                   />
-                  <span className="font-mono text-xs text-slate-300">{newTeamSecondaryColor}</span>
+                  <span className="font-mono text-xs text-slate-600">{newTeamSecondaryColor}</span>
                 </div>
               </div>
             </div>
 
             {/* Khung Tự Động Tạo Tài Khoản Cho Đội Trưởng */}
-            <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
-              <div className="flex items-center gap-2 text-cyan-300 font-bold text-xs">
-                <KeyRound className="w-4 h-4 text-cyan-400 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 space-y-2">
+              <div className="flex items-center gap-2 text-blue-700 font-bold text-xs">
+                <KeyRound className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>Tự Động Cấp Tài Khoản Cho Đội Trưởng Đội Bóng</span>
               </div>
-              <p className="text-[11px] text-slate-300">
+              <p className="text-[11px] text-slate-600">
                 Hệ thống sẽ tự động tạo tài khoản này với vai trò Đội Trưởng để bàn giao cho đội bóng vào tự thêm thành viên của đội mình:
               </p>
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Tài khoản (Username)</label>
+                  <label className="text-[11px] font-semibold text-slate-700 block mb-1">Tài khoản (Username)</label>
                   <input
                     type="text"
                     value={newCaptainUsername}
                     onChange={(e) => setNewCaptainUsername(e.target.value)}
                     placeholder="captain_..."
-                    className="w-full bg-slate-900 border border-slate-700 text-cyan-300 font-mono text-xs rounded-xl p-2 font-bold"
+                    className="w-full bg-white border border-slate-300 text-blue-700 font-mono text-xs rounded-xl p-2 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-300 block mb-1">Mật khẩu khởi tạo</label>
+                  <label className="text-[11px] font-semibold text-slate-700 block mb-1">Mật khẩu khởi tạo</label>
                   <input
                     type="text"
                     value={newCaptainPassword}
                     onChange={(e) => setNewCaptainPassword(e.target.value)}
                     placeholder="123"
-                    className="w-full bg-slate-900 border border-slate-700 text-emerald-400 font-mono text-xs rounded-xl p-2 font-bold"
+                    className="w-full bg-white border border-slate-300 text-amber-700 font-mono text-xs rounded-xl p-2 font-bold"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setTeamModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Hủy
               </button>
@@ -1211,7 +1211,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleCreateTeam}
                 disabled={!newTeamName || !newTeamShortName}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-blue-500/20 active:scale-95"
               >
                 Tạo Đội Bóng &amp; Cấp Tài Khoản Đội Trưởng
               </button>
@@ -1222,38 +1222,38 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
       {/* Modal: Thông Báo Tạo Đội & Tài Khoản Đội Trưởng Thành Công (Cho BTC copy gửi Đội trưởng) */}
       {createdCaptainModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-emerald-500/40 rounded-3xl p-6 shadow-2xl space-y-4 text-center animate-in fade-in zoom-in-95">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto text-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 text-center animate-in fade-in zoom-in-95">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center mx-auto text-2xl">
               🎉
             </div>
             <div>
-              <h3 className="text-lg font-black text-white">Đã Tạo Đội Bóng &amp; Cấp Tài Khoản Đội Trưởng!</h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <h3 className="text-lg font-black text-slate-900">Đã Tạo Đội Bóng &amp; Cấp Tài Khoản Đội Trưởng!</h3>
+              <p className="text-xs text-slate-600 mt-1">
                 Đội bóng <strong>{createdCaptainModal.teamName}</strong> đã được lưu thành công vào cơ sở dữ liệu.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-2 text-xs">
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
-                <span className="text-slate-400">Tên đội bóng:</span>
-                <span className="font-bold text-white">{createdCaptainModal.teamName}</span>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-xs">
+              <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                <span className="text-slate-500">Tên đội bóng:</span>
+                <span className="font-bold text-slate-900">{createdCaptainModal.teamName}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
-                <span className="text-slate-400">Đội trưởng:</span>
-                <span className="font-bold text-white">{createdCaptainModal.captainName || 'Chưa đặt tên'}</span>
+              <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                <span className="text-slate-500">Đội trưởng:</span>
+                <span className="font-bold text-slate-900">{createdCaptainModal.captainName || 'Chưa đặt tên'}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-slate-800/80">
-                <span className="text-slate-400">Tên đăng nhập:</span>
-                <span className="font-mono font-black text-cyan-300">@{createdCaptainModal.username}</span>
+              <div className="flex justify-between items-center py-1 border-b border-slate-100">
+                <span className="text-slate-500">Tên đăng nhập:</span>
+                <span className="font-mono font-black text-blue-700">@{createdCaptainModal.username}</span>
               </div>
               <div className="flex justify-between items-center py-1">
-                <span className="text-slate-400">Mật khẩu đăng nhập:</span>
-                <span className="font-mono font-black text-emerald-400">{createdCaptainModal.password}</span>
+                <span className="text-slate-500">Mật khẩu đăng nhập:</span>
+                <span className="font-mono font-black text-amber-700">{createdCaptainModal.password}</span>
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500">
               Hãy bấm nút bên dưới để sao chép thông tin tài khoản và gửi cho Đội trưởng. Đội trưởng có quyền thêm và chỉnh sửa thành viên của đội mình.
             </p>
 
@@ -1266,7 +1266,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   setCopiedCaptainCreds(true);
                   setTimeout(() => setCopiedCaptainCreds(false), 2500);
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 transition-all active:scale-95"
               >
                 {copiedCaptainCreds ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
                 <span>{copiedCaptainCreds ? '✓ Đã Sao Chép Vào Bộ Nhớ Tạm!' : 'Sao Chép Thông Tin Bàn Giao Cho Đội Trưởng'}</span>
@@ -1275,7 +1275,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setCreatedCaptainModal(null)}
-                className="w-full py-2 px-4 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="w-full py-2 px-4 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Đóng
               </button>
@@ -1284,52 +1284,52 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
       )}
 
-      {/* Modal 2: Add Player (Rule #15) */}
+      {/* Modal 3: Add Player (Rule #15) */}
       {playerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-400" />
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
                 Đăng Ký Cầu Thủ Mới (Điều 15)
               </h3>
               <button
                 onClick={() => setPlayerModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Họ và tên cầu thủ</label>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Họ và tên cầu thủ</label>
               <input
                 type="text"
                 value={newPlayerName}
                 onChange={(e) => setNewPlayerName(e.target.value)}
                 placeholder="VD: Nguyễn Văn Hoàng"
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Mã sinh viên (MSSV)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Mã sinh viên (MSSV)</label>
                 <input
                   type="text"
                   value={newPlayerStudentId}
                   onChange={(e) => setNewPlayerStudentId(e.target.value)}
                   placeholder="VD: 23520099"
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-mono focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Khóa sinh viên</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Khóa sinh viên</label>
                 <select
                   value={newPlayerCohort}
                   onChange={(e) => setNewPlayerCohort(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 >
                   <option value="K23">Khóa K23 (2023)</option>
                   <option value="K24">Khóa K24 (2024)</option>
@@ -1341,23 +1341,23 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Số áo (1 - 99)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Số áo (1 - 99)</label>
                 <input
                   type="number"
                   min={1}
                   max={99}
                   value={newPlayerJersey}
                   onChange={(e) => setNewPlayerJersey(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-mono focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Vị trí thi đấu</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Vị trí thi đấu</label>
                 <select
                   value={newPlayerPos}
                   onChange={(e) => setNewPlayerPos(e.target.value as PlayerPosition)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 >
                   <option value="GK">Thủ Môn (GK)</option>
                   <option value="DF">Hậu Vệ (DF)</option>
@@ -1367,11 +1367,11 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setPlayerModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Hủy
               </button>
@@ -1379,7 +1379,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleAddPlayer}
                 disabled={!newPlayerName || !newPlayerStudentId}
-                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50 text-white text-xs font-bold shadow-md shadow-blue-500/20 active:scale-95"
               >
                 Lưu Hồ Sơ Cầu Thủ
               </button>
@@ -1388,137 +1388,137 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
       )}
 
-      {/* Modal 3: Edit Team & Group - CHỈ DÀNH CHO BTC */}
+      {/* Modal 4: Edit Team & Group - CHỈ DÀNH CHO BTC */}
       {editTeamModalOpen && isOrganizerOrAdmin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-cyan-400" />
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-blue-600" />
                 Chỉnh Sửa Đội Bóng &amp; Bảng Đấu (BTC)
               </h3>
               <button
                 onClick={() => setEditTeamModalOpen(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Tên Đội Bóng</label>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Tên Đội Bóng</label>
               <input
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Tên Viết Tắt</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Tên Viết Tắt</label>
                 <input
                   type="text"
                   value={editShortName}
                   onChange={(e) => setEditShortName(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono uppercase"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-mono uppercase focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Chi Đoàn / Lớp</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Chi Đoàn / Lớp</label>
                 <input
                   type="text"
                   value={editClass}
                   onChange={(e) => setEditClass(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Direct Group Selection! */}
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-cyan-500/40 space-y-1">
-              <label className="text-xs font-bold text-cyan-300 block">
+            <div className="p-3 rounded-xl bg-sky-50 border border-sky-200 space-y-1">
+              <label className="text-xs font-bold text-blue-700 block">
                 Phân Bảng Đấu ({groups.join(', ')})
               </label>
               <select
                 value={editGroup}
                 onChange={(e) => setEditGroup(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
+                className="w-full bg-white border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-bold focus:border-blue-500 focus:outline-none"
               >
                 <option value="NONE">-- Chưa Phân Bảng (Hộp Chờ) --</option>
                 {groups.map((g) => (
                   <option key={g} value={g}>BẢNG {g}</option>
                 ))}
               </select>
-              <p className="text-[10px] text-slate-400">
+              <p className="text-[10px] text-slate-600">
                 Bạn có thể tự do chỉ định hoặc đổi bảng đấu cho đội bóng này bất cứ lúc nào.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Trưởng Đoàn</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Trưởng Đoàn</label>
                 <input
                   type="text"
                   value={editLeader}
                   onChange={(e) => setEditLeader(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Đội Trưởng</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Đội Trưởng</label>
                 <input
                   type="text"
                   value={editCaptain}
                   onChange={(e) => setEditCaptain(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Màu Áo Chính</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Màu Áo Chính</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={editPrimaryColor}
                     onChange={(e) => setEditPrimaryColor(e.target.value)}
-                    className="w-9 h-9 rounded cursor-pointer bg-transparent"
+                    className="w-9 h-9 rounded cursor-pointer bg-transparent border border-slate-200"
                   />
-                  <span className="font-mono text-xs text-slate-300">{editPrimaryColor}</span>
+                  <span className="font-mono text-xs text-slate-600">{editPrimaryColor}</span>
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Màu Áo Phụ</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Màu Áo Phụ</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={editSecondaryColor}
                     onChange={(e) => setEditSecondaryColor(e.target.value)}
-                    className="w-9 h-9 rounded cursor-pointer bg-transparent"
+                    className="w-9 h-9 rounded cursor-pointer bg-transparent border border-slate-200"
                   />
-                  <span className="font-mono text-xs text-slate-300">{editSecondaryColor}</span>
+                  <span className="font-mono text-xs text-slate-600">{editSecondaryColor}</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setEditTeamModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Hủy
               </button>
               <button
                 type="button"
                 onClick={handleSaveEditTeam}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 active:scale-95"
               >
                 Lưu Thay Đổi
               </button>
@@ -1527,13 +1527,13 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
         </div>
       )}
 
-      {/* Modal 4: Edit Player (Cầu thủ) - Cho BTC hoặc Đội trưởng đội mình */}
+      {/* Modal 5: Edit Player (Cầu thủ) - Cho BTC hoặc Đội trưởng đội mình */}
       {editPlayerModalOpen && editingPlayer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
+          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-cyan-400" />
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Edit3 className="w-5 h-5 text-blue-600" />
                 Chỉnh Sửa Thông Tin Cầu Thủ
               </h3>
               <button
@@ -1541,39 +1541,39 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                   setEditPlayerModalOpen(false);
                   setEditingPlayer(null);
                 }}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-300 block mb-1">Họ và tên cầu thủ</label>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">Họ và tên cầu thủ</label>
               <input
                 type="text"
                 value={editPlayerName}
                 onChange={(e) => setEditPlayerName(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-bold"
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-bold focus:border-blue-500 focus:bg-white focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Mã sinh viên (MSSV)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Mã sinh viên (MSSV)</label>
                 <input
                   type="text"
                   value={editPlayerStudentId}
                   onChange={(e) => setEditPlayerStudentId(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-mono focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Khóa sinh viên</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Khóa sinh viên</label>
                 <select
                   value={editPlayerCohort}
                   onChange={(e) => setEditPlayerCohort(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 >
                   <option value="K23">Khóa K23 (2023)</option>
                   <option value="K24">Khóa K24 (2024)</option>
@@ -1585,23 +1585,23 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Số áo (1 - 99)</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Số áo (1 - 99)</label>
                 <input
                   type="number"
                   min={1}
                   max={99}
                   value={editPlayerJersey}
                   onChange={(e) => setEditPlayerJersey(Number(e.target.value))}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5 font-mono"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 font-mono focus:border-blue-500 focus:bg-white focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">Vị trí thi đấu</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Vị trí thi đấu</label>
                 <select
                   value={editPlayerPos}
                   onChange={(e) => setEditPlayerPos(e.target.value as PlayerPosition)}
-                  className="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-2.5"
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-xs rounded-xl p-2.5 focus:border-blue-500 focus:bg-white focus:outline-none"
                 >
                   <option value="GK">Thủ Môn (GK)</option>
                   <option value="DF">Hậu Vệ (DF)</option>
@@ -1611,14 +1611,14 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => {
                   setEditPlayerModalOpen(false);
                   setEditingPlayer(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold"
               >
                 Hủy
               </button>
@@ -1626,7 +1626,7 @@ export const TeamsView: React.FC<TeamsViewProps> = ({
                 type="button"
                 onClick={handleSaveEditPlayer}
                 disabled={!editPlayerName || !editPlayerStudentId}
-                className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-lg active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 active:scale-95"
               >
                 Lưu Thay Đổi
               </button>
