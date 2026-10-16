@@ -415,7 +415,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Home */}
               <button
                 onClick={() => handlePickTab('home')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'home'
                     ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -430,7 +430,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Live */}
               <button
                 onClick={() => handlePickTab('live')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all active:scale-95 ${
                   activeTab === 'live'
                     ? 'bg-red-950/80 border-red-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -452,7 +452,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Schedule */}
               <button
                 onClick={() => handlePickTab('schedule')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'schedule'
                     ? 'bg-teal-950/80 border-teal-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -467,7 +467,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Standings */}
               <button
                 onClick={() => handlePickTab('standings')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'standings'
                     ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -482,7 +482,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Teams */}
               <button
                 onClick={() => handlePickTab('teams')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'teams'
                     ? 'bg-blue-950/80 border-blue-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -498,7 +498,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('draw')}
-                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                     activeTab === 'draw'
                       ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -514,7 +514,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Knockout Bracket */}
               <button
                 onClick={() => handlePickTab('bracket')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'bracket'
                     ? 'bg-purple-950/80 border-purple-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -529,7 +529,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Discipline */}
               <button
                 onClick={() => handlePickTab('discipline')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all active:scale-95 ${
                   activeTab === 'discipline'
                     ? 'bg-amber-950/80 border-amber-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -552,7 +552,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {(canManage || currentRole === 'TEAM_MANAGER') && (
                 <button
                   onClick={() => handlePickTab('complaints')}
-                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all touch-target active:scale-95 ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center justify-between transition-all active:scale-95 ${
                     activeTab === 'complaints'
                       ? 'bg-cyan-950/80 border-cyan-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -576,7 +576,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('finance')}
-                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                     activeTab === 'finance'
                       ? 'bg-emerald-950/80 border-emerald-500 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -592,7 +592,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {/* Awards */}
               <button
                 onClick={() => handlePickTab('awards')}
-                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                   activeTab === 'awards'
                     ? 'bg-yellow-950/80 border-yellow-500 text-white font-bold'
                     : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -608,7 +608,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
               {canManage && (
                 <button
                   onClick={() => handlePickTab('audit')}
-                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all touch-target active:scale-95 ${
+                  className={`p-3 min-h-[48px] rounded-2xl border text-left flex items-center gap-2.5 transition-all active:scale-95 ${
                     activeTab === 'audit'
                       ? 'bg-slate-800 border-slate-600 text-white font-bold'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -634,7 +634,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                   onClose();
                   onBackToPortal();
                 }}
-                className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all touch-target active:scale-95"
+                className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all active:scale-95"
               >
                 <div className="flex items-center gap-2">
                   <LayoutGrid className="w-4 h-4 text-emerald-400" />
@@ -647,7 +647,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             {/* Sound Toggle Button (Moved from mobile header) */}
             <button
               onClick={handleToggleSound}
-              className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all touch-target active:scale-95"
+              className="w-full min-h-[48px] p-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 flex items-center justify-between text-xs font-bold transition-all active:scale-95"
             >
               <div className="flex items-center gap-2">
                 {soundOn ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
@@ -667,7 +667,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                       onClose();
                       onClearData();
                     }}
-                    className="p-3 min-h-[44px] rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-900 active:scale-95 touch-target"
+                    className="p-3 min-h-[44px] rounded-xl bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-red-900 active:scale-95"
                   >
                     <Trash2 className="w-4 h-4 text-red-400" />
                     <span>Xóa Dữ Liệu</span>
@@ -680,7 +680,7 @@ export const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                       onClose();
                       onLoadDemo();
                     }}
-                    className="p-3 min-h-[44px] rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 active:scale-95 touch-target"
+                    className="p-3 min-h-[44px] rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 active:scale-95"
                   >
                     <Database className="w-4 h-4 text-amber-400" />
                     <span>Nạp Dữ Liệu Demo</span>

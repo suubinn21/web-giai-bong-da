@@ -183,10 +183,6 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-/* Touch Target Minimum (WCAG 2.5.5 & Mobile Ergonomics: 44px minimum height) */
-.touch-target {
-  min-height: 44px;
-}
 
 /* Mobile Safe Bottom Inset */
 .safe-area-bottom {

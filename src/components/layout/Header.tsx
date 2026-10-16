@@ -178,11 +178,11 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Brand Logo, Back Button, Portal Button & Dynamic Tournament Title */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            {/* Dedicated Back Button (Lùi 1 trang) - Visible on mobile & desktop with 44px touch target */}
+            {/* Dedicated Back Button (Lùi 1 trang) - Visible on mobile & desktop */}
             {onGoBack && canGoBack && (
               <button
                 onClick={onGoBack}
-                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 shadow-md transition-all active:scale-95 shrink-0 touch-target"
+                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 shadow-md transition-all active:scale-95 shrink-0"
                 title={activeTab && activeTab !== 'home' ? 'Lùi lại trang trước' : 'Quay lại cổng danh sách giải đấu'}
                 aria-label="Lùi lại 1 trang"
               >
@@ -202,7 +202,7 @@ export const Header: React.FC<HeaderProps> = ({
             {onBackToPortal && (!onGoBack || !canGoBack) && (
               <button
                 onClick={onBackToPortal}
-                className="hidden lg:flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap touch-target"
+                className="hidden lg:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
                 title="Quay lại cổng danh sách các giải đấu đã tạo"
               >
                 <LayoutGrid className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -223,14 +223,14 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Right Controls: Desktop controls hidden on mobile, mobile has only Hamburger Menu */}
+          {/* Right Controls: Desktop controls hidden on mobile, mobile has ONLY the Hamburger Menu button */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             
             {/* Edit Tournament Config Button (Desktop only, mobile in Menu Hamburger) */}
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onEditTournament && (
               <button
                 onClick={onEditTournament}
-                className="hidden md:inline-flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap touch-target active:scale-95"
+                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 font-bold text-xs border border-slate-700 hover:border-cyan-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap active:scale-95"
                 title={`Cấu hình giải đấu: ${tournament.numberOfGroups || 4} Bảng × ${tournament.teamsPerGroup || 4} Đội`}
               >
                 <Edit3 className="w-4 h-4 text-cyan-400 shrink-0" />
@@ -242,7 +242,7 @@ export const Header: React.FC<HeaderProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onOpenCreateTournament}
-                className="hidden md:inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95 touch-target"
+                className="hidden md:inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 title="Khởi tạo mùa giải bóng đá mới"
               >
                 <Plus className="w-4 h-4 shrink-0" />
@@ -254,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative hidden lg:block shrink-0">
               <button
                 onClick={() => canManage && setStatusMenuOpen(!statusMenuOpen)}
-                className={`flex items-center gap-2 text-xs font-bold min-h-[44px] px-3.5 rounded-xl border shadow-sm transition-all shrink-0 whitespace-nowrap touch-target ${currentStage.bgClass} ${
+                className={`flex items-center gap-2 text-xs font-bold min-h-[40px] px-3.5 rounded-xl border shadow-sm transition-all shrink-0 whitespace-nowrap ${currentStage.bgClass} ${
                   canManage ? 'cursor-pointer hover:brightness-110 active:scale-95' : 'cursor-default'
                 }`}
                 title={canManage ? 'Bấm để thay đổi giai đoạn giải đấu' : 'Giai đoạn hiện tại của giải đấu'}
@@ -301,7 +301,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Cloud Realtime Sync Status Indicator (Desktop only) */}
             <div
-              className={`hidden lg:flex items-center gap-1.5 min-h-[44px] px-3 rounded-xl border text-xs font-semibold shadow-sm transition-all shrink-0 whitespace-nowrap ${
+              className={`hidden lg:flex items-center gap-1.5 min-h-[40px] px-3 rounded-xl border text-xs font-semibold shadow-sm transition-all shrink-0 whitespace-nowrap ${
                 cloudStatus === 'connected'
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400'
                   : cloudStatus === 'connecting'
@@ -336,11 +336,11 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
 
-            {/* Quick Admin User Management Button */}
+            {/* Quick Admin User Management Button (Desktop only) */}
             {canManage && onOpenUserManagement && (
               <button
                 onClick={onOpenUserManagement}
-                className="hidden xl:flex items-center gap-1.5 min-h-[44px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-xs font-bold text-emerald-400 transition-all shadow-sm shrink-0 active:scale-95 touch-target"
+                className="hidden xl:flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-xs font-bold text-emerald-400 transition-all shadow-sm shrink-0 active:scale-95"
                 title="Tạo và quản lý tài khoản Ban Tổ Chức & Trọng tài"
               >
                 <Users className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -351,7 +351,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Sound FX Toggle Button (Desktop only, mobile in Menu Hamburger) */}
             <button
               onClick={toggleSound}
-              className={`hidden md:flex items-center justify-center min-h-[44px] min-w-[44px] rounded-xl border transition-all shrink-0 touch-target ${
+              className={`hidden md:flex items-center justify-center min-h-[40px] min-w-[40px] rounded-xl border transition-all shrink-0 ${
                 soundOn
                   ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-400 hover:bg-emerald-900/50'
                   : 'bg-slate-900 border-slate-700 text-slate-500 hover:text-slate-300'
@@ -367,7 +367,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative hidden md:block shrink-0">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 min-h-[44px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap touch-target"
+                  className="flex items-center gap-2 min-h-[40px] px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 shadow-sm transition-all shrink-0 whitespace-nowrap"
                   title="Thông tin tài khoản & Đổi vai trò"
                 >
                   <img
@@ -484,7 +484,7 @@ export const Header: React.FC<HeaderProps> = ({
               onOpenAuthModal && (
                 <button
                   onClick={onOpenAuthModal}
-                  className="hidden md:inline-flex items-center gap-2 min-h-[44px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95 touch-target"
+                  className="hidden md:inline-flex items-center gap-2 min-h-[40px] px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all border border-emerald-400/30 shrink-0 whitespace-nowrap active:scale-95"
                 >
                   <LogIn className="w-4 h-4 shrink-0" />
                   <span>Đăng Nhập</span>
@@ -496,7 +496,7 @@ export const Header: React.FC<HeaderProps> = ({
             {onOpenMobileMenu && (
               <button
                 onClick={onOpenMobileMenu}
-                className="flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-400 hover:text-white md:hidden transition-all shadow-md active:scale-95 touch-target"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-emerald-500/30 text-emerald-400 hover:text-white md:hidden transition-all shadow-md active:scale-95"
                 title="Mở menu chức năng giải đấu"
                 aria-label="Mở menu chức năng"
               >

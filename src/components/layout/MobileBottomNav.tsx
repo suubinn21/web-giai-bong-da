@@ -43,7 +43,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* 1. Trang Chủ */}
         <button
           onClick={() => handleSelectTab('home')}
-          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all active:scale-95 ${
             activeTab === 'home'
               ? 'text-emerald-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
@@ -62,7 +62,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* 2. Trực Tiếp (Live) */}
         <button
           onClick={() => handleSelectTab('live')}
-          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
+          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all active:scale-95 ${
             activeTab === 'live'
               ? 'text-red-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
@@ -86,7 +86,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* 3. Lịch Đấu */}
         <button
           onClick={() => handleSelectTab('schedule')}
-          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all active:scale-95 ${
             activeTab === 'schedule'
               ? 'text-teal-300 font-black'
               : 'text-slate-400 hover:text-slate-200'
@@ -105,7 +105,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         {/* 4. BXH */}
         <button
           onClick={() => handleSelectTab('standings')}
-          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
+          className={`flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all active:scale-95 ${
             activeTab === 'standings'
               ? 'text-amber-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
@@ -127,7 +127,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             SoundFX.playClick();
             onOpenMobileMenu();
           }}
-          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all touch-target active:scale-95 ${
+          className={`relative flex flex-col items-center justify-center min-h-[48px] py-1 px-1 rounded-xl transition-all active:scale-95 ${
             ['bracket', 'teams', 'draw', 'discipline', 'complaints', 'finance', 'awards', 'audit'].includes(activeTab)
               ? 'text-cyan-400 font-black'
               : 'text-slate-400 hover:text-slate-200'
@@ -152,7 +152,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
       {canGoBack && onGoBack && (
         <button
           onClick={onGoBack}
-          className="fixed bottom-[78px] left-3 z-40 md:hidden flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full bg-slate-900/95 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-xl backdrop-blur-md font-bold text-xs active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2 touch-target"
+          className="fixed bottom-[78px] left-3 z-40 md:hidden flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full bg-slate-900/95 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-xl backdrop-blur-md font-bold text-xs active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-2"
           title="Lùi lại 1 trang"
           aria-label="Lùi lại 1 trang"
         >

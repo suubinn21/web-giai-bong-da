@@ -131,7 +131,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate('live')}
-              className="flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-xl shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95 touch-target"
+              className="flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-xl shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 active:scale-95"
             >
               <Radio className="w-4 h-4 animate-pulse" />
               <span>Xem Trực Tiếp (Live Match Center)</span>
@@ -139,7 +139,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
 
             <button
               onClick={() => onNavigate('standings')}
-              className="flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-2xl bg-[#070F1E]/90 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm border border-emerald-500/30 hover:border-emerald-400 transition-all active:scale-95 touch-target shadow-md"
+              className="flex items-center gap-2 min-h-[44px] px-6 py-3 rounded-2xl bg-[#070F1E]/90 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm border border-emerald-500/30 hover:border-emerald-400 transition-all active:scale-95 shadow-md"
             >
               <Trophy className="w-4 h-4 text-amber-400" />
               <span>Bảng Xếp Hạng 4 Bảng</span>
@@ -147,7 +147,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
 
             <button
               onClick={() => onNavigate('bracket')}
-              className="flex items-center gap-2 min-h-[44px] px-5 py-3 rounded-2xl bg-[#070F1E]/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs sm:text-sm border border-slate-700 hover:border-cyan-500/40 transition-all active:scale-95 touch-target"
+              className="flex items-center gap-2 min-h-[44px] px-5 py-3 rounded-2xl bg-[#070F1E]/90 hover:bg-slate-800 text-slate-300 hover:text-white font-bold text-xs sm:text-sm border border-slate-700 hover:border-cyan-500/40 transition-all active:scale-95"
             >
               <span>Nhánh Knockout</span>
               <ArrowRight className="w-4 h-4 text-emerald-400" />
@@ -242,7 +242,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
             </div>
             <button
               onClick={() => onNavigate('schedule')}
-              className="min-h-[44px] px-3 text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 active:scale-95 touch-target"
+              className="min-h-[44px] px-3 text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 active:scale-95"
             >
               <span>Xem tất cả lịch</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -263,7 +263,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
                 </div>
                 <button
                   onClick={() => onNavigate('schedule')}
-                  className="inline-flex items-center gap-1.5 min-h-[44px] px-5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold transition-all shadow-sm active:scale-95 touch-target"
+                  className="inline-flex items-center gap-1.5 min-h-[44px] px-5 py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/40 text-xs font-bold transition-all shadow-sm active:scale-95"
                 >
                   <span>Xem Toàn Bộ Kết Quả &amp; BXH</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -280,7 +280,7 @@ export const PublicHome: React.FC<PublicHomeProps> = ({
                     onClick={() => {
                       onSelectMatch(m.id);
                     }}
-                    className="bg-[#070F1E]/95 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 active:scale-[0.99] touch-target group"
+                    className="bg-[#070F1E]/95 backdrop-blur-md border border-emerald-500/25 hover:border-emerald-400 rounded-2xl p-4 sm:p-5 shadow-xl transition-all cursor-pointer hover:bg-slate-800/60 active:scale-[0.99] group"
                   >
                     <div className="flex items-center justify-between text-[11px] mb-2 text-slate-400 gap-1.5 flex-wrap">
                       <div className="flex items-center gap-1.5">

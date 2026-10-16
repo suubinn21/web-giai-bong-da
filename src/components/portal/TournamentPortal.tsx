@@ -165,7 +165,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             {onGoBack && canGoBack && (
               <button
                 onClick={onGoBack}
-                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-md transition-all active:scale-95 shrink-0 touch-target"
+                className="flex items-center gap-1.5 min-h-[44px] min-w-[44px] px-3 rounded-xl bg-slate-900/90 active:bg-slate-800 hover:bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-md transition-all active:scale-95 shrink-0"
                 title="Lùi lại giải đấu vừa xem"
                 aria-label="Lùi lại 1 trang"
               >
@@ -257,7 +257,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               onOpenAuthModal && (
                 <button
                   onClick={onOpenAuthModal}
-                  className="flex items-center gap-2 min-h-[44px] px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs sm:text-sm font-black transition-all shadow-md shadow-emerald-500/30 border border-emerald-400/40 active:scale-95 touch-target"
+                  className="flex items-center gap-2 min-h-[44px] px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs sm:text-sm font-black transition-all shadow-md shadow-emerald-500/30 border border-emerald-400/40 active:scale-95"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>Đăng Nhập</span>
@@ -269,7 +269,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onOpenUserManagement && (
               <button
                 onClick={onOpenUserManagement}
-                className="flex items-center gap-2 min-h-[44px] px-3 sm:px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-emerald-400 font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 active:scale-95 touch-target"
+                className="flex items-center gap-2 min-h-[44px] px-3 sm:px-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-emerald-500/50 text-emerald-400 font-bold text-xs sm:text-sm transition-all shadow-md shrink-0 active:scale-95"
                 title="Tạo và quản lý tài khoản Ban Tổ Chức & Trọng tài"
               >
                 <Users className="w-4 h-4" />
@@ -282,7 +282,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onCreateTournament}
-                className="flex items-center gap-2 min-h-[44px] px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40 shrink-0 touch-target"
+                className="flex items-center gap-2 min-h-[44px] px-3.5 sm:px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 border border-emerald-400/40 shrink-0"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">+ Tạo Mới Giải Đấu</span>
@@ -380,7 +380,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
           </div>
         </div>
 
-        {/* Search, Filter & Year Selection Toolbar with Touch-Target Compliance */}
+        {/* Search, Filter & Year Selection Toolbar with Compliance */}
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3.5 bg-[#070F1E]/90 backdrop-blur-md border border-emerald-500/25 p-3.5 sm:p-4 rounded-2xl shadow-xl">
           
           {/* Search Box */}
@@ -391,7 +391,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Tìm kiếm giải đấu theo tên, năm, mã hiệu hoặc đơn vị tổ chức..."
-              className="w-full pl-10 pr-12 min-h-[44px] py-2.5 bg-[#040A14]/90 border border-emerald-500/30 focus:border-emerald-400 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all touch-target"
+              className="w-full pl-10 pr-12 min-h-[44px] py-2.5 bg-[#040A14]/90 border border-emerald-500/30 focus:border-emerald-400 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
             />
             {searchTerm && (
               <button
@@ -479,7 +479,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
             {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
               <button
                 onClick={onCreateTournament}
-                className="min-h-[44px] px-3 py-2 text-xs sm:text-sm text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1.5 underline active:scale-95 transition-all touch-target"
+                className="min-h-[44px] px-3 py-2 text-xs sm:text-sm text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1.5 underline active:scale-95 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>Thêm giải đấu mới</span>
@@ -499,7 +499,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
               {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && (
                 <button
                   onClick={onCreateTournament}
-                  className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-xl shadow-emerald-500/20 transition-all inline-flex items-center gap-2 touch-target active:scale-95"
+                  className="min-h-[44px] px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-xl shadow-emerald-500/20 transition-all inline-flex items-center gap-2 active:scale-95"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tạo Giải Đấu Mới</span>
@@ -519,7 +519,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                   setStatusFilter('ALL');
                   setYearFilter('ALL');
                 }}
-                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white transition-colors touch-target active:scale-95"
+                className="min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white transition-colors active:scale-95"
               >
                 Xóa Bộ Lọc
               </button>
@@ -652,7 +652,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                       <div className="pt-4 mt-4 border-t border-slate-800/80 flex items-center gap-2">
                         <button
                           onClick={() => onSelectTournament(tour)}
-                          className="flex-1 flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all transform active:scale-98 touch-target"
+                          className="flex-1 flex items-center justify-center gap-2 min-h-[44px] px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-black text-xs sm:text-sm shadow-md shadow-emerald-500/20 transition-all transform active:scale-98"
                         >
                           <span>Vào Xem / Điều Hành Giải</span>
                           <ArrowRight className="w-4 h-4" />
@@ -662,7 +662,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                         {(currentRole === 'SUPER_ADMIN' || currentRole === 'ORGANIZER') && onEditTournament && (
                           <button
                             onClick={() => onEditTournament(tour)}
-                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-900 hover:bg-cyan-950/80 text-slate-400 hover:text-cyan-300 border border-slate-800 hover:border-cyan-500/40 transition-colors active:scale-95 touch-target"
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-900 hover:bg-cyan-950/80 text-slate-400 hover:text-cyan-300 border border-slate-800 hover:border-cyan-500/40 transition-colors active:scale-95"
                             title="Sửa cấu hình giải đấu (Số bảng, số đội/bảng...)"
                             aria-label="Sửa cấu hình giải đấu"
                           >
@@ -678,7 +678,7 @@ export const TournamentPortal: React.FC<TournamentPortalProps> = ({
                                 onDeleteTournament(tour.id);
                               }
                             }}
-                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-900 hover:bg-red-950/80 text-slate-500 hover:text-red-400 border border-slate-800 hover:border-red-500/40 transition-colors active:scale-95 touch-target"
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-slate-900 hover:bg-red-950/80 text-slate-500 hover:text-red-400 border border-slate-800 hover:border-red-500/40 transition-colors active:scale-95"
                             title="Xóa giải đấu này"
                             aria-label="Xóa giải đấu"
                           >
