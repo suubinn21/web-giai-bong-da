@@ -282,31 +282,34 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     const pitchNum = shortPitch.match(/\d+/)?.[0] || '1';
     const pitchColorMap: Record<string, { badge: string; border: string; text: string }> = {
       '1': {
-        badge: 'bg-cyan-950/90 border-cyan-500/50 text-cyan-300',
-        border: 'hover:border-cyan-500/60',
-        text: 'text-cyan-400',
+        badge: 'bg-sky-50 border-sky-300 text-sky-800',
+        border: 'hover:border-sky-400',
+        text: 'text-sky-600',
       },
       '2': {
-        badge: 'bg-emerald-950/90 border-emerald-500/50 text-emerald-300',
-        border: 'hover:border-emerald-500/60',
-        text: 'text-emerald-400',
+        badge: 'bg-emerald-50 border-emerald-300 text-emerald-800',
+        border: 'hover:border-emerald-400',
+        text: 'text-emerald-600',
       },
       '3': {
-        badge: 'bg-amber-950/90 border-amber-500/50 text-amber-300',
-        border: 'hover:border-amber-500/60',
-        text: 'text-amber-400',
+        badge: 'bg-amber-50 border-amber-300 text-amber-800',
+        border: 'hover:border-amber-400',
+        text: 'text-amber-600',
       },
       '4': {
-        badge: 'bg-purple-950/90 border-purple-500/50 text-purple-300',
-        border: 'hover:border-purple-500/60',
-        text: 'text-purple-400',
+        badge: 'bg-purple-50 border-purple-300 text-purple-800',
+        border: 'hover:border-purple-400',
+        text: 'text-purple-600',
       },
     };
     const pitchStyle = pitchColorMap[pitchNum] || {
-      badge: 'bg-slate-800 border-slate-700 text-slate-300',
-      border: 'hover:border-emerald-500/50',
-      text: 'text-slate-400',
+      badge: 'bg-slate-100 border-slate-200 text-slate-700',
+      border: 'hover:border-blue-400',
+      text: 'text-slate-600',
     };
+
+    const homeName = home?.name || (m.round === 'GROUP' ? `Đội ${m.group || ''} (Chờ bốc thăm)` : 'Đội chờ xác định');
+    const awayName = away?.name || (m.round === 'GROUP' ? `Đội ${m.group || ''} (Chờ bốc thăm)` : 'Đội chờ xác định');
 
     return (
       <div
@@ -315,14 +318,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         className={`bg-white border border-slate-200 ${pitchStyle.border} rounded-2xl p-4 shadow-xs transition-all cursor-pointer hover:shadow-md hover:border-blue-400 flex flex-col justify-between group text-slate-800`}
       >
         {/* Card Header: Match #, Round Label, Prominent PITCH BADGE & Match Status */}
-        <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-800/80 mb-3 gap-2 flex-wrap">
+        <div className="flex items-center justify-between text-[11px] pb-2.5 border-b border-slate-100 mb-3 gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-mono font-bold text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded text-[10px] border border-slate-700">
+            <span className="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] border border-slate-200">
               #{m.matchNumber || m.id}
             </span>
-            <span className="font-extrabold text-emerald-400">{m.roundLabel}</span>
+            <span className="font-extrabold text-blue-700">{m.roundLabel}</span>
             {/* SỐ SÂN THI ĐẤU NỔI BẬT THEO MÀU SÂN */}
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide border shadow-sm ${pitchStyle.badge}`}>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black tracking-wide border shadow-2xs ${pitchStyle.badge}`}>
               <MapPin className={`w-3 h-3 ${pitchStyle.text} shrink-0`} />
               <span>{shortPitch.toUpperCase()}</span>
             </span>
@@ -330,63 +333,63 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
           <div className="flex items-center gap-1.5 shrink-0">
             {m.status === 'LIVE' && (
-              <span className="flex items-center gap-1 font-bold text-red-400 animate-pulse text-[10px] bg-red-950/70 border border-red-500/40 px-2 py-0.5 rounded-lg">
-                <Radio className="w-3 h-3" /> LIVE {m.currentMinute}&apos;
+              <span className="flex items-center gap-1 font-bold text-red-700 animate-pulse text-[10px] bg-red-50 border border-red-200 px-2 py-0.5 rounded-lg">
+                <Radio className="w-3 h-3 text-red-600" /> LIVE {m.currentMinute}&apos;
               </span>
             )}
             {m.status === 'FINISHED' && (
-              <span className="text-emerald-400 font-bold text-[10px] bg-emerald-950/70 border border-emerald-500/40 px-2 py-0.5 rounded-lg">
+              <span className="text-emerald-700 font-bold text-[10px] bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg">
                 KẾT THÚC
               </span>
             )}
             {m.status === 'SCHEDULED' && (
-              <span className="text-slate-300 font-mono text-[10px] bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-lg flex items-center gap-1">
-                <Clock className="w-3 h-3 text-slate-400" /> {m.time}
+              <span className="text-slate-700 font-mono text-[10px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-lg flex items-center gap-1">
+                <Clock className="w-3 h-3 text-slate-500" /> {m.time}
               </span>
             )}
           </div>
         </div>
 
         {/* Match Teams & Score */}
-        <div className="space-y-2 py-1">
+        <div className="space-y-2.5 py-1">
           {/* Home */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 truncate">
               {home ? (
                 <span
-                  className="w-3 h-3 rounded-full border flex-shrink-0"
+                  className="w-3.5 h-3.5 rounded-full border shadow-2xs flex-shrink-0"
                   style={{ backgroundColor: home.primaryColor, borderColor: home.secondaryColor }}
                 ></span>
               ) : (
-                <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-300 border border-slate-400 flex-shrink-0"></span>
               )}
-              <span className="text-xs font-bold text-white truncate group-hover:text-emerald-300 transition-colors">
-                {home?.name || 'Đội chờ xác định'}
+              <span className={`text-xs font-bold truncate transition-colors ${home ? 'text-slate-900 group-hover:text-blue-700' : 'text-slate-500 italic'}`}>
+                {homeName}
               </span>
             </div>
 
-            <span className="font-mono font-black text-sm text-white">
+            <span className="font-mono font-black text-sm text-slate-900">
               {m.status === 'FINISHED' || m.status === 'LIVE' ? m.homeScore : '-'}
             </span>
           </div>
 
           {/* Away */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 truncate">
               {away ? (
                 <span
-                  className="w-3 h-3 rounded-full border flex-shrink-0"
+                  className="w-3.5 h-3.5 rounded-full border shadow-2xs flex-shrink-0"
                   style={{ backgroundColor: away.primaryColor, borderColor: away.secondaryColor }}
                 ></span>
               ) : (
-                <span className="w-3 h-3 rounded-full bg-slate-800 flex-shrink-0"></span>
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-300 border border-slate-400 flex-shrink-0"></span>
               )}
-              <span className="text-xs font-bold text-white truncate group-hover:text-emerald-300 transition-colors">
-                {away?.name || 'Đội chờ xác định'}
+              <span className={`text-xs font-bold truncate transition-colors ${away ? 'text-slate-900 group-hover:text-blue-700' : 'text-slate-500 italic'}`}>
+                {awayName}
               </span>
             </div>
 
-            <span className="font-mono font-black text-sm text-white">
+            <span className="font-mono font-black text-sm text-slate-900">
               {m.status === 'FINISHED' || m.status === 'LIVE' ? m.awayScore : '-'}
             </span>
           </div>
@@ -394,33 +397,33 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
         {/* Penalty shootout if applicable */}
         {m.penaltyShootout && (
-          <div className="my-2 p-1.5 bg-amber-500/10 border border-amber-500/30 rounded-lg text-[10px] text-amber-300 text-center font-bold">
+          <div className="my-2 p-1.5 bg-amber-50 border border-amber-200 rounded-lg text-[10px] text-amber-800 text-center font-bold">
             Luân lưu 6m: {m.penaltyShootout.homeScore} - {m.penaltyShootout.awayScore}
           </div>
         )}
 
         {/* Card Footer: Detailed Pitch / Venue & Synchronized Date/Time */}
-        <div className="pt-2.5 border-t border-slate-800/80 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
+        <div className="pt-2.5 border-t border-slate-100 mt-3 flex items-center justify-between text-[11px] gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 truncate max-w-[190px]" title={fullName}>
             <MapPin className={`w-3.5 h-3.5 ${pitchStyle.text} shrink-0`} />
-            <span className="truncate font-semibold text-slate-300 group-hover:text-white transition-colors">{fullName}</span>
+            <span className="truncate font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">{fullName}</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-300 bg-slate-800/90 px-2 py-0.5 rounded border border-slate-700/80">
-              <Calendar className="w-3 h-3 text-slate-400" />
+            <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+              <Calendar className="w-3 h-3 text-slate-500" />
               <span>{m.date}</span>
-              <Clock className="w-3 h-3 text-emerald-400 ml-1" />
-              <span className="font-bold text-emerald-400">{m.time}</span>
+              <Clock className="w-3 h-3 text-blue-600 ml-1" />
+              <span className="font-bold text-blue-700">{m.time}</span>
             </div>
 
             {canGenerate && (
               <button
                 onClick={(e) => handleOpenEditMatch(e, m)}
-                className="px-2 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-cyan-300 hover:text-white text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95"
+                className="px-2 py-0.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 hover:text-blue-800 text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95 shadow-2xs"
                 title="Chỉnh sửa ngày, giờ & sân thi đấu của trận này"
               >
-                <Edit3 className="w-3 h-3 text-cyan-400" />
+                <Edit3 className="w-3 h-3 text-blue-600" />
                 <span>Sửa Lịch</span>
               </button>
             )}
@@ -434,18 +437,18 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
     <div className="space-y-6">
       
       {/* Top Banner Card */}
-      <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 text-slate-800">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+            <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
               LỊCH THI ĐẤU TRỌN GÓI 1 NGÀY • 32 TRẬN
             </span>
-            <span className="text-xs text-slate-400">16 Đội • 4 Bảng • 4 Sân</span>
+            <span className="text-xs text-slate-500">16 Đội • 4 Bảng • 4 Sân</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
             {canGenerate ? 'Điều Hành Lịch Đấu 1 Ngày (06:30 – 17:35)' : 'Lịch Thi Đấu & Kết Quả (06:30 – 17:35)'}
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             06:30 – 10:30: 24 trận vòng bảng (6 ca x 4 sân) • 10:30 – 15:00: Nghỉ trưa &amp; tổng hợp BXH • 15:00 – 17:35: Tứ kết, Bán kết, Tranh hạng 3 &amp; Chung kết.
           </p>
         </div>
@@ -454,13 +457,13 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {canGenerate && (
             validationResult.valid ? (
-              <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3 py-1.5 rounded-xl font-bold">
-                <CheckCircle2 className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>0 Xung Đột Sân/Giờ</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 text-xs text-red-400 bg-red-950/60 border border-red-500/30 px-3 py-1.5 rounded-xl font-bold">
-                <AlertCircle className="w-4 h-4" />
+              <div className="flex items-center gap-1.5 text-xs text-red-700 bg-red-50 border border-red-200 px-3 py-1.5 rounded-xl font-bold">
+                <AlertCircle className="w-4 h-4 text-red-600" />
                 <span>{validationResult.conflicts.length} Xung Đột</span>
               </div>
             )
@@ -470,16 +473,16 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <>
               <button
                 onClick={handleSyncAllSchedule}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 font-bold text-xs shadow-sm transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 font-bold text-xs shadow-2xs transition-all active:scale-95"
                 title="Tự động đồng bộ toàn bộ ngày và giờ 32 trận đấu theo lịch 1 ngày (06:30 - 17:35)"
               >
-                <Zap className="w-3.5 h-3.5 text-cyan-400" />
+                <Zap className="w-3.5 h-3.5 text-sky-600" />
                 <span>Đồng Bộ Giờ 1 Ngày</span>
               </button>
 
               <button
                 onClick={handleAutoGenerate}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all active:scale-95"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Tự Động Tạo Lịch 32 Trận</span>
@@ -492,8 +495,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       {/* Quick Stage & Round Selector Pills */}
       <div className="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-2.5 shadow-xs text-slate-800">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase tracking-wider">
-            <CalendarDays className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <CalendarDays className="w-4 h-4 text-blue-600" />
             <span>Chọn Nhanh Giai Đoạn Thi Đấu (Lịch 1 Ngày • 4 Sân)</span>
           </div>
           {(filterRound !== 'ALL' || filterTimeSlot !== 'ALL' || filterDate !== 'ALL') && (
@@ -503,7 +506,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 setFilterTimeSlot('ALL');
                 setFilterDate('ALL');
               }}
-              className="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold transition-colors flex items-center gap-1"
+              className="text-[11px] text-blue-600 hover:text-blue-700 font-bold transition-colors flex items-center gap-1"
             >
               <span>← Xem toàn bộ 32 trận</span>
             </button>
@@ -519,13 +522,17 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
               filterRound === 'ALL' && filterTimeSlot === 'ALL' && filterDate === 'ALL'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60'
+                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
             }`}
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Tất Cả 32 Trận</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 text-white/90 ml-0.5">
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
+              filterRound === 'ALL' && filterTimeSlot === 'ALL' && filterDate === 'ALL'
+                ? 'bg-white/20 text-white'
+                : 'bg-white text-blue-700 border border-slate-200'
+            }`}>
               {matches.length}
             </span>
           </button>
@@ -538,12 +545,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
               filterRound === 'GROUP'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
             }`}
           >
             <span>🌅 Vòng Bảng (06:30 – 10:30)</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-emerald-400 ml-0.5">
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
+              filterRound === 'GROUP' ? 'bg-white/20 text-white' : 'bg-white text-blue-700 border border-slate-200'
+            }`}>
               24 trận
             </span>
           </button>
@@ -555,12 +564,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
               filterRound === 'QUARTER_FINAL'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
             }`}
           >
             <span>⚡ Tứ Kết (15:00 – 15:45)</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-cyan-400 ml-0.5">
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
+              filterRound === 'QUARTER_FINAL' ? 'bg-white/20 text-white' : 'bg-white text-blue-700 border border-slate-200'
+            }`}>
               4 trận
             </span>
           </button>
@@ -572,12 +583,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
               filterRound === 'SEMI_FINAL'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
             }`}
           >
             <span>🔥 Bán Kết (15:55 – 16:40)</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-amber-400 ml-0.5">
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
+              filterRound === 'SEMI_FINAL' ? 'bg-white/20 text-white' : 'bg-white text-amber-700 border border-slate-200'
+            }`}>
               2 trận
             </span>
           </button>
@@ -589,12 +602,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             }}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 shrink-0 ${
               filterRound === 'FINAL' || filterRound === 'THIRD_PLACE'
-                ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-slate-800 hover:bg-slate-700/80 text-slate-300 border border-slate-700/60 hover:text-white'
+                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 text-white shadow-md shadow-blue-500/20'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
             }`}
           >
             <span>🏆 Chung Kết &amp; Tranh 3 (16:50 – 17:35)</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-rose-400 ml-0.5">
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-full ml-0.5 ${
+              filterRound === 'FINAL' || filterRound === 'THIRD_PLACE' ? 'bg-white/20 text-white' : 'bg-white text-rose-700 border border-slate-200'
+            }`}>
               2 trận
             </span>
           </button>
@@ -604,19 +619,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
       {/* Filter & Sort Bar */}
       <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3 text-xs shadow-xs text-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-wider">
-            <Filter className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-slate-700 font-bold uppercase tracking-wider">
+            <Filter className="w-4 h-4 text-blue-600" />
             <span>Bộ Lọc &amp; Sắp Xếp Lịch Thi Đấu</span>
           </div>
 
           {/* View Mode Toggle: Grouped by date vs Flat Grid */}
-          <div className="flex items-center gap-1 bg-slate-800/90 p-1 rounded-xl border border-slate-700/60">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
             <button
               onClick={() => setViewLayout('GROUPED_BY_DATE')}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                 viewLayout === 'GROUPED_BY_DATE'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Nhóm các trận đấu theo từng ngày thi đấu"
             >
@@ -627,8 +642,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               onClick={() => setViewLayout('GRID')}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                 viewLayout === 'GRID'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
               title="Hiển thị toàn bộ dưới dạng lưới"
             >
@@ -640,13 +655,13 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
         <div className="flex flex-wrap items-center gap-2.5 pt-1">
           {/* Quick Pitch Filter Chips */}
-          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 overflow-x-auto max-w-full">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 overflow-x-auto max-w-full">
             <button
               onClick={() => setFilterVenue('ALL')}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all shrink-0 ${
                 filterVenue === 'ALL'
-                  ? 'bg-emerald-500 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Tất Cả Sân
@@ -660,8 +675,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                   onClick={() => setFilterVenue(v.id)}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 shrink-0 ${
                     isActive
-                      ? 'bg-cyan-600 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <MapPin className="w-2.5 h-2.5" />
@@ -676,7 +691,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <select
               value={filterTimeSlot}
               onChange={(e) => setFilterTimeSlot(e.target.value)}
-              className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-emerald-500/50 transition-colors"
+              className="bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-blue-400 focus:outline-none focus:bg-white transition-colors"
             >
               <option value="ALL">⏰ Tất Cả Ca Đấu</option>
               {availableTimeSlots.map((time) => (
@@ -692,7 +707,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <select
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-emerald-500/50 transition-colors"
+              className="bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-blue-400 focus:outline-none focus:bg-white transition-colors"
             >
               <option value="ALL">📅 Tất Cả Các Ngày</option>
               {availableDates.map((d) => (
@@ -708,7 +723,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <select
               value={filterRound}
               onChange={(e) => setFilterRound(e.target.value)}
-              className="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-emerald-500/50 transition-colors"
+              className="bg-slate-50 border border-slate-300 text-slate-800 rounded-xl px-3 py-1.5 font-medium cursor-pointer hover:border-blue-400 focus:outline-none focus:bg-white transition-colors"
             >
               <option value="ALL">🏆 Tất Cả Vòng Đấu</option>
               <option value="GROUP">Vòng Bảng (24 trận)</option>
@@ -724,7 +739,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as 'TIME_ASC' | 'TIME_DESC' | 'MATCH_NUM')}
-              className="bg-slate-800 border border-slate-700 text-emerald-400 font-bold rounded-xl px-3 py-1.5 cursor-pointer hover:border-emerald-500/50 transition-colors"
+              className="bg-slate-50 border border-slate-300 text-blue-700 font-bold rounded-xl px-3 py-1.5 cursor-pointer hover:border-blue-400 focus:outline-none focus:bg-white transition-colors"
             >
               <option value="TIME_ASC">⏱ Sắp Xếp: Giờ Sớm Đến Muộn (Mặc định)</option>
               <option value="TIME_DESC">⏱ Sắp Xếp: Giờ Muộn Đến Sớm</option>
@@ -742,10 +757,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                 setFilterTimeSlot('ALL');
                 setSortOrder('TIME_ASC');
               }}
-              className="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1 border border-slate-700 transition-colors"
+              className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1 border border-slate-200 transition-colors"
               title="Đặt lại bộ lọc về mặc định"
             >
-              <RefreshCw className="w-3 h-3 text-slate-400" />
+              <RefreshCw className="w-3 h-3 text-slate-500" />
               <span>Đặt lại</span>
             </button>
           )}
@@ -754,12 +769,12 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
       {/* Matches Display: Grouped by Date or Flat Grid */}
       {sortedMatches.length === 0 ? (
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-slate-800/80 text-slate-400 flex items-center justify-center mx-auto">
+        <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center mx-auto">
             <Calendar className="w-6 h-6" />
           </div>
-          <h3 className="text-base font-bold text-white">Không tìm thấy trận đấu nào</h3>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <h3 className="text-base font-bold text-slate-900">Không tìm thấy trận đấu nào</h3>
+          <p className="text-xs text-slate-600 max-w-sm mx-auto">
             Không có trận đấu nào phù hợp với bộ lọc ngày, vòng đấu hoặc sân đã chọn. Vui lòng thử chọn bộ lọc khác.
           </p>
           <button
@@ -769,7 +784,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               setFilterDate('ALL');
               setSortOrder('TIME_ASC');
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-bold hover:bg-emerald-900/80 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold hover:bg-blue-100 transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Đặt lại tất cả bộ lọc</span>
@@ -784,30 +799,30 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             return (
               <div key={dateStr} className="space-y-5 bg-white p-4 sm:p-5 rounded-3xl border border-slate-200 shadow-xs text-slate-800">
                 {/* Matchday Header Banner */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800/80 gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    <div className="p-2.5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
                       <CalendarDays className="w-5 h-5" />
                     </div>
                     <div>
-                      <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                      <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
                         <span>{formatDateHeader(dateStr)}</span>
                         {dateStr !== 'UNSCHEDULED' && (
-                          <span className="text-xs font-mono font-normal text-slate-400">
+                          <span className="text-xs font-mono font-normal text-slate-500">
                             ({dateStr})
                           </span>
                         )}
                       </h3>
-                      <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
+                      <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-0.5">
                         <span>Gồm {timesInDay.length} ca thi đấu:</span>
-                        <span className="text-emerald-400 font-semibold font-mono">
+                        <span className="text-blue-700 font-semibold font-mono">
                           {timesInDay.map((t) => `Ca ${t}`).join(' • ')}
                         </span>
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 self-start sm:self-center">
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-3 py-1 rounded-xl border border-emerald-500/30">
+                    <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-xl border border-blue-200">
                       {dayMatches.length} trận đấu trong ngày
                     </span>
                   </div>
@@ -836,27 +851,27 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       <React.Fragment key={slotTime}>
                         {/* Mốc Nghỉ Trưa & Tổng Hợp BXH Vòng Bảng (Trước Ca Tứ Kết 15:00) */}
                         {slotTime === '15:00' && (
-                          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg shadow-amber-950/20 my-2">
+                          <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs my-2">
                             <div className="flex items-center gap-3">
-                              <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                              <div className="p-2.5 rounded-xl bg-amber-100 border border-amber-300 text-amber-700">
                                 <Coffee className="w-5 h-5" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
+                                  <span className="text-xs font-black text-amber-900 uppercase tracking-wider">
                                     10:30 – 15:00 • NGHỈ TRƯA &amp; TỔNG HỢP KẾT QUẢ VÒNG BẢNG
                                   </span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">
                                     Khoảng nghỉ 4 giờ 30 phút
                                   </span>
                                 </div>
-                                <p className="text-xs text-amber-100/80 mt-0.5">
+                                <p className="text-xs text-slate-700 mt-0.5">
                                   BTC hoàn tất nhập điểm 24 trận vòng bảng, công bố BXH 4 bảng A-B-C-D, xác định 8 đội vào Tứ kết &amp; các đội phục hồi thể lực chuẩn bị cho loạt knock-out buổi chiều.
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-300 bg-black/40 px-3 py-1.5 rounded-xl border border-amber-500/30 self-start sm:self-center shrink-0">
-                              <Timer className="w-4 h-4 text-amber-400" />
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-800 bg-white px-3 py-1.5 rounded-xl border border-amber-200 self-start sm:self-center shrink-0">
+                              <Timer className="w-4 h-4 text-amber-600" />
                               <span>Hoàn tất 24/24 trận vòng bảng</span>
                             </div>
                           </div>
@@ -864,21 +879,21 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                         {/* Nghỉ 10 phút trước Bán Kết */}
                         {slotTime === '15:55' && (
-                          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-blue-500/15 border border-blue-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md my-2">
+                          <div className="p-3.5 sm:p-4 rounded-2xl bg-sky-50/70 border border-sky-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs my-2">
                             <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-xl bg-blue-500/20 border border-blue-500/40 text-blue-300">
+                              <div className="p-2 rounded-xl bg-sky-100 border border-sky-300 text-blue-700">
                                 <Timer className="w-4 h-4" />
                               </div>
                               <div>
-                                <span className="text-xs font-black text-blue-300 uppercase tracking-wider block">
+                                <span className="text-xs font-black text-blue-900 uppercase tracking-wider block">
                                   15:45 – 15:55 • NGHỈ 10 PHÚT, CHUẨN BỊ BÁN KẾT (2 SÂN)
                                 </span>
-                                <p className="text-[11px] text-blue-100/80 mt-0.5">
+                                <p className="text-[11px] text-slate-600 mt-0.5">
                                   Bán kết 1 (Thắng TK1 vs Thắng TK3 - Sân 1) &amp; Bán kết 2 (Thắng TK2 vs Thắng TK4 - Sân 2).
                                 </p>
                               </div>
                             </div>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-200 border border-blue-500/30 shrink-0 self-start sm:self-center">
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-white text-blue-700 border border-blue-200 shrink-0 self-start sm:self-center">
                               Nghỉ 10 phút
                             </span>
                           </div>
@@ -886,21 +901,21 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                         {/* Nghỉ 10 phút trước Chung Kết & Tranh 3 */}
                         {slotTime === '16:50' && (
-                          <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md my-2">
+                          <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs my-2">
                             <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                              <div className="p-2 rounded-xl bg-amber-100 border border-amber-300 text-amber-800">
                                 <Trophy className="w-4 h-4" />
                               </div>
                               <div>
-                                <span className="text-xs font-black text-amber-300 uppercase tracking-wider block">
+                                <span className="text-xs font-black text-amber-900 uppercase tracking-wider block">
                                   16:40 – 16:50 • NGHỈ 10 PHÚT, CHUẨN BỊ TRANH HẠNG 3 &amp; CHUNG KẾT
                                 </span>
-                                <p className="text-[11px] text-amber-100/80 mt-0.5">
+                                <p className="text-[11px] text-slate-700 mt-0.5">
                                   🥉 Sân 1: Tranh Hạng 3 (Thua BK1 vs Thua BK2) • 🏆 Sân 2: CHUNG KẾT VÔ ĐỊCH (Thắng BK1 vs Thắng BK2).
                                 </p>
                               </div>
                             </div>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30 shrink-0 self-start sm:self-center">
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-white text-amber-800 border border-amber-200 shrink-0 self-start sm:self-center">
                               Trận cuối cùng
                             </span>
                           </div>
@@ -908,34 +923,34 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                         <div className="space-y-3">
                           {/* Ca Thi Đấu Sub-Header Banner */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-800/75 border border-slate-700/60 shadow-sm">
+                          <div className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-blue-50/90 via-sky-50/50 to-white border border-blue-200/80 shadow-2xs">
                             <div className="flex items-center gap-2.5">
                               <div
                                 className={`p-1.5 rounded-lg ${
                                   isMorning
-                                    ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                                    : 'bg-orange-500/10 text-orange-400 border border-orange-500/30'
+                                    ? 'bg-amber-100 text-amber-700 border border-amber-300'
+                                    : 'bg-orange-100 text-orange-700 border border-orange-300'
                                 }`}
                               >
                                 {isMorning ? <Sun className="w-4 h-4" /> : <Sunset className="w-4 h-4" />}
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-black text-white tracking-wide">
+                                <span className="text-xs font-black text-slate-900 tracking-wide">
                                   CA {slotTime}
                                 </span>
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-700 text-slate-300">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white text-blue-700 border border-blue-200 shadow-2xs">
                                   {sessionLabel}
                                 </span>
                               </div>
-                              <span className="text-slate-500 hidden sm:inline">•</span>
-                              <span className="text-[11px] text-slate-400 hidden sm:inline">
+                              <span className="text-slate-400 hidden sm:inline">•</span>
+                              <span className="text-[11px] text-slate-600 hidden sm:inline">
                                 Thi đấu đồng thời trên:{' '}
-                                <strong className="text-cyan-300 font-semibold">{pitchesUsed.join(', ')}</strong>
+                                <strong className="text-blue-700 font-bold">{pitchesUsed.join(', ')}</strong>
                               </span>
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-500/30 font-bold">
+                              <span className="text-[11px] font-mono text-blue-800 bg-blue-100/70 px-2.5 py-0.5 rounded-md border border-blue-200 font-bold">
                                 {slotMatches.length} trận cùng giờ
                               </span>
                             </div>
@@ -949,33 +964,27 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                         {/* Mốc Lễ Bế Mạc & Trao Cúp Vô Địch (Sau Ca Chung Kết 16:50) */}
                         {slotTime === '16:50' && (
-                          <div className="relative overflow-hidden p-4 sm:p-5 rounded-2xl border border-emerald-500/40 bg-slate-900/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xl mt-4">
-                            <div 
-                              className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none"
-                              style={{ backgroundImage: `url('/images/trophy-celebration.jpg')` }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-950/60 pointer-events-none" />
-
-                            <div className="relative z-10 flex items-center gap-3">
-                              <div className="w-14 h-14 rounded-xl overflow-hidden border border-amber-400/60 shadow-md shrink-0">
+                          <div className="p-4 sm:p-5 rounded-2xl border border-amber-200 bg-amber-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs mt-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden border border-amber-300 shadow-xs shrink-0">
                                 <img src="/images/trophy-cup.jpg" alt="Cúp Vô Địch" className="w-full h-full object-cover" />
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs font-black text-amber-300 uppercase tracking-wider">
+                                  <span className="text-xs font-black text-amber-900 uppercase tracking-wider">
                                     17:35 – 18:15 • LỄ BẾ MẠC &amp; TRAO CÚP VÔ ĐỊCH
                                   </span>
-                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white text-amber-800 border border-amber-200">
                                     Tổng kết giải
                                   </span>
                                 </div>
-                                <p className="text-xs text-slate-200 mt-0.5">
+                                <p className="text-xs text-slate-700 mt-0.5">
                                   Trao Cúp Vô địch, Huy chương Vàng - Bạc - Đồng, Cầu thủ xuất sắc nhất, Vua phá lưới &amp; Thủ môn xuất sắc nhất.
                                 </p>
                               </div>
                             </div>
-                            <div className="relative z-10 flex items-center gap-2 text-xs font-mono font-bold text-emerald-300 bg-black/60 px-3 py-1.5 rounded-xl border border-emerald-500/30 self-start sm:self-center shrink-0">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                            <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-800 bg-white px-3 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-center shrink-0">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                               <span>Hoàn thành 32/32 trận trọn gói 1 ngày</span>
                             </div>
                           </div>
@@ -999,38 +1008,38 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 animate-in fade-in duration-200">
           <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 text-slate-800">
             {/* Modal Header */}
-            <div className="flex items-start justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-start justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400">
+                <div className="p-2.5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white">
+                  <h3 className="text-base font-black text-slate-900">
                     Điều Chỉnh Giờ &amp; Sân Thi Đấu
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     Trận #{editingMatch.matchNumber} • {editingMatch.roundLabel}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setEditingMatch(null)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Match Teams Selector (Hỗ trợ BTC tự do điều chỉnh đội đấu Tứ kết & các vòng) */}
-            <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-3">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
               <div className="flex items-center justify-between">
-                <label className="font-bold text-slate-200 flex items-center gap-1.5 text-xs">
-                  <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <label className="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                  <Trophy className="w-3.5 h-3.5 text-amber-500" />
                   <span>Chọn 2 Đội Thi Đấu ({editingMatch.roundLabel})</span>
                 </label>
                 {editingMatch.round !== 'GROUP' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" />
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-600" />
                     <span>Tự do ghép cặp Knockout</span>
                   </span>
                 )}
@@ -1039,7 +1048,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_1fr] items-center gap-2.5">
                 {/* Home Team Selector */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                  <label className="text-[11px] font-semibold text-slate-600 block mb-1">
                     Đội 1 (Đội Chủ Nhà)
                   </label>
                   <select
@@ -1048,7 +1057,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       setEditHomeTeamId(e.target.value);
                       setEditIsCustomMatchup(true);
                     }}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold focus:border-emerald-500 focus:outline-none"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 font-bold focus:border-blue-500 focus:outline-none"
                   >
                     <option value="">-- Chưa xác định / Chờ kết quả --</option>
                     {teams.map((t) => (
@@ -1069,7 +1078,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       setEditAwayTeamId(temp);
                       setEditIsCustomMatchup(true);
                     }}
-                    className="p-2 rounded-xl bg-slate-700 hover:bg-emerald-600 text-slate-300 hover:text-white transition-all shadow-sm active:scale-95"
+                    className="p-2 rounded-xl bg-slate-200 hover:bg-blue-600 text-slate-700 hover:text-white transition-all shadow-xs active:scale-95"
                     title="Đổi vị trí 2 đội bóng"
                   >
                     <ArrowLeftRight className="w-4 h-4" />
@@ -1078,7 +1087,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
                 {/* Away Team Selector */}
                 <div>
-                  <label className="text-[11px] font-semibold text-slate-400 block mb-1">
+                  <label className="text-[11px] font-semibold text-slate-600 block mb-1">
                     Đội 2 (Đội Khách)
                   </label>
                   <select
@@ -1087,7 +1096,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       setEditAwayTeamId(e.target.value);
                       setEditIsCustomMatchup(true);
                     }}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white font-bold focus:border-cyan-500 focus:outline-none"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 font-bold focus:border-blue-500 focus:outline-none"
                   >
                     <option value="">-- Chưa xác định / Chờ kết quả --</option>
                     {teams.map((t) => (
@@ -1101,9 +1110,9 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
               {/* Trợ giúp & nút khôi phục ghép cặp tự động theo BXH */}
               {editingMatch.round !== 'GROUP' && (
-                <div className="pt-2 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-2 text-[11px]">
-                  <span className="text-slate-400">
-                    💡 <strong className="text-slate-300">Tùy biến:</strong> BTC có thể chọn bất kỳ cặp đấu nào (Ví dụ: bốc thăm phân cặp giữa các đội Nhất và Nhì bảng).
+                <div className="pt-2 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                  <span className="text-slate-600">
+                    💡 <strong className="text-slate-800">Tùy biến:</strong> BTC có thể chọn bất kỳ cặp đấu nào (Ví dụ: bốc thăm phân cặp giữa các đội Nhất và Nhì bảng).
                   </span>
                   <button
                     type="button"
@@ -1118,7 +1127,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                         setEditIsCustomMatchup(false);
                       }
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 underline font-semibold cursor-pointer"
+                    className="text-blue-600 hover:text-blue-800 underline font-semibold cursor-pointer"
                   >
                     Khôi phục ghép cặp tự động (theo BXH)
                   </button>
@@ -1130,22 +1139,22 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             <div className="space-y-3 text-xs">
               {/* Date Input */}
               <div>
-                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                <label className="font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-blue-600" />
                   <span>Ngày Thi Đấu</span>
                 </label>
                 <input
                   type="date"
                   value={editDate}
                   onChange={(e) => setEditDate(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono focus:border-emerald-500 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* Time Input & Quick Slots */}
               <div>
-                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <label className="font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-blue-600" />
                   <span>Giờ Thi Đấu</span>
                 </label>
                 <div className="flex flex-wrap gap-1.5 mb-2">
@@ -1156,8 +1165,8 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                       onClick={() => setEditTime(preset)}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-bold font-mono transition-all ${
                         editTime === preset
-                          ? 'bg-emerald-500 text-white shadow-sm'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                       }`}
                     >
                       {preset}
@@ -1168,20 +1177,20 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                   type="time"
                   value={editTime}
                   onChange={(e) => setEditTime(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white font-mono focus:border-emerald-500 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* Venue Selection */}
               <div>
-                <label className="font-bold text-slate-300 block mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                <label className="font-bold text-slate-700 block mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-blue-600" />
                   <span>Sân Thi Đấu</span>
                 </label>
                 <select
                   value={editVenueId}
                   onChange={(e) => setEditVenueId(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-cyan-500 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:border-blue-500 focus:outline-none"
                 >
                   {venues.map((v) => (
                     <option key={v.id} value={v.id}>
@@ -1193,13 +1202,13 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
               {/* Referee Selection */}
               <div>
-                <label className="font-bold text-slate-300 block mb-1.5">
+                <label className="font-bold text-slate-700 block mb-1.5">
                   Trọng Tài Phụ Trách
                 </label>
                 <select
                   value={editRefereeId}
                   onChange={(e) => setEditRefereeId(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-cyan-500 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:border-blue-500 focus:outline-none"
                 >
                   {referees.map((r) => (
                     <option key={r.id} value={r.id}>
@@ -1211,13 +1220,13 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
               {/* Match Status */}
               <div>
-                <label className="font-bold text-slate-300 block mb-1.5">
+                <label className="font-bold text-slate-700 block mb-1.5">
                   Trạng Thái Trận
                 </label>
                 <select
                   value={editStatus}
                   onChange={(e) => setEditStatus(e.target.value as MatchStatus)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-white focus:border-emerald-500 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:border-blue-500 focus:outline-none"
                 >
                   <option value="SCHEDULED">Chưa Bắt Đầu (SCHEDULED)</option>
                   <option value="LIVE">Đang Diễn Ra (LIVE)</option>
@@ -1228,11 +1237,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
 
             {/* Conflict Warning Alert */}
             {conflictMatch && (
-              <div className="p-3 rounded-2xl bg-amber-950/60 border border-amber-500/50 text-amber-300 text-xs flex items-start gap-2.5">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
                   <div className="font-bold">Cảnh báo trùng sân &amp; giờ:</div>
-                  <div className="text-[11px] text-amber-200/90">
+                  <div className="text-[11px] text-amber-800">
                     Sân này lúc <strong>{editTime}</strong> ngày <strong>{editDate}</strong> đã được xếp cho <strong>Trận #{conflictMatch.matchNumber} ({conflictMatch.roundLabel})</strong>!
                   </div>
                 </div>
@@ -1240,18 +1249,18 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
             )}
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setEditingMatch(null)}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-all"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
               >
                 Hủy
               </button>
               <button
                 type="button"
                 onClick={handleSaveMatchSchedule}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition-all active:scale-95"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
               >
                 Lưu Thay Đổi
               </button>
