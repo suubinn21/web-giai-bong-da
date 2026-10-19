@@ -462,10 +462,9 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
         </div>
 
         {/* Hero Card for Current #1 Player */}
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          
-          {/* Left Column: Player Spotlight Card */}
-          <div className="lg:col-span-7 bg-slate-50 border border-amber-200 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
+        <div className="relative z-10">
+          {/* Player Spotlight Card */}
+          <div className="w-full bg-slate-50 border border-amber-200 rounded-2xl p-5 sm:p-6 shadow-xs relative overflow-hidden">
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
               
               {/* Player Image / Avatar */}
@@ -566,60 +565,6 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
               </div>
             )}
           </div>
-
-          {/* Right Column: Scoring Rules and Official Award Status */}
-          <div className="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <h5 className="text-xs font-black uppercase text-amber-800 tracking-wider flex items-center gap-1.5">
-                <Medal className="w-4 h-4 text-amber-600" />
-                <span>Giải Thưởng Chính Thức</span>
-              </h5>
-              {bestPlayerAward && canEdit && (
-                <button
-                  onClick={() => handleOpenEdit(bestPlayerAward)}
-                  className="text-[11px] text-blue-600 hover:text-blue-700 font-bold flex items-center gap-1"
-                >
-                  <Edit3 className="w-3 h-3" /> Chỉnh sửa
-                </button>
-              )}
-            </div>
-
-            <div className="bg-white p-3.5 rounded-xl border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500">Tên giải thưởng:</span>
-                <span className="font-bold text-slate-900">{bestPlayerAward?.title || 'Cầu Thủ Xuất Sắc Nhất'}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500">Người nhận giải:</span>
-                <span className="font-bold text-amber-800">{bestPlayerAward?.recipientName || 'Chưa xác định'}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500">Đội bóng:</span>
-                <span className="font-medium text-blue-700">{bestPlayerAward?.recipientTeam || 'Chờ vòng Knock-out'}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-                <span className="text-slate-500">Tiền thưởng:</span>
-                <span className="font-mono font-black text-amber-700">
-                  {bestPlayerAward?.prizeMoney ? bestPlayerAward.prizeMoney.toLocaleString() : '1,000,000'} đ
-                </span>
-              </div>
-            </div>
-
-            {/* Scoring Methodology Box */}
-            <div className="text-[11px] text-slate-700 bg-amber-50/70 border border-amber-200 p-3 rounded-xl space-y-1.5">
-              <div className="font-bold text-amber-900 flex items-center gap-1.5">
-                <span>📋 Quy chuẩn tính điểm Cầu thủ xuất sắc nhất:</span>
-              </div>
-              <ul className="space-y-1 text-slate-600 pl-3 list-disc text-[10px]">
-                <li><span className="text-slate-900 font-semibold">Bàn thắng vòng Knock-out</span> là tiêu chí số 1 để xác định danh hiệu.</li>
-                <li>Mỗi bàn thắng vòng Knock-out: <span className="text-amber-800 font-bold">+10 điểm</span>.</li>
-                <li>Bàn thắng trận Chung kết: <span className="text-amber-800 font-bold">+5 điểm thưởng</span>.</li>
-                <li>Bàn thắng trận Bán kết: <span className="text-amber-800 font-bold">+3 điểm thưởng</span>.</li>
-                <li>Mỗi đường kiến tạo ở vòng Knock-out: <span className="text-blue-700 font-bold">+4 điểm</span>.</li>
-              </ul>
-            </div>
-          </div>
-
         </div>
 
         {/* Knockout Goal Scorers Leaderboard Table */}
@@ -734,13 +679,13 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
 
       {/* Individual Awards Section (Tùy Chọn Danh Hiệu Cá Nhân) */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
           <div>
-            <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-              <Award className="w-5 h-5 text-emerald-400" />
+            <h3 className="text-sm sm:text-base font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+              <Award className="w-5 h-5 text-blue-600" />
               <span>Danh Hiệu Cá Nhân Tùy Chọn ({individualAwards.length})</span>
             </h3>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-600 mt-0.5">
               Quy định Điều 28: Tuyên dương các cá nhân xuất sắc. Ban Tổ Chức có thể tùy biến thêm, sửa hoặc xóa danh hiệu theo nhu cầu giải đấu.
             </p>
           </div>
@@ -748,7 +693,7 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
           {canEdit && (
             <button
               onClick={handleOpenCreate}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all flex items-center gap-2 self-start sm:self-auto active:scale-95"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-2 self-start sm:self-auto active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>+ Thêm Danh Hiệu Cá Nhân</span>
@@ -757,19 +702,19 @@ export const AwardsView: React.FC<AwardsViewProps> = ({
         </div>
 
         {individualAwards.length === 0 ? (
-          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-10 text-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
+          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-10 text-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mx-auto text-2xl">
               🏅
             </div>
-            <h4 className="text-base font-bold text-white">Chưa Có Danh Hiệu Cá Nhân Nào</h4>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
+            <h4 className="text-base font-bold text-slate-900">Chưa Có Danh Hiệu Cá Nhân Nào</h4>
+            <p className="text-xs text-slate-600 max-w-md mx-auto">
               Hiện tại danh sách danh hiệu cá nhân đang trống. Ban Tổ Chức có thể bấm nút bên dưới để tạo các danh hiệu tùy chỉnh (Thủ môn xuất sắc, Bàn thắng đẹp, Cầu thủ triển vọng, v.v.).
             </p>
             {canEdit && (
               <div className="pt-2">
                 <button
                   onClick={handleOpenCreate}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all inline-flex items-center gap-2"
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition-all inline-flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   <span>+ Tạo Danh Hiệu Cá Nhân Đầu Tiên</span>
