@@ -204,8 +204,8 @@ export class ScheduleEngine {
       { id: 'M28', matchNumber: 28, round: 'QUARTER_FINAL', label: 'Tứ kết 4 (Nhất D vs Nhì C)', time: '15:00', venueId: v4.id, venueName: v4.name, referee: ref4 },
 
       // 15:55 – 16:40: 2 trận Bán kết song song trên 2 sân
-      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK3)', time: '15:55', venueId: v1.id, venueName: v1.name, referee: ref1 },
-      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK2 vs Thắng TK4)', time: '15:55', venueId: v2.id, venueName: v2.name, referee: ref2 },
+      { id: 'M29', matchNumber: 29, round: 'SEMI_FINAL', label: 'Bán kết 1 (Thắng TK1 vs Thắng TK2)', time: '15:55', venueId: v1.id, venueName: v1.name, referee: ref1 },
+      { id: 'M30', matchNumber: 30, round: 'SEMI_FINAL', label: 'Bán kết 2 (Thắng TK3 vs Thắng TK4)', time: '15:55', venueId: v2.id, venueName: v2.name, referee: ref2 },
 
       // 16:50 – 17:35: Tranh Hạng 3 (Sân 1) & Chung Kết Vô Địch (Sân 2)
       { id: 'M31', matchNumber: 31, round: 'THIRD_PLACE', label: 'Tranh Hạng 3 (Thua BK1 vs Thua BK2)', time: '16:50', venueId: v1.id, venueName: v1.name, referee: ref1 },
@@ -295,10 +295,10 @@ export class ScheduleEngine {
       return { matches: [], migrated: false };
     }
 
-    const migrationKey = 'itftms_schedule_4pitches_v2026_applied';
+    const migrationKey = 'itftms_schedule_4pitches_v2026_bk12_34';
     const isApplied = typeof window !== 'undefined' ? localStorage.getItem(migrationKey) : null;
 
-    // Kiểm tra nếu còn bất kỳ trận nào theo lịch cũ (ví dụ M01 lúc 07:00, M25 lúc 14:20 hoặc Sân 1/Sân 2)
+    // Kiểm tra nếu còn bất kỳ trận nào theo lịch cũ (ví dụ M01 lúc 07:00, M25 lúc 14:20 hoặc nhãn Bán kết cũ)
     const needsMigration =
       !isApplied ||
       existingMatches.some(
@@ -309,7 +309,8 @@ export class ScheduleEngine {
           (m.id === 'M25' && m.time !== '15:00') ||
           (m.id === 'M27' && (m.time !== '15:00' || !m.venueName?.includes('Sân 3'))) ||
           (m.id === 'M28' && (m.time !== '15:00' || !m.venueName?.includes('Sân 4'))) ||
-          (m.id === 'M29' && m.time !== '15:55') ||
+          (m.id === 'M29' && (m.time !== '15:55' || !m.roundLabel?.includes('Thắng TK1 vs Thắng TK2'))) ||
+          (m.id === 'M30' && !m.roundLabel?.includes('Thắng TK3 vs Thắng TK4')) ||
           (m.id === 'M31' && (m.time !== '16:50' || !m.venueName?.includes('Sân 1'))) ||
           (m.id === 'M32' && (m.time !== '16:50' || !m.venueName?.includes('Sân 2')))
       );

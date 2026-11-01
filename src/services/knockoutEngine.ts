@@ -1,7 +1,7 @@
 // ITFTMS 2026 - Knockout Bracket Engine
 // Specification: Sections 5, 8, 22
 // Quarter-Finals: 1A vs 2B, 1B vs 2A, 1C vs 2D, 1D vs 2C
-// Semi-Finals: Win TK1 vs Win TK3, Win TK2 vs Win TK4
+// Semi-Finals: Win TK1 vs Win TK2, Win TK3 vs Win TK4
 // Final: Win BK1 vs Win BK2 | 3rd Place: Lose BK1 vs Lose BK2
 // Penalty Shootout 6m for draws in knockout stages.
 
@@ -109,22 +109,22 @@ export class KnockoutEngine {
     };
 
     // 2. Semi Finals
-    // BK1: Win TK1 vs Win TK3 (Match 29)
+    // BK1: Win TK1 vs Win TK2 (Match 29)
     const m29 = getMatch('M29');
     const winTK1 = getWinnerId(m25);
-    const winTK3 = getWinnerId(m27);
+    const winTK2 = getWinnerId(m26);
     if (m29 && !m29.isCustomMatchup) {
-      if (winTK1) m29.homeTeamId = winTK1;
-      if (winTK3) m29.awayTeamId = winTK3;
+      m29.homeTeamId = winTK1 || '';
+      m29.awayTeamId = winTK2 || '';
     }
 
-    // BK2: Win TK2 vs Win TK4 (Match 30)
+    // BK2: Win TK3 vs Win TK4 (Match 30)
     const m30 = getMatch('M30');
-    const winTK2 = getWinnerId(m26);
+    const winTK3 = getWinnerId(m27);
     const winTK4 = getWinnerId(m28);
     if (m30 && !m30.isCustomMatchup) {
-      if (winTK2) m30.homeTeamId = winTK2;
-      if (winTK4) m30.awayTeamId = winTK4;
+      m30.homeTeamId = winTK3 || '';
+      m30.awayTeamId = winTK4 || '';
     }
 
     // 3. Third Place: Lose BK1 vs Lose BK2 (Match 31)

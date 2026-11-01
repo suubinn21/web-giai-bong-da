@@ -57,44 +57,44 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
     return (
       <div
         onClick={() => onSelectMatch(match.id)}
-        className={`w-full sm:w-64 md:w-72 rounded-2xl border transition-all cursor-pointer shadow-xl ${
+        className={`w-full sm:w-64 md:w-72 rounded-2xl border transition-all cursor-pointer shadow-sm hover:shadow-md ${
           isFinal
-            ? 'bg-gradient-to-b from-amber-950/60 to-slate-900 border-amber-500/60 hover:border-amber-400 glow-amber sm:scale-105'
-            : 'bg-[#0B132B]/90 border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/80'
+            ? 'bg-gradient-to-b from-amber-50 to-white border-amber-400 hover:border-amber-500 sm:scale-105'
+            : 'bg-white border-slate-200 hover:border-blue-400'
         }`}
       >
         {/* Header of Match Card */}
-        <div className="px-3.5 py-2 border-b border-slate-800 flex items-center justify-between text-[11px] gap-1.5">
+        <div className="px-3.5 py-2 border-b border-slate-100 flex items-center justify-between text-[11px] gap-1.5 bg-slate-50/70 rounded-t-2xl">
           <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-slate-300">{label || match.roundLabel}</span>
-            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-black bg-cyan-950 text-cyan-300 border border-cyan-500/40">
-              <MapPin className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
+            <span className="font-extrabold text-blue-800">{label || match.roundLabel}</span>
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-black bg-sky-50 text-sky-700 border border-sky-200">
+              <MapPin className="w-2.5 h-2.5 text-sky-600 shrink-0" />
               <span>{(match.venueName ? match.venueName.match(/Sân\s*\d+/i)?.[0] || match.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}</span>
             </span>
             {match.isCustomMatchup && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">
                 Tự chỉnh
               </span>
             )}
           </div>
           {match.status === 'LIVE' && (
-            <span className="flex items-center gap-1 text-red-400 font-bold animate-pulse text-[10px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+            <span className="flex items-center gap-1 text-red-600 font-bold animate-pulse text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
               LIVE
             </span>
           )}
           {match.status === 'FINISHED' && (
-            <span className="text-emerald-400 font-bold text-[10px]">FT</span>
+            <span className="text-emerald-700 font-bold text-[10px]">FT</span>
           )}
           {match.status === 'SCHEDULED' && (
-            <span className="text-slate-400 font-mono text-[10px]">{match.time}</span>
+            <span className="text-slate-600 font-mono text-[10px] font-semibold">{match.time}</span>
           )}
         </div>
 
         {/* Home Team */}
         <div
-          className={`p-3 flex items-center justify-between border-b border-slate-800/60 ${
-            isHomeWinner ? 'bg-emerald-950/40 text-emerald-300 font-black' : 'text-slate-300'
+          className={`p-3 flex items-center justify-between border-b border-slate-100 ${
+            isHomeWinner ? 'bg-emerald-50 text-emerald-800 font-black' : 'text-slate-800 font-semibold'
           }`}
         >
           <div className="flex items-center gap-2 truncate">
@@ -104,21 +104,21 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
                 style={{ backgroundColor: home.primaryColor, borderColor: home.secondaryColor }}
               ></span>
             ) : (
-              <span className="w-3.5 h-3.5 rounded-full bg-slate-800 flex-shrink-0"></span>
+              <span className="w-3.5 h-3.5 rounded-full bg-slate-200 border border-slate-300 flex-shrink-0"></span>
             )}
-            <span className="truncate text-xs">
+            <span className={`truncate text-xs ${!home ? 'text-slate-500 italic font-medium' : ''}`}>
               {home?.name || placeholderHome || 'Chưa xác định'}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 font-mono font-bold text-sm">
+          <div className="flex items-center gap-2 font-mono font-bold text-sm text-slate-900">
             {match.status === 'FINISHED' || match.status === 'LIVE' ? (
               <span>{match.homeScore}</span>
             ) : (
-              <span className="text-slate-600">-</span>
+              <span className="text-slate-400">-</span>
             )}
             {match.penaltyShootout && (
-              <span className="text-[10px] text-amber-400 font-mono">
+              <span className="text-[10px] text-amber-700 font-mono">
                 ({match.penaltyShootout.homeScore}p)
               </span>
             )}
@@ -127,8 +127,8 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
 
         {/* Away Team */}
         <div
-          className={`p-3 flex items-center justify-between ${
-            isAwayWinner ? 'bg-emerald-950/40 text-emerald-300 font-black' : 'text-slate-300'
+          className={`p-3 flex items-center justify-between rounded-b-2xl ${
+            isAwayWinner ? 'bg-emerald-50 text-emerald-800 font-black' : 'text-slate-800 font-semibold'
           }`}
         >
           <div className="flex items-center gap-2 truncate">
@@ -138,21 +138,21 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
                 style={{ backgroundColor: away.primaryColor, borderColor: away.secondaryColor }}
               ></span>
             ) : (
-              <span className="w-3.5 h-3.5 rounded-full bg-slate-800 flex-shrink-0"></span>
+              <span className="w-3.5 h-3.5 rounded-full bg-slate-200 border border-slate-300 flex-shrink-0"></span>
             )}
-            <span className="truncate text-xs">
+            <span className={`truncate text-xs ${!away ? 'text-slate-500 italic font-medium' : ''}`}>
               {away?.name || placeholderAway || 'Chưa xác định'}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 font-mono font-bold text-sm">
+          <div className="flex items-center gap-2 font-mono font-bold text-sm text-slate-900">
             {match.status === 'FINISHED' || match.status === 'LIVE' ? (
               <span>{match.awayScore}</span>
             ) : (
-              <span className="text-slate-600">-</span>
+              <span className="text-slate-400">-</span>
             )}
             {match.penaltyShootout && (
-              <span className="text-[10px] text-amber-400 font-mono">
+              <span className="text-[10px] text-amber-700 font-mono">
                 ({match.penaltyShootout.awayScore}p)
               </span>
             )}
@@ -168,40 +168,40 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
     <div className="space-y-6">
       
       {/* Banner */}
-      <div className="bg-[#0B132B] border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 text-slate-800">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+            <span className="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
               VÒNG ĐẤU LOẠI TRỰC TIẾP
             </span>
-            <span className="text-xs text-slate-400">Điều lệ Điều 5 & Điều 22</span>
+            <span className="text-xs text-slate-500">Điều lệ Điều 5 &amp; Điều 22</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-white">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900">
             Nhánh Đấu Tứ Kết ➔ Bán Kết ➔ Chung Kết
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 mt-1">
             Hòa sau 40 phút thi đấu chính thức: Không đá hiệp phụ, tiến hành đá luân lưu 6m (Điều 8).
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
+          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
             <span>Đội Thắng Đi Tiếp</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
             <span>Đá Luân Lưu 6m</span>
           </div>
         </div>
       </div>
 
       {/* Mobile Stage Selector Tabs (only visible on mobile phones) */}
-      <div className="flex sm:hidden items-center justify-between gap-1 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto text-xs">
+      <div className="flex sm:hidden items-center justify-between gap-1 p-1 bg-slate-100 border border-slate-200 rounded-2xl overflow-x-auto text-xs">
         <button
           onClick={() => setMobileStage('ALL')}
           className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
-            mobileStage === 'ALL' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+            mobileStage === 'ALL' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Sơ Đồ Ngang
@@ -209,7 +209,7 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         <button
           onClick={() => setMobileStage('QF')}
           className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
-            mobileStage === 'QF' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+            mobileStage === 'QF' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Tứ Kết
@@ -217,7 +217,7 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         <button
           onClick={() => setMobileStage('SF')}
           className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
-            mobileStage === 'SF' ? 'bg-emerald-500 text-white shadow' : 'text-slate-400 hover:text-white'
+            mobileStage === 'SF' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Bán Kết
@@ -225,7 +225,7 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         <button
           onClick={() => setMobileStage('FINAL')}
           className={`flex-1 py-1.5 px-2 rounded-xl font-bold text-center transition-all ${
-            mobileStage === 'FINAL' ? 'bg-amber-500 text-slate-950 font-black shadow' : 'text-slate-400 hover:text-white'
+            mobileStage === 'FINAL' ? 'bg-amber-500 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
           Chung Kết 🏆
@@ -237,14 +237,14 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
         <div className="sm:hidden space-y-4 pt-2">
           {mobileStage === 'QF' && (
             <div className="space-y-3">
-              <div className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center justify-between">
+              <div className="text-xs font-black text-blue-700 uppercase tracking-widest flex items-center justify-between">
                 <span>4 TRẬN VÒNG TỨ KẾT</span>
-                <span className="text-[10px] text-slate-400 font-normal">Chạm trận để vào Live Center</span>
+                <span className="text-[10px] text-slate-500 font-normal">Chạm trận để vào Live Center</span>
               </div>
               <div className="flex flex-col gap-3">
                 {renderBracketMatch(tk1, 'TỨ KẾT 1', 'Nhất bảng A', 'Nhì bảng B')}
-                {renderBracketMatch(tk3, 'TỨ KẾT 3', 'Nhất bảng C', 'Nhì bảng D')}
                 {renderBracketMatch(tk2, 'TỨ KẾT 2', 'Nhất bảng B', 'Nhì bảng A')}
+                {renderBracketMatch(tk3, 'TỨ KẾT 3', 'Nhất bảng C', 'Nhì bảng D')}
                 {renderBracketMatch(tk4, 'TỨ KẾT 4', 'Nhất bảng D', 'Nhì bảng C')}
               </div>
             </div>
@@ -252,21 +252,21 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
 
           {mobileStage === 'SF' && (
             <div className="space-y-3">
-              <div className="text-xs font-black text-cyan-400 uppercase tracking-widest flex items-center justify-between">
+              <div className="text-xs font-black text-blue-700 uppercase tracking-widest flex items-center justify-between">
                 <span>2 TRẬN VÒNG BÁN KẾT</span>
-                <span className="text-[10px] text-slate-400 font-normal">Chạm trận để vào Live Center</span>
+                <span className="text-[10px] text-slate-500 font-normal">Chạm trận để vào Live Center</span>
               </div>
               <div className="flex flex-col gap-3">
-                {renderBracketMatch(bk1, 'BÁN KẾT 1', 'Thắng Tứ kết 1', 'Thắng Tứ kết 3')}
-                {renderBracketMatch(bk2, 'BÁN KẾT 2', 'Thắng Tứ kết 2', 'Thắng Tứ kết 4')}
+                {renderBracketMatch(bk1, 'BÁN KẾT 1', 'Thắng Tứ kết 1', 'Thắng Tứ kết 2')}
+                {renderBracketMatch(bk2, 'BÁN KẾT 2', 'Thắng Tứ kết 3', 'Thắng Tứ kết 4')}
               </div>
             </div>
           )}
 
           {mobileStage === 'FINAL' && (
             <div className="space-y-4">
-              <div className="text-xs font-black text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
-                <Trophy className="w-4 h-4 text-amber-400" />
+              <div className="text-xs font-black text-amber-600 uppercase tracking-widest flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-amber-500" />
                 <span>TRẬN CHUNG KẾT &amp; TRANH HẠNG BA</span>
               </div>
               <div className="flex flex-col gap-4">
@@ -284,48 +284,48 @@ export const BracketTree: React.FC<BracketTreeProps> = ({
           
           {/* Column 1: Quarter Finals (Tứ kết) */}
           <div className="flex flex-col space-y-8 flex-shrink-0">
-            <div className="text-xs font-black text-emerald-400 uppercase tracking-widest text-center mb-1">
+            <div className="text-xs font-black text-blue-700 uppercase tracking-widest text-center mb-1">
               VÒNG TỨ KẾT (4 TRẬN)
             </div>
             
             {renderBracketMatch(tk1, 'TỨ KẾT 1', 'Nhất bảng A', 'Nhì bảng B')}
-            {renderBracketMatch(tk3, 'TỨ KẾT 3', 'Nhất bảng C', 'Nhì bảng D')}
             {renderBracketMatch(tk2, 'TỨ KẾT 2', 'Nhất bảng B', 'Nhì bảng A')}
+            {renderBracketMatch(tk3, 'TỨ KẾT 3', 'Nhất bảng C', 'Nhì bảng D')}
             {renderBracketMatch(tk4, 'TỨ KẾT 4', 'Nhất bảng D', 'Nhì bảng C')}
           </div>
 
           {/* SVG Connector Lines Left -> Center */}
-          <div className="hidden lg:flex flex-col justify-around h-[550px] w-12 text-slate-600">
-            <ChevronRight className="w-8 h-8 text-emerald-500/40" />
-            <ChevronRight className="w-8 h-8 text-emerald-500/40" />
+          <div className="hidden lg:flex flex-col justify-around h-[550px] w-12 text-slate-400">
+            <ChevronRight className="w-8 h-8 text-blue-500/50" />
+            <ChevronRight className="w-8 h-8 text-blue-500/50" />
           </div>
 
           {/* Column 2: Semi Finals (Bán kết) */}
           <div className="flex flex-col justify-around h-[550px] flex-shrink-0 space-y-12">
-            <div className="text-xs font-black text-cyan-400 uppercase tracking-widest text-center mb-1">
+            <div className="text-xs font-black text-sky-700 uppercase tracking-widest text-center mb-1">
               VÒNG BÁN KẾT (2 TRẬN)
             </div>
-            {renderBracketMatch(bk1, 'BÁN KẾT 1', 'Thắng Tứ kết 1', 'Thắng Tứ kết 3')}
-            {renderBracketMatch(bk2, 'BÁN KẾT 2', 'Thắng Tứ kết 2', 'Thắng Tứ kết 4')}
+            {renderBracketMatch(bk1, 'BÁN KẾT 1', 'Thắng Tứ kết 1', 'Thắng Tứ kết 2')}
+            {renderBracketMatch(bk2, 'BÁN KẾT 2', 'Thắng Tứ kết 3', 'Thắng Tứ kết 4')}
           </div>
 
           {/* SVG Connector Lines Center -> Finals */}
-          <div className="hidden lg:flex flex-col justify-center h-[550px] w-12 text-slate-600">
-            <ChevronRight className="w-8 h-8 text-amber-500/60" />
+          <div className="hidden lg:flex flex-col justify-center h-[550px] w-12 text-slate-400">
+            <ChevronRight className="w-8 h-8 text-amber-500/70" />
           </div>
 
           {/* Column 3: Grand Final & 3rd Place */}
           <div className="flex flex-col justify-center items-center h-[550px] flex-shrink-0 space-y-8">
-            <div className="text-xs font-black text-amber-400 uppercase tracking-widest text-center flex items-center gap-1.5">
-              <Trophy className="w-4 h-4 text-amber-400" />
+            <div className="text-xs font-black text-amber-600 uppercase tracking-widest text-center flex items-center gap-1.5">
+              <Trophy className="w-4 h-4 text-amber-500" />
               <span>TRẬN CHUNG KẾT VÔ ĐỊCH</span>
             </div>
             
             {renderBracketMatch(grandFinal, '🏆 CHUNG KẾT (FINAL)', 'Thắng Bán kết 1', 'Thắng Bán kết 2', true)}
 
             {/* Third Place Match */}
-            <div className="pt-4 border-t border-slate-800 w-full flex flex-col items-center">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+            <div className="pt-4 border-t border-slate-200 w-full flex flex-col items-center">
+              <div className="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Award className="w-3.5 h-3.5 text-amber-600" />
                 <span>TRANH HẠNG BA</span>
               </div>

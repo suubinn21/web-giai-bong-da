@@ -889,7 +889,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({
                                   15:45 – 15:55 • NGHỈ 10 PHÚT, CHUẨN BỊ BÁN KẾT (2 SÂN)
                                 </span>
                                 <p className="text-[11px] text-slate-600 mt-0.5">
-                                  Bán kết 1 (Thắng TK1 vs Thắng TK3 - Sân 1) &amp; Bán kết 2 (Thắng TK2 vs Thắng TK4 - Sân 2).
+                                  Bán kết 1 (Thắng TK1 vs Thắng TK2 - Sân 1) &amp; Bán kết 2 (Thắng TK3 vs Thắng TK4 - Sân 2).
                                 </p>
                               </div>
                             </div>
