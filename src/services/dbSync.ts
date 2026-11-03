@@ -37,6 +37,16 @@ export interface TournamentCloudData {
   updatedAt?: number;
 }
 
+const MAX_CLOUD_AUDIT_LOGS = 100;
+
+function compactAuditLogs(logs?: AuditLog[]): AuditLog[] | undefined {
+  if (!Array.isArray(logs)) return logs;
+  return logs.slice(0, MAX_CLOUD_AUDIT_LOGS).map((log) => ({
+    ...log,
+    details: log.details && log.details.length > 300 ? `${log.details.slice(0, 300)}...` : log.details,
+  }));
+}
+
 // Sanitize objects by stripping undefined values (Firestore rejects undefined)
 function cleanForFirestore<T>(data: T): T {
   try {
@@ -147,10 +157,14 @@ export async function pushTournamentCloud(
 
   try {
     const docRef = doc(db, 'tournament_data', tournamentId);
-    const cleaned = cleanForFirestore({
+    const payload: Partial<TournamentCloudData> & { updatedAt: number } = {
       ...data,
       updatedAt: Date.now(),
-    });
+    };
+    if (Array.isArray(payload.auditLogs)) {
+      payload.auditLogs = compactAuditLogs(payload.auditLogs);
+    }
+    const cleaned = cleanForFirestore(payload);
     await setDoc(docRef, cleaned, { merge: true });
   } catch (err) {
     console.error('[Firestore] Lỗi ghi dữ liệu lên đám mây:', err);

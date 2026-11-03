@@ -414,6 +414,8 @@ export class StorageService {
     localStorage.setItem(this.getScopedKey(STORAGE_KEYS.AWARDS), JSON.stringify(awards));
   }
 
+  private static readonly MAX_AUDIT_LOGS = 100;
+
   static getAuditLogs(): AuditLog[] {
     const cleanInitLog: AuditLog[] = [
       {
@@ -450,6 +452,12 @@ export class StorageService {
       return log;
     });
 
+    // Giới hạn tối đa số lượng bản ghi để tránh tràn giới hạn 1MB của Firestore
+    if (logs.length > this.MAX_AUDIT_LOGS) {
+      logs = logs.slice(0, this.MAX_AUDIT_LOGS);
+      hasChanges = true;
+    }
+
     if (hasChanges) {
       this.saveAuditLogs(logs);
     }
@@ -458,11 +466,24 @@ export class StorageService {
 
   static saveAuditLogs(logs: AuditLog[]): void {
     if (!this.isClient) return;
-    SecureStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, logs);
+    const capped = Array.isArray(logs) ? logs.slice(0, this.MAX_AUDIT_LOGS) : [];
+    SecureStorage.setItem(STORAGE_KEYS.AUDIT_LOGS, capped);
   }
 
   static logAction(actorName: string, actorRole: UserRole, action: string, target: string, details: string, reason?: string): void {
+    // Bỏ qua các log tự động lặp lại gây phình dung lượng CSDL
+    if (action === 'TỰ ĐỘNG TẠO TÀI KHOẢN ĐỘI TRƯỞNG' || action === 'CHUYỂN VAI TRÒ HỆ THỐNG') {
+      return;
+    }
+
     const logs = this.getAuditLogs();
+    const safeDetails = details && details.length > 300 ? `${details.slice(0, 300)}...` : details;
+
+    // Chống ghi trùng liên tiếp cùng một nội dung thao tác
+    if (logs.length > 0 && logs[0].action === action && logs[0].target === target && logs[0].details === safeDetails) {
+      return;
+    }
+
     const newLog: AuditLog = {
       id: `AUD-${Date.now()}`,
       timestamp: new Date().toLocaleString('vi-VN'),
@@ -470,11 +491,11 @@ export class StorageService {
       actorRole,
       action,
       target,
-      details,
+      details: safeDetails,
       reason,
     };
     logs.unshift(newLog);
-    this.saveAuditLogs(logs);
+    this.saveAuditLogs(logs.slice(0, this.MAX_AUDIT_LOGS));
   }
 
   static getDeletedTournamentIds(): string[] {
