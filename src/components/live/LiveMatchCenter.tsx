@@ -17,7 +17,6 @@ import {
   RotateCcw,
   Shield,
   AlertTriangle,
-  Shirt,
   Flame,
   FileEdit,
   ArrowRightLeft,
@@ -467,13 +466,13 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
               className={`flex-shrink-0 px-3.5 py-2.5 rounded-xl border text-xs text-left transition-all cursor-pointer ${
                 isSelected
                   ? 'bg-gradient-to-r from-emerald-600 to-teal-700 border-2 border-emerald-300 shadow-lg shadow-emerald-500/30 text-white font-black scale-[1.02]'
-                  : 'bg-slate-900/90 border border-slate-700/80 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-emerald-500/50 shadow-sm'
+                  : 'bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:text-white hover:border-emerald-500/50 shadow-sm'
               }`}
             >
               <div className="flex items-center justify-between gap-2 text-[10px] text-slate-300 mb-1">
                 <div className="flex items-center gap-1">
-                  <span className="font-bold">{m.roundLabel}</span>
-                  <span className="font-extrabold text-cyan-300 bg-cyan-950 px-1.5 py-0.5 rounded text-[9px] border border-cyan-500/60 shadow-xs">
+                  <span className="font-bold text-slate-200">{m.roundLabel}</span>
+                  <span className="font-extrabold text-cyan-200 bg-cyan-950 px-1.5 py-0.5 rounded text-[9px] border border-cyan-400/60 shadow-xs">
                     {(m.venueName ? m.venueName.match(/Sân\s*\d+/i)?.[0] || m.venueName.split(' - ')[0] : 'Sân 1').toUpperCase()}
                   </span>
                 </div>
@@ -486,9 +485,12 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
                 {m.status === 'FINISHED' && (
                   <span className="text-emerald-400 font-extrabold">FT</span>
                 )}
+                {m.status === 'SCHEDULED' && (
+                  <span className="text-sky-300 font-mono font-bold text-[9px]">{m.time}</span>
+                )}
               </div>
               <div className="font-bold flex items-center justify-between gap-4">
-                <span className="text-white">{h?.shortName || 'TBD'} vs {a?.shortName || 'TBD'}</span>
+                <span className="text-white font-bold">{h?.shortName || 'TBD'} vs {a?.shortName || 'TBD'}</span>
                 <span className="text-emerald-400 font-mono font-black">
                   {m.homeScore} - {m.awayScore}
                 </span>
@@ -513,43 +515,55 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
         <div className="absolute -top-10 right-10 w-48 h-48 bg-blue-500/15 blur-3xl pointer-events-none"></div>
 
         {/* Top Info Bar */}
-        <div className="px-6 py-3.5 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs bg-[#0B1A30]">
+        <div className="relative z-10 px-6 py-3.5 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs bg-[#081528]/95 backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="font-extrabold text-emerald-300 bg-emerald-950/90 border border-emerald-500/50 px-3 py-1 rounded-lg uppercase tracking-wider text-xs shadow-sm">
+            <span className="font-extrabold text-emerald-200 bg-emerald-900/80 border border-emerald-400/60 px-3 py-1 rounded-lg uppercase tracking-wider text-xs shadow-sm">
               {activeMatch.roundLabel}
             </span>
-            <span className="inline-flex items-center gap-1.5 font-extrabold text-cyan-300 bg-cyan-950/90 border border-cyan-400/50 px-3 py-1 rounded-lg text-xs shadow-sm">
-              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
-              Sân: {activeMatch.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}
+            <span className="inline-flex items-center gap-1.5 font-bold text-cyan-100 bg-cyan-950/80 border border-cyan-400/60 px-3 py-1 rounded-lg text-xs shadow-sm">
+              <MapPin className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+              <span>Sân: <strong className="font-extrabold text-cyan-200">{activeMatch.venueName || 'Sân 1 - Cỏ Nhân Tạo KTX'}</strong></span>
             </span>
-            <span className="inline-flex items-center gap-1.5 font-bold text-slate-200 bg-slate-900/90 border border-slate-700 px-3 py-1 rounded-lg text-xs shadow-sm">
-              Trọng tài: {activeMatch.refereeName || 'BTC'}
+            <span className="inline-flex items-center gap-1.5 font-bold text-slate-200 bg-slate-800/90 border border-slate-600/80 px-3 py-1 rounded-lg text-xs shadow-sm">
+              <span>Trọng tài: <strong className="font-extrabold text-amber-300">{activeMatch.refereeName || 'BTC'}</strong></span>
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             {activeMatch.status === 'LIVE' && (
-              <span className="inline-flex items-center gap-1.5 bg-red-600 text-white border-2 border-red-400 px-3.5 py-1 rounded-full font-black animate-pulse text-xs shadow-lg shadow-red-600/30">
+              <span className="inline-flex items-center gap-1.5 bg-red-600 text-white border-2 border-red-300 px-3.5 py-1 rounded-full font-black animate-pulse text-xs shadow-lg shadow-red-600/40">
                 <span className="w-2.5 h-2.5 rounded-full bg-white"></span>
                 ĐANG DIỄN RA (HIỆP {activeMatch.half})
               </span>
             )}
             {activeMatch.status === 'HALFTIME' && (
-              <span className="inline-flex items-center gap-1.5 bg-amber-500 text-slate-950 border-2 border-amber-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-amber-500/30">
-                <Coffee className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 border-2 border-amber-200 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-amber-500/40">
+                <Coffee className="w-4 h-4 text-slate-950" />
                 NGHỈ GIỮA HIỆP (5 PHÚT)
               </span>
             )}
             {activeMatch.status === 'FINISHED' && (
-              <span className="inline-flex items-center gap-1.5 bg-emerald-600 text-white border-2 border-emerald-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-emerald-600/30">
-                <CheckCircle2 className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1.5 bg-emerald-600 text-white border-2 border-emerald-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-emerald-600/40">
+                <CheckCircle2 className="w-4 h-4 text-white" />
                 KẾT THÚC TRẬN ĐẤU (FULL TIME)
               </span>
             )}
             {activeMatch.status === 'SCHEDULED' && (
-              <span className="inline-flex items-center gap-1.5 bg-blue-600 text-white border-2 border-blue-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-blue-600/30">
-                <Clock className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1.5 bg-blue-600 text-white border-2 border-blue-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-blue-600/40">
+                <Clock className="w-4 h-4 text-white" />
                 CHƯA BẮT ĐẦU ({activeMatch.time})
+              </span>
+            )}
+            {activeMatch.status === 'CHECKING' && (
+              <span className="inline-flex items-center gap-1.5 bg-purple-600 text-white border-2 border-purple-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-purple-600/40">
+                <Clock className="w-4 h-4 text-white" />
+                ĐANG ĐIỂM DANH ({activeMatch.time})
+              </span>
+            )}
+            {(activeMatch.status === 'POSTPONED' || activeMatch.status === 'CANCELLED') && (
+              <span className="inline-flex items-center gap-1.5 bg-rose-700 text-white border-2 border-rose-300 px-3.5 py-1 rounded-full font-black text-xs shadow-lg shadow-rose-700/40">
+                <Clock className="w-4 h-4 text-white" />
+                {activeMatch.status === 'POSTPONED' ? 'HOÃN TRẬN' : 'HỦY TRẬN'}
               </span>
             )}
 
@@ -702,7 +716,7 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
         {/* Live Match Operational Control Bar for Organizer / Referee */}
         {canEdit && (
-          <div className="px-5 sm:px-6 py-3.5 sm:py-4 bg-[#081525] border-t-2 border-sky-500/40 flex flex-wrap items-center justify-between gap-3 shadow-2xl">
+          <div className="relative z-10 px-5 sm:px-6 py-3.5 sm:py-4 bg-[#081525] border-t-2 border-sky-500/40 flex flex-wrap items-center justify-between gap-3 shadow-2xl">
             
             {/* Timer controls */}
             <div className="flex flex-wrap items-center gap-2.5">
@@ -804,168 +818,92 @@ export const LiveMatchCenter: React.FC<LiveMatchCenterProps> = ({
 
       </div>
 
-      {/* Two Columns: 5-a-side Pitch Visualizer & Real-time Event Timeline */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left: 5-a-side Tactical Pitch Diagram */}
-        <div className="lg:col-span-7 bg-[#0B132B]/80 rounded-2xl border border-slate-800 p-5 shadow-xl">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Shirt className="w-5 h-5 text-emerald-400" />
-              <h3 className="font-extrabold text-white text-sm">
-                Sơ Đồ Chiến Thuật 5 Người (Futsal / Mini Football)
-              </h3>
-            </div>
-            <span className="text-xs text-slate-400">Đội hình tiêu chuẩn: 1 GK - 2 DF - 1 MF - 1 FW</span>
+      {/* Live Match Event Feed / Timeline */}
+      <div className="bg-[#0B132B]/80 rounded-2xl border border-slate-800 p-5 shadow-xl flex flex-col">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-amber-400" />
+            <h3 className="font-extrabold text-white text-sm">
+              Diễn Biến &amp; Nhật Ký Trực Tiếp
+            </h3>
           </div>
+          <span className="text-xs text-slate-400">{activeMatch.events.length} sự kiện</span>
+        </div>
 
-          {/* Grass Field Canvas */}
-          <div className="relative w-full h-80 rounded-xl pitch-pattern border-2 border-emerald-500/30 overflow-hidden flex flex-col justify-between p-4 shadow-inner">
-            
-            {/* Center Line and Circle */}
-            <div className="pitch-half-line"></div>
-            <div className="pitch-center-circle"></div>
-
-            {/* Top Half: Home Team Formation */}
-            <div className="relative z-10 flex flex-col justify-between h-[45%]">
-              <div className="text-[10px] font-bold text-white/80 uppercase tracking-widest text-center">
-                {homeTeam?.name} (Sân Nhà)
-              </div>
-              {/* Formation 1 GK, 2 DF, 1 MF, 1 FW */}
-              <div className="flex justify-around items-center">
-                {homeTeam?.players.slice(0, 5).map((p, idx) => (
-                  <div key={p.id} className="flex flex-col items-center group cursor-pointer">
-                    <div 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-lg border-2 transition-transform group-hover:scale-125 ${
-                        p.isSuspended ? 'bg-red-600 border-red-300' : 'bg-blue-600 border-white text-white'
-                      }`}
-                    >
-                      {p.isSuspended ? '🔒' : p.jerseyNumber}
-                    </div>
-                    <span className="text-[10px] text-white font-medium mt-1 drop-shadow bg-black/60 px-1 rounded">
-                      {p.name.split(' ').pop()}
-                    </span>
-                    <span className="text-[8px] text-emerald-300 font-mono uppercase">{p.position}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Bottom Half: Away Team Formation */}
-            <div className="relative z-10 flex flex-col justify-between h-[45%]">
-              <div className="flex justify-around items-center">
-                {awayTeam?.players.slice(0, 5).map((p, idx) => (
-                  <div key={p.id} className="flex flex-col items-center group cursor-pointer">
-                    <div 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-lg border-2 transition-transform group-hover:scale-125 ${
-                        p.isSuspended ? 'bg-red-600 border-red-300' : 'bg-emerald-600 border-white text-white'
-                      }`}
-                    >
-                      {p.isSuspended ? '🔒' : p.jerseyNumber}
-                    </div>
-                    <span className="text-[10px] text-white font-medium mt-1 drop-shadow bg-black/60 px-1 rounded">
-                      {p.name.split(' ').pop()}
-                    </span>
-                    <span className="text-[8px] text-cyan-300 font-mono uppercase">{p.position}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="text-[10px] font-bold text-white/80 uppercase tracking-widest text-center">
-                {awayTeam?.name} (Sân Khách)
-              </div>
-            </div>
-
+        {/* Quick squad suspension warning banner */}
+        {(homeTeam?.players.some((p) => p.isSuspended) || awayTeam?.players.some((p) => p.isSuspended)) && (
+          <div className="mb-4 p-2.5 rounded-lg bg-red-950/60 border border-red-500/40 text-red-300 text-xs flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
+            <span>
+              Cảnh báo kỷ luật Điều 11 &amp; 12: Có cầu thủ bị treo giò 🔒 (không được phép đăng ký vào sân hoặc ghi bàn).
+            </span>
           </div>
+        )}
 
-          {/* Quick squad suspension warning banner */}
-          {(homeTeam?.players.some((p) => p.isSuspended) || awayTeam?.players.some((p) => p.isSuspended)) && (
-            <div className="mt-3 p-2.5 rounded-lg bg-red-950/60 border border-red-500/40 text-red-300 text-xs flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <span>
-                Cảnh báo kỷ luật Điều 11 & 12: Có cầu thủ bị treo giò 🔒 (không được phép đăng ký vào sân hoặc ghi bàn).
-              </span>
+        <div className="space-y-3 flex-1 overflow-y-auto max-h-96 pr-1">
+          {activeMatch.events.length === 0 ? (
+            <div className="text-center py-12 text-slate-500 text-xs">
+              Chưa có diễn biến nào. Nhấn &quot;+ Bàn Thắng&quot;, &quot;Phạt Thẻ&quot; hoặc &quot;Thay Người&quot; để cập nhật.
             </div>
+          ) : (
+            activeMatch.events
+              .slice()
+              .reverse()
+              .map((ev) => {
+                const evTeam = teams.find((t) => t.id === ev.teamId);
+                const isHome = ev.teamId === homeTeam?.id;
+
+                return (
+                  <div
+                    key={ev.id}
+                    className="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80 flex items-start gap-3 hover:border-slate-700 transition-colors"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center font-mono font-bold text-xs text-emerald-400 border border-slate-700">
+                      {ev.minute}&apos;
+                    </div>
+
+                    <div className="flex-1 text-xs">
+                      <div className="flex items-center justify-between font-bold text-white">
+                        <span className="flex items-center gap-1.5">
+                          {ev.type === 'GOAL' && '⚽ BÀN THẮNG!'}
+                          {ev.type === 'CARD' && (ev.cardType === 'YELLOW' ? '🟨 THẺ VÀNG' : '🟥 THẺ ĐỎ')}
+                          {ev.type === 'SUBSTITUTION' && '🔄 THAY NGƯỜI'}
+                        </span>
+                        <span className="text-[10px] text-slate-400">{evTeam?.shortName}</span>
+                      </div>
+
+                      {ev.type === 'GOAL' && (
+                        <div className="text-slate-300 mt-1">
+                          <span className="font-semibold text-emerald-300">{ev.playerName}</span>
+                          {ev.isOwnGoal && <span className="text-red-400 ml-1">(Phản lưới nhà)</span>}
+                          {ev.assistPlayerName && (
+                            <span className="text-slate-400 ml-1">
+                              (Kiến tạo: {ev.assistPlayerName})
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {ev.type === 'CARD' && (
+                        <div className="text-slate-300 mt-1">
+                          <span className="font-semibold text-amber-300">{ev.playerName}</span>
+                          {ev.reason && <span className="text-slate-400 ml-1">- {ev.reason}</span>}
+                        </div>
+                      )}
+
+                      {ev.type === 'SUBSTITUTION' && (
+                        <div className="text-slate-300 mt-1 flex items-center gap-1">
+                          <span className="text-red-400">Ra: {ev.playerOutName}</span>
+                          <span>➔</span>
+                          <span className="text-emerald-400">Vào: {ev.playerInName}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
           )}
         </div>
-
-        {/* Right: Live Match Event Feed / Timeline */}
-        <div className="lg:col-span-5 bg-[#0B132B]/80 rounded-2xl border border-slate-800 p-5 shadow-xl flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Flame className="w-5 h-5 text-amber-400" />
-              <h3 className="font-extrabold text-white text-sm">
-                Diễn Biến & Nhật Ký Trực Tiếp
-              </h3>
-            </div>
-            <span className="text-xs text-slate-400">{activeMatch.events.length} sự kiện</span>
-          </div>
-
-          <div className="space-y-3 flex-1 overflow-y-auto max-h-80 pr-1">
-            {activeMatch.events.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 text-xs">
-                Chưa có diễn biến nào. Nhấn "+ Bàn Thắng", "Phạt Thẻ" hoặc "Thay Người" để cập nhật.
-              </div>
-            ) : (
-              activeMatch.events
-                .slice()
-                .reverse()
-                .map((ev) => {
-                  const evTeam = teams.find((t) => t.id === ev.teamId);
-                  const isHome = ev.teamId === homeTeam?.id;
-
-                  return (
-                    <div
-                      key={ev.id}
-                      className="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80 flex items-start gap-3 hover:border-slate-700 transition-colors"
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center font-mono font-bold text-xs text-emerald-400 border border-slate-700">
-                        {ev.minute}&apos;
-                      </div>
-
-                      <div className="flex-1 text-xs">
-                        <div className="flex items-center justify-between font-bold text-white">
-                          <span className="flex items-center gap-1.5">
-                            {ev.type === 'GOAL' && '⚽ BÀN THẮNG!'}
-                            {ev.type === 'CARD' && (ev.cardType === 'YELLOW' ? '🟨 THẺ VÀNG' : '🟥 THẺ ĐỎ')}
-                            {ev.type === 'SUBSTITUTION' && '🔄 THAY NGƯỜI'}
-                          </span>
-                          <span className="text-[10px] text-slate-400">{evTeam?.shortName}</span>
-                        </div>
-
-                        {ev.type === 'GOAL' && (
-                          <div className="text-slate-300 mt-1">
-                            <span className="font-semibold text-emerald-300">{ev.playerName}</span>
-                            {ev.isOwnGoal && <span className="text-red-400 ml-1">(Phản lưới nhà)</span>}
-                            {ev.assistPlayerName && (
-                              <span className="text-slate-400 ml-1">
-                                (Kiến tạo: {ev.assistPlayerName})
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {ev.type === 'CARD' && (
-                          <div className="text-slate-300 mt-1">
-                            <span className="font-semibold text-amber-300">{ev.playerName}</span>
-                            {ev.reason && <span className="text-slate-400 ml-1">- {ev.reason}</span>}
-                          </div>
-                        )}
-
-                        {ev.type === 'SUBSTITUTION' && (
-                          <div className="text-slate-300 mt-1 flex items-center gap-1">
-                            <span className="text-red-400">Ra: {ev.playerOutName}</span>
-                            <span>➔</span>
-                            <span className="text-emerald-400">Vào: {ev.playerInName}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-            )}
-          </div>
-        </div>
-
       </div>
 
       {/* MODAL 1: Add Goal */}
