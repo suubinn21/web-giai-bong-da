@@ -414,7 +414,7 @@ export class StorageService {
     localStorage.setItem(this.getScopedKey(STORAGE_KEYS.AWARDS), JSON.stringify(awards));
   }
 
-  private static readonly MAX_AUDIT_LOGS = 100;
+  private static readonly MAX_AUDIT_LOGS = 150;
 
   static getAuditLogs(): AuditLog[] {
     const cleanInitLog: AuditLog[] = [

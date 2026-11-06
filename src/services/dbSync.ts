@@ -37,7 +37,7 @@ export interface TournamentCloudData {
   updatedAt?: number;
 }
 
-const MAX_CLOUD_AUDIT_LOGS = 100;
+const MAX_CLOUD_AUDIT_LOGS = 150;
 
 function compactAuditLogs(logs?: AuditLog[]): AuditLog[] | undefined {
   if (!Array.isArray(logs)) return logs;
