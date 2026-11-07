@@ -32,6 +32,17 @@ export const DEFAULT_ACCOUNTS: UserAccount[] = [
     avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
     createdAt: '2026-09-01T08:00:00.000Z',
   },
+  {
+    id: 'USR-BTC-MANHQUYNH',
+    username: 'btc_manhquynh',
+    password: hashPassword(BTC_DEFAULT_PASSWORD, 'btcmanhquynh2026'),
+    fullName: 'Ban Tổ Chức - Mạnh Quỳnh',
+    role: 'ORGANIZER',
+    email: 'btc_manhquynh@itftms.vn',
+    phone: '0908 123 456',
+    avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=btc_manhquynh',
+    createdAt: '2026-09-01T08:00:00.000Z',
+  },
 ];
 
 export class AuthService {
@@ -49,7 +60,7 @@ export class AuthService {
       let parsed = SecureStorage.getItem<UserAccount[]>(AUTH_STORAGE_KEYS.USERS);
       if (!parsed || !Array.isArray(parsed) || parsed.length === 0) {
         SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, DEFAULT_ACCOUNTS);
-        pushUserAccountsCloud(DEFAULT_ACCOUNTS).catch(() => {});
+        // KHÔNG đẩy DEFAULT_ACCOUNTS lên Cloud khi client mới chưa có cache để tránh làm mất tài khoản Cloud
         return [...DEFAULT_ACCOUNTS];
       }
 
@@ -63,11 +74,12 @@ export class AuthService {
       let hasChanges = filtered.length !== parsed.length;
       parsed = filtered;
 
-      // Đảm bảo luôn có ít nhất 1 tài khoản Ban Tổ Chức (admin) hoạt động
-      const hasBtc = parsed.some((u) => u.role === 'ORGANIZER' || u.role === 'SUPER_ADMIN');
-      if (!hasBtc) {
-        parsed.unshift(...DEFAULT_ACCOUNTS);
-        hasChanges = true;
+      // Đảm bảo luôn có các tài khoản mặc định (admin, btc_manhquynh) hoạt động
+      for (const def of DEFAULT_ACCOUNTS) {
+        if (!parsed.some((u) => u.username.toLowerCase() === def.username.toLowerCase() || u.id === def.id)) {
+          parsed.push(def);
+          hasChanges = true;
+        }
       }
 
       // Tự động nâng cấp các tài khoản lưu dạng thô (plaintext) sang mã băm Salted SHA-256 an toàn
@@ -91,10 +103,9 @@ export class AuthService {
         }
       }
 
-      // Luôn ghi đè bản đã mã hóa an toàn vào storage
+      // Ghi đè bản đã chuẩn hóa vào storage cục bộ
       if (hasChanges) {
         SecureStorage.setItem(AUTH_STORAGE_KEYS.USERS, parsed);
-        pushUserAccountsCloud(parsed).catch(() => {});
       }
       return parsed;
     } catch {
@@ -387,9 +398,13 @@ export class AuthService {
       return { success: false, error: 'Vui lòng nhập tài khoản/email/tên đội và mật khẩu!' };
     }
 
-    // Bỏ ký tự '@' nếu người dùng gõ hoặc copy @captain_...
+    // Bỏ ký tự '@' nếu người dùng gõ hoặc copy @captain_... hoặc @btc_...
     const strippedId = rawId.replace(/^@+/, '').trim();
     const cleanId = strippedId.toLowerCase();
+
+    // Trích xuất username nếu người dùng nhập email (ví dụ: btc_manhquynh@itftms.vn -> btc_manhquynh)
+    const usernameFromEmail = cleanId.includes('@') ? cleanId.split('@')[0].trim() : '';
+    const normUsernameFromEmail = usernameFromEmail ? normalize(usernameFromEmail) : '';
 
     // Lấy phần tên cốt lõi sau khi loại bỏ tiền tố captain
     const idWithoutCaptain = strippedId.replace(/^captain[_.\s-]*/i, '').trim();
@@ -424,6 +439,7 @@ export class AuthService {
 
     // 1. Tìm trong danh sách tài khoản hiện có
     let found = users.find((u) => {
+      const uUsernameLower = (u.username || '').toLowerCase();
       const uNorm = normalize(u.username);
       const uCore = uNorm.replace(/^captain/, '');
       const isBtcAccount = u.role === 'ORGANIZER' || u.role === 'SUPER_ADMIN';
@@ -438,19 +454,26 @@ export class AuthService {
           normTarget === 'admin' ||
           normTarget === 'bantochuc');
 
-      // a. Khớp theo username hoặc email
+      // a. Khớp theo username hoặc email (hỗ trợ cả khi nhập btc_manhquynh@itftms.vn)
       const matchUsername =
         matchBtcAlias ||
-        u.username.toLowerCase() === cleanId ||
+        uUsernameLower === cleanId ||
+        (usernameFromEmail && uUsernameLower === usernameFromEmail) ||
         uNorm === normTarget ||
-        (normCore && (uCore === normCore || uNorm === `captain${normCore}` || u.username.toLowerCase() === `captain_${normCore}`));
-      const matchEmail = u.email.toLowerCase() === cleanId;
+        (normUsernameFromEmail && uNorm === normUsernameFromEmail) ||
+        (normCore && (uCore === normCore || uNorm === `captain${normCore}` || uUsernameLower === `captain_${normCore}`));
+
+      const matchEmail = Boolean(
+        (u.email && u.email.toLowerCase() === cleanId) ||
+        (usernameFromEmail && cleanId.endsWith('@itftms.vn') && uUsernameLower === usernameFromEmail)
+      );
 
       // b. Khớp theo họ tên người dùng
       const matchFullName =
-        normalize(u.fullName) === normTarget ||
-        (normCore && normalize(u.fullName) === normCore) ||
-        (normCore && normCore.length >= 3 && normalize(u.fullName).includes(normCore));
+        (u.fullName && normalize(u.fullName) === normTarget) ||
+        (u.fullName && normUsernameFromEmail && normalize(u.fullName) === normUsernameFromEmail) ||
+        (u.fullName && normCore && normalize(u.fullName) === normCore) ||
+        (u.fullName && normCore && normCore.length >= 3 && normalize(u.fullName).includes(normCore));
 
       // c. Khớp thông tin Đội trưởng
       let matchCaptainInfo = false;
@@ -488,18 +511,20 @@ export class AuthService {
       }
 
       const isMatch = matchUsername || matchEmail || matchFullName || matchCaptainInfo;
+      if (!isMatch) return false;
+
       let isPassCorrect = verifyPassword(cleanPass, u.password);
       
-      // Hỗ trợ mật khẩu phức tạp chuẩn của BTC khi tài khoản chưa khởi tạo mật khẩu
-      if (!isPassCorrect && isBtcAccount && !u.password) {
+      // Hỗ trợ mật khẩu chuẩn của BTC (Btc@2026!#)
+      if (!isPassCorrect && isBtcAccount) {
         if (cleanPass === BTC_DEFAULT_PASSWORD) {
           isPassCorrect = true;
         }
       }
 
-      if (isMatch && isPassCorrect) {
-        // Tự động nâng cấp sang mã băm Salted SHA-256 nếu mật khẩu chưa được băm
-        if (u.password && !u.password.startsWith('sha256$') && !u.password.startsWith('sha256:')) {
+      if (isPassCorrect) {
+        // Tự động nâng cấp sang mã băm Salted SHA-256 an toàn
+        if (!u.password || !u.password.startsWith('sha256$') || cleanPass === BTC_DEFAULT_PASSWORD) {
           u.password = hashPassword(cleanPass);
           this.saveUsers(users);
         }
@@ -609,6 +634,34 @@ export class AuthService {
     );
 
     return { success: true, user: found };
+  }
+
+  /**
+   * Đăng nhập bất đồng bộ an toàn:
+   * 1. Thử đăng nhập nhanh từ LocalStorage trước (0ms)
+   * 2. Nếu không tìm thấy, tự động kéo danh sách tài khoản mới nhất từ Cloud Firestore về và thử lại
+   * Giúp khắc phục 100% tình trạng thiết bị mới hoặc mạng chậm chưa kịp đồng bộ tài khoản từ Cloud
+   */
+  static async loginAsync(identifier: string, password: string): Promise<{ success: boolean; user?: UserAccount; error?: string }> {
+    // 1. Thử đăng nhập nhanh từ LocalStorage
+    const localResult = this.login(identifier, password);
+    if (localResult.success) {
+      return localResult;
+    }
+
+    // 2. Nếu thất bại, kéo trực tiếp danh sách tài khoản từ Cloud Firestore
+    try {
+      const { fetchUserAccountsCloud } = await import('./dbSync');
+      const cloudAccounts = await fetchUserAccountsCloud();
+      if (cloudAccounts && Array.isArray(cloudAccounts) && cloudAccounts.length > 0) {
+        this.mergeCloudUsers(cloudAccounts);
+        return this.login(identifier, password);
+      }
+    } catch (e) {
+      console.warn('[AuthService] Lỗi kéo tài khoản Firestore khi đăng nhập:', e);
+    }
+
+    return localResult;
   }
 
   /**

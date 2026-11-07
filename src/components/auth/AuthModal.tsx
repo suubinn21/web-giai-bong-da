@@ -73,14 +73,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
     setLoading(true);
 
-    setTimeout(() => {
-      const res = AuthService.login(loginIdentifier, loginPassword);
+    try {
+      const res = await AuthService.loginAsync(loginIdentifier, loginPassword);
       setLoading(false);
       if (res.success && res.user) {
         SoundFX.playGoalCheer();
@@ -93,7 +93,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         SoundFX.playWhistle();
         setErrorMsg(res.error || 'Đăng nhập không thành công');
       }
-    }, 300);
+    } catch {
+      setLoading(false);
+      setErrorMsg('Đăng nhập không thành công. Vui lòng kiểm tra lại kết nối mạng!');
+    }
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {

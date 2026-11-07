@@ -328,14 +328,39 @@ export function subscribeUserAccountsCloud(
 
 /**
  * Đẩy danh sách tài khoản người dùng lên Cloud Firestore
+ * Luôn hợp nhất (merge) với các tài khoản hiện có trên Cloud để không bao giờ bị mất tài khoản
  */
 export async function pushUserAccountsCloud(accounts: UserAccount[]): Promise<void> {
-  if (!db || !isFirebaseConfigured()) return;
+  if (!db || !isFirebaseConfigured() || !Array.isArray(accounts) || accounts.length === 0) return;
 
   try {
     const docRef = doc(db, 'system', 'user_accounts');
+    const snap = await getDoc(docRef);
+    let mergedAccounts = [...accounts];
+
+    if (snap.exists()) {
+      const cloudData = snap.data();
+      if (Array.isArray(cloudData.accounts)) {
+        const cloudAccounts = cloudData.accounts as UserAccount[];
+        const map = new Map<string, UserAccount>();
+        // 1. Giữ các tài khoản hiện có trên Cloud để không bị ghi đè mất mát khi client mới truy cập
+        for (const ca of cloudAccounts) {
+          if (ca && ca.id) {
+            map.set(ca.id, ca);
+          }
+        }
+        // 2. Cập nhật hoặc bổ sung các tài khoản từ client hiện tại
+        for (const na of accounts) {
+          if (na && na.id) {
+            map.set(na.id, { ...(map.get(na.id) || {}), ...na });
+          }
+        }
+        mergedAccounts = Array.from(map.values());
+      }
+    }
+
     const cleaned = cleanForFirestore({
-      accounts,
+      accounts: mergedAccounts,
       updatedAt: Date.now(),
     });
     await setDoc(docRef, cleaned, { merge: true });
