@@ -402,19 +402,19 @@ export class AuthService {
     const strippedId = rawId.replace(/^@+/, '').trim();
     const cleanId = strippedId.toLowerCase();
 
-    // Trích xuất username nếu người dùng nhập email (ví dụ: btc_manhquynh@itftms.vn -> btc_manhquynh)
-    const usernameFromEmail = cleanId.includes('@') ? cleanId.split('@')[0].trim() : '';
-    const normUsernameFromEmail = usernameFromEmail ? normalize(usernameFromEmail) : '';
-
-    // Lấy phần tên cốt lõi sau khi loại bỏ tiền tố captain
-    const idWithoutCaptain = strippedId.replace(/^captain[_.\s-]*/i, '').trim();
-
     const normalize = (s: string) =>
       (s || '')
         .toLowerCase()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[@\s\-_.]+/g, '');
+
+    // Trích xuất username nếu người dùng nhập email (ví dụ: btc_manhquynh@itftms.vn -> btc_manhquynh)
+    const usernameFromEmail = cleanId.includes('@') ? cleanId.split('@')[0].trim() : '';
+    const normUsernameFromEmail = usernameFromEmail ? normalize(usernameFromEmail) : '';
+
+    // Lấy phần tên cốt lõi sau khi loại bỏ tiền tố captain
+    const idWithoutCaptain = strippedId.replace(/^captain[_.\s-]*/i, '').trim();
 
     const normTarget = normalize(strippedId);
     const normCore = normalize(idWithoutCaptain);
